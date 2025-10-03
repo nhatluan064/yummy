@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Web Nhà Hàng</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      /* --- CÀI ĐẶT CHUNG VÀ BIẾN MÀU SẮC --- */
+      :root {
+        --primary-color: #f97316; /* Cam */
+        --primary-color-dark: #ea580c;
+        --background-color: #fefbf6;
+        --card-background-color: #ffffff;
+        --text-color: #333333;
+        --text-light-color: #666666;
+        --border-color: #f3eae0;
+        --border-radius: 12px;
+        --shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        --success-color: #22c55e;
+        --warning-color: #f59e0b;
+        --danger-color: #ef4444;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "Be Vietnam Pro", sans-serif;
+        background-color: var(--background-color);
+        color: var(--text-color);
+        line-height: 1.6;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1.5rem;
+      }
+
+      /* --- PAGE NAVIGATION --- */
+      .page {
+        display: none;
+        animation: fadeIn 0.5s;
+      }
+      .page.active {
+        display: block;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      /* --- NAVBAR --- */
+      .navbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: var(--card-background-color);
+        padding: 1rem 2rem;
+        border-bottom: 1px solid var(--border-color);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+      }
+      .navbar-logo a {
+        color: var(--primary-color);
+        text-decoration: none;
+        font-size: 1.8rem;
+        font-weight: bold;
+      }
+      .navbar-logo a i {
+        margin-right: 8px;
+      }
+      .navbar-links {
+        list-style: none;
+        display: flex;
+        gap: 1rem;
+      }
+      .navbar-links a {
+        color: var(--text-light-color);
+        text-decoration: none;
+        font-size: 1rem;
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        transition: background-color 0.3s, color 0.3s;
+        cursor: pointer;
+      }
+      .navbar-links a.active,
+      .navbar-links a:hover {
+        color: white;
+        background-color: var(--primary-color);
+      }
+      .navbar-links a i {
+        margin-right: 6px;
+      }
+
+      /* --- HEADER CHÍNH --- */
+      .main-header {
+        text-align: center;
+        padding: 3rem 0;
+      }
+      .main-header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+      }
+      .main-header p {
+        font-size: 1.1rem;
+        color: var(--text-light-color);
+      }
+
+      /* --- TRANG CHỦ --- */
+      #page-trang-chu .hero {
+        height: 80vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        color: white;
+        background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+          url("https://placehold.co/1200x800/5c3d2e/FFFFFF?text=Nhà+Hàng")
+            no-repeat center center/cover;
+      }
+      #page-trang-chu .hero h1 {
+        font-size: 3.5rem;
+        margin-bottom: 1rem;
+      }
+      #page-trang-chu .hero p {
+        font-size: 1.2rem;
+        margin-bottom: 2rem;
+      }
+      #page-trang-chu .hero .cta-buttons {
+        display: flex;
+        gap: 1rem;
+      }
+      .btn {
+        padding: 0.8rem 1.8rem;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 700;
+        transition: transform 0.2s, background-color 0.3s;
+      }
+      .btn:hover {
+        transform: translateY(-3px);
+      }
+      .btn-primary {
+        background-color: var(--primary-color);
+        color: white;
+      }
+      .btn-secondary {
+        background-color: transparent;
+        color: white;
+        border: 2px solid white;
+      }
+
+      /* --- TRANG THỰC ĐƠN & ORDER --- */
+      .menu-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1.5rem;
+      }
+      .menu-card {
+        background: var(--card-background-color);
+        border: 1px solid var(--border-color);
+        border-radius: var(--border-radius);
+        padding: 1rem;
+        transition: transform 0.2s, box-shadow 0.2s;
+        display: flex;
+        flex-direction: column;
+      }
+      .menu-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow);
+      }
+      .menu-card-image {
+        width: 100%;
+        height: 160px;
+        object-fit: cover;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+      }
+      .menu-card-body {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+      .menu-card-details h4 {
+        font-size: 1.1rem;
+        font-weight: 700;
+        margin-bottom: 0.25rem;
+      }
+      .menu-card-details p {
+        font-size: 0.9rem;
+        color: var(--text-light-color);
+      }
+      .menu-card-price {
+        background-color: #fff7ed;
+        color: var(--primary-color);
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-weight: 700;
+        font-size: 1rem;
+      }
+      .add-to-cart-btn {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 0.6rem 1rem;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: background-color 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .add-to-cart-btn:hover {
+        background-color: var(--primary-color-dark);
+      }
+      .menu-category {
+        margin-bottom: 3rem;
+      }
+      .menu-category h2 {
+        display: inline-block;
+        padding-bottom: 0.5rem;
+        margin-bottom: 1.5rem;
+        border-bottom: 3px solid var(--primary-color);
+      }
+
+      /* --- TRANG ĐẶT BÀN --- */
+      .booking-form-container {
+        max-width: 700px;
+        margin: 0 auto;
+        background: var(--card-background-color);
+        padding: 2.5rem;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow);
+      }
+      .form-group {
+        margin-bottom: 1.5rem;
+      }
+      .form-group label {
+        display: block;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+      }
+      .form-group input,
+      .form-group select,
+      .form-group textarea {
+        width: 100%;
+        padding: 0.8rem;
+        font-size: 1rem;
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
+        font-family: "Be Vietnam Pro", sans-serif;
+      }
+      .form-group textarea {
+        resize: vertical;
+        min-height: 100px;
+      }
+      .submit-btn {
+        width: 100%;
+        padding: 1rem;
+        font-size: 1.1rem;
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        font-weight: 700;
+      }
+      .submit-btn:hover {
+        background-color: var(--primary-color-dark);
+      }
+
+      /* --- TRANG ADMIN --- */
+      #page-admin .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+      }
+      #page-admin .stat-card {
+        background: var(--card-background-color);
+        padding: 1.5rem;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      #page-admin .stat-card .number {
+        font-size: 2rem;
+        font-weight: 700;
+      }
+      #page-admin .stat-card .icon {
+        font-size: 2rem;
+        color: var(--primary-color);
+      }
+      #page-admin .recent-orders {
+        background: var(--card-background-color);
+        padding: 1.5rem;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow);
+      }
+      #page-admin .order-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 0;
+        border-bottom: 1px solid var(--border-color);
+      }
+      #page-admin .order-item:last-child {
+        border-bottom: none;
+      }
+      #page-admin .order-details .order-id {
+        font-weight: 700;
+      }
+      #page-admin .order-status {
+        padding: 0.3rem 0.8rem;
+        border-radius: 20px;
+        font-weight: 500;
+        font-size: 0.9rem;
+      }
+      #page-admin .status-pending {
+        background-color: #fef3c7;
+        color: #d97706;
+      }
+      #page-admin .status-completed {
+        background-color: #d1fae5;
+        color: #059669;
+      }
+      #page-admin .status-cancelled {
+        background-color: #fee2e2;
+        color: #dc2626;
+      }
+
+      /* --- GIỎ HÀNG (DÙNG CHUNG CHO ORDER) --- */
+      .main-content {
+        display: flex;
+        align-items: flex-start;
+        gap: 2rem;
+      }
+      .menu-section {
+        flex: 3;
+      }
+      .cart-section {
+        flex: 1.5;
+        min-width: 320px;
+        background-color: var(--card-background-color);
+        padding: 1.5rem;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow);
+        position: sticky;
+        top: 100px;
+        border: 1px solid var(--border-color);
+      }
+      .cart-header {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 1rem;
+      }
+      .cart-header i {
+        margin-right: 0.5rem;
+        color: var(--primary-color);
+      }
+      .cart-items {
+        list-style: none;
+        max-height: 40vh;
+        overflow-y: auto;
+      }
+      .cart-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 0;
+        border-bottom: 1px solid #eee;
+      }
+      .cart-item-details .name {
+        font-weight: 700;
+      }
+      .cart-item-details .price {
+        color: var(--text-light-color);
+        font-size: 0.9rem;
+      }
+      .cart-item-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+      .quantity-btn {
+        border: 1px solid #ccc;
+        background: #f9f9f9;
+        width: 28px;
+        height: 28px;
+        cursor: pointer;
+        border-radius: 50%;
+      }
+      .cart-empty {
+        text-align: center;
+        color: #888;
+        padding: 2rem 0;
+        font-style: italic;
+      }
+      .cart-summary {
+        border-top: 2px dotted #ddd;
+        padding-top: 1.5rem;
+        margin-top: 1rem;
+      }
+      .total-price {
+        display: flex;
+        justify-content: space-between;
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin-bottom: 1.5rem;
+      }
+      #checkout-btn {
+        width: 100%;
+      } /* Sử dụng lại class .submit-btn */
+    </style>
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="navbar-logo">
+        <a href="#"><i class="fa-solid fa-utensils"></i>LOGO</a>
+      </div>
+      <ul class="navbar-links">
+        <li>
+          <a data-page="trang-chu" class="nav-link active"
+            ><i class="fa-solid fa-house"></i>Trang chủ</a
+          >
+        </li>
+        <li>
+          <a data-page="thuc-don" class="nav-link"
+            ><i class="fa-solid fa-book-open"></i>Thực đơn</a
+          >
+        </li>
+        <li>
+          <a data-page="dat-ban" class="nav-link"
+            ><i class="fa-solid fa-calendar-days"></i>Đặt bàn</a
+          >
+        </li>
+        <li>
+          <a data-page="order" class="nav-link"
+            ><i class="fa-solid fa-cart-shopping"></i>Order</a
+          >
+        </li>
+        <li>
+          <a data-page="admin" class="nav-link"
+            ><i class="fa-solid fa-user-shield"></i>Admin</a
+          >
+        </li>
+      </ul>
+    </nav>
+
+    <!-- ========= TRANG CHỦ ========= -->
+    <div id="page-trang-chu" class="page active">
+      <div class="hero">
+        <h1>Trải nghiệm ẩm thực</h1>
+        <p>Đặt bàn nhanh chóng, order dễ dàng, thưởng thức món ngon</p>
+        <div class="cta-buttons">
+          <a href="#" class="btn btn-primary nav-link" data-page="dat-ban"
+            ><i class="fa-solid fa-calendar-days"></i> Đặt bàn ngay</a
+          >
+          <a href="#" class="btn btn-secondary nav-link" data-page="thuc-don"
+            ><i class="fa-solid fa-book-open"></i> Xem thực đơn</a
+          >
+        </div>
+      </div>
+    </div>
+
+    <!-- ========= TRANG THỰC ĐƠN ========= -->
+    <div id="page-thuc-don" class="page">
+      <div class="container">
+        <header class="main-header">
+          <h1>Thực đơn</h1>
+          <p>Khám phá những món ăn đặc sắc của chúng tôi</p>
+        </header>
+        <div class="menu-category">
+          <h2><i class="fa-solid fa-star"></i> Món chính</h2>
+          <div class="menu-grid">
+            <div class="menu-card">
+              <img
+                src="https://placehold.co/400x300/e9a28a/FFFFFF?text=Steak"
+                alt="Steak bò Úc"
+                class="menu-card-image"
+              />
+              <div class="menu-card-body">
+                <div class="menu-card-details">
+                  <h4>Steak bò Úc</h4>
+                  <p>Thăn ngoại bò Úc, khoai tây nghiền</p>
+                </div>
+                <span class="menu-card-price">450,000đ</span>
+              </div>
+            </div>
+            <div class="menu-card">
+              <img
+                src="https://placehold.co/400x300/a3cbe0/FFFFFF?text=Cá+hồi"
+                alt="Cá hồi áp chảo"
+                class="menu-card-image"
+              />
+              <div class="menu-card-body">
+                <div class="menu-card-details">
+                  <h4>Cá hồi áp chảo</h4>
+                  <p>Cá hồi Na Uy, rau củ nướng</p>
+                </div>
+                <span class="menu-card-price">380,000đ</span>
+              </div>
+            </div>
+            <div class="menu-card">
+              <img
+                src="https://placehold.co/400x300/e0c08b/FFFFFF?text=Mì+Ý"
+                alt="Mì Ý sốt bò bằm"
+                class="menu-card-image"
+              />
+              <div class="menu-card-body">
+                <div class="menu-card-details">
+                  <h4>Mì Ý sốt bò bằm</h4>
+                  <p>Mì Ý truyền thống, sốt cà chua bò</p>
+                </div>
+                <span class="menu-card-price">180,000đ</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="menu-category">
+          <h2><i class="fa-solid fa-leaf"></i> Món khai vị</h2>
+          <div class="menu-grid">
+            <div class="menu-card">
+              <img
+                src="https://placehold.co/400x300/84a98c/FFFFFF?text=Salad"
+                alt="Salad Caesar"
+                class="menu-card-image"
+              />
+              <div class="menu-card-body">
+                <div class="menu-card-details">
+                  <h4>Salad Caesar</h4>
+                  <p>Xà lách, phô mai parmesan, bánh mì nướng</p>
+                </div>
+                <span class="menu-card-price">85,000đ</span>
+              </div>
+            </div>
+            <div class="menu-card">
+              <img
+                src="https://placehold.co/400x300/e6b8a2/FFFFFF?text=Gỏi+cuốn"
+                alt="Gỏi cuốn tôm thịt"
+                class="menu-card-image"
+              />
+              <div class="menu-card-body">
+                <div class="menu-card-details">
+                  <h4>Gỏi cuốn tôm thịt</h4>
+                  <p>Tôm tươi, thịt heo, rau sống, bún</p>
+                </div>
+                <span class="menu-card-price">65,000đ</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========= TRANG ĐẶT BÀN ========= -->
+    <div id="page-dat-ban" class="page">
+      <div class="container">
+        <header class="main-header">
+          <h1>Đặt bàn</h1>
+          <p>Đặt chỗ trước để có trải nghiệm tốt nhất</p>
+        </header>
+        <div class="booking-form-container">
+          <form id="booking-form">
+            <div class="form-group">
+              <label for="name">Họ và tên *</label
+              ><input type="text" id="name" required />
+            </div>
+            <div class="form-group">
+              <label for="phone">Số điện thoại *</label
+              ><input type="tel" id="phone" required />
+            </div>
+            <div class="form-group">
+              <label for="email">Email</label><input type="email" id="email" />
+            </div>
+            <div class="form-group">
+              <label for="date">Ngày đặt bàn *</label
+              ><input type="date" id="date" required />
+            </div>
+            <div class="form-group">
+              <label for="time">Giờ đặt bàn *</label
+              ><input type="time" id="time" required />
+            </div>
+            <div class="form-group">
+              <label for="people">Số người *</label>
+              <select id="people" required>
+                <option value="1">1 người</option>
+                <option value="2">2 người</option>
+                <option value="3">3 người</option>
+                <option value="4">4 người</option>
+                <option value="5">5+ người</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="notes">Ghi chú</label
+              ><textarea
+                id="notes"
+                placeholder="Yêu cầu đặc biệt (nếu có)..."
+              ></textarea>
+            </div>
+            <button type="submit" class="submit-btn">Xác nhận đặt bàn</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========= TRANG ORDER ========= -->
+    <div id="page-order" class="page">
+      <div class="container">
+        <header class="main-header">
+          <h1>Order món</h1>
+          <p>Chọn món và đặt hàng ngay</p>
+        </header>
+        <main class="main-content">
+          <section class="menu-section">
+            <h2 class="section-title">Món phổ biến</h2>
+            <div class="menu-grid" id="order-menu-grid">
+              <div
+                class="menu-card"
+                data-name="Steak bò Úc"
+                data-price="450000"
+              >
+                <img
+                  src="https://placehold.co/400x300/e9a28a/FFFFFF?text=Steak"
+                  alt="Steak bò Úc"
+                  class="menu-card-image"
+                />
+                <div class="menu-card-body">
+                  <div class="menu-card-details">
+                    <h4>Steak bò Úc</h4>
+                    <span class="menu-card-price">450,000đ</span>
+                  </div>
+                  <button class="add-to-cart-btn">
+                    <i class="fa-solid fa-plus"></i>Thêm
+                  </button>
+                </div>
+              </div>
+              <div
+                class="menu-card"
+                data-name="Cá hồi áp chảo"
+                data-price="380000"
+              >
+                <img
+                  src="https://placehold.co/400x300/a3cbe0/FFFFFF?text=Cá+hồi"
+                  alt="Cá hồi áp chảo"
+                  class="menu-card-image"
+                />
+                <div class="menu-card-body">
+                  <div class="menu-card-details">
+                    <h4>Cá hồi áp chảo</h4>
+                    <span class="menu-card-price">380,000đ</span>
+                  </div>
+                  <button class="add-to-cart-btn">
+                    <i class="fa-solid fa-plus"></i>Thêm
+                  </button>
+                </div>
+              </div>
+              <div
+                class="menu-card"
+                data-name="Mì Ý sốt bò bằm"
+                data-price="180000"
+              >
+                <img
+                  src="https://placehold.co/400x300/e0c08b/FFFFFF?text=Mì+Ý"
+                  alt="Mì Ý"
+                  class="menu-card-image"
+                />
+                <div class="menu-card-body">
+                  <div class="menu-card-details">
+                    <h4>Mì Ý sốt bò bằm</h4>
+                    <span class="menu-card-price">180,000đ</span>
+                  </div>
+                  <button class="add-to-cart-btn">
+                    <i class="fa-solid fa-plus"></i>Thêm
+                  </button>
+                </div>
+              </div>
+              <div
+                class="menu-card"
+                data-name="Cơm gà Hải Nam"
+                data-price="120000"
+              >
+                <img
+                  src="https://placehold.co/400x300/f0d07a/FFFFFF?text=Cơm+gà"
+                  alt="Cơm gà"
+                  class="menu-card-image"
+                />
+                <div class="menu-card-body">
+                  <div class="menu-card-details">
+                    <h4>Cơm gà Hải Nam</h4>
+                    <span class="menu-card-price">120,000đ</span>
+                  </div>
+                  <button class="add-to-cart-btn">
+                    <i class="fa-solid fa-plus"></i>Thêm
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+          <aside class="cart-section">
+            <h2 class="cart-header">
+              <i class="fa-solid fa-bag-shopping"></i>Giỏ hàng
+            </h2>
+            <ul class="cart-items" id="cart-items">
+              <li class="cart-empty">Giỏ hàng trống</li>
+            </ul>
+            <div class="cart-summary" id="cart-summary" style="display: none">
+              <div class="total-price">
+                <strong>Tổng cộng:</strong><span id="total-price">0đ</span>
+              </div>
+              <button id="checkout-btn" class="submit-btn">Thanh toán</button>
+            </div>
+          </aside>
+        </main>
+      </div>
+    </div>
+
+    <!-- ========= TRANG ADMIN ========= -->
+    <div id="page-admin" class="page">
+      <div class="container">
+        <header class="main-header">
+          <h1>Admin Dashboard</h1>
+          <p>Quản lý nhà hàng của bạn</p>
+        </header>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div>
+              <div class="number">24</div>
+              <span>Đơn hàng hôm nay</span>
+            </div>
+            <div class="icon"><i class="fa-solid fa-receipt"></i></div>
+          </div>
+          <div class="stat-card">
+            <div>
+              <div class="number">12</div>
+              <span>Đặt bàn hôm nay</span>
+            </div>
+            <div class="icon"><i class="fa-solid fa-calendar-check"></i></div>
+          </div>
+          <div class="stat-card">
+            <div>
+              <div class="number">48</div>
+              <span>Món ăn</span>
+            </div>
+            <div class="icon"><i class="fa-solid fa-utensils"></i></div>
+          </div>
+          <div class="stat-card">
+            <div>
+              <div class="number">156</div>
+              <span>Khách hàng</span>
+            </div>
+            <div class="icon"><i class="fa-solid fa-users"></i></div>
+          </div>
+        </div>
+        <div class="recent-orders">
+          <h2 style="margin-bottom: 1rem">Đơn hàng gần đây</h2>
+          <div class="order-item">
+            <div class="order-details">
+              <div class="order-id">ORD001</div>
+              <span>Bàn 5 - 3 món</span>
+            </div>
+            <div class="order-info">
+              <strong>650,000đ</strong>
+              <span class="order-status status-cancelled">Đã hủy</span>
+            </div>
+          </div>
+          <div class="order-item">
+            <div class="order-details">
+              <div class="order-id">ORD002</div>
+              <span>Bàn 12 - 2 món</span>
+            </div>
+            <div class="order-info">
+              <strong>380,000đ</strong>
+              <span class="order-status status-completed">Hoàn thành</span>
+            </div>
+          </div>
+          <div class="order-item">
+            <div class="order-details">
+              <div class="order-id">ORD003</div>
+              <span>Bàn 3 - 5 món</span>
+            </div>
+            <div class="order-info">
+              <strong>920,000đ</strong>
+              <span class="order-status status-pending">Chờ xác nhận</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+      <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        // --- LOGIC CHUYỂN TRANG ---
+        const navLinks = document.querySelectorAll(".nav-link");
+        const pages = document.querySelectorAll(".page");
+
+        function showPage(pageId) {
+          pages.forEach((page) => page.classList.remove("active"));
+          document.getElementById(`page-${pageId}`).classList.add("active");
+
+          navLinks.forEach((link) => {
+            link.classList.remove("active");
+            if (link.dataset.page === pageId) {
+              link.classList.add("active");
+            }
+          });
+          window.scrollTo(0, 0);
+        }
+
+        document.body.addEventListener("click", (e) => {
+          const navLink = e.target.closest(".nav-link");
+          if (navLink) {
+            e.preventDefault();
+            const pageId = navLink.dataset.page;
+            if (pageId) showPage(pageId);
+          }
+        });
+
+        // --- LOGIC ĐẶT BÀN ---
+        const bookingForm = document.getElementById("booking-form");
+        bookingForm.addEventListener("submit", (e) => {
+          e.preventDefault();
+          alert(
+            "Đặt bàn thành công! Chúng tôi sẽ sớm liên hệ với bạn để xác nhận."
+          );
+          bookingForm.reset();
+        });
+
+        // --- LOGIC GIỎ HÀNG (ORDER) ---
+        const cartItemsList = document.getElementById("cart-items");
+        const totalPriceEl = document.getElementById("total-price");
+        const cartSummary = document.getElementById("cart-summary");
+        let cart = {};
+
+        const formatCurrency = (amount) =>
+          new Intl.NumberFormat("vi-VN", {
+            style: "currency",
+            currency: "VND",
+          }).format(amount);
+
+        const renderCart = () => {
+          cartItemsList.innerHTML = "";
+          let total = 0;
+          if (Object.keys(cart).length === 0) {
+            cartItemsList.innerHTML =
+              '<li class="cart-empty">Giỏ hàng trống</li>';
+            cartSummary.style.display = "none";
+            return;
+          }
+
+          cartSummary.style.display = "block";
+          Object.keys(cart).forEach((itemName) => {
+            const item = cart[itemName];
+            total += item.price * item.quantity;
+            const li = document.createElement("li");
+            li.className = "cart-item";
+            li.dataset.name = itemName;
+            li.innerHTML = `
+                    <div class="cart-item-details"><span class="name">${itemName}</span><span class="price">${formatCurrency(
+              item.price
+            )}</span></div>
+                    <div class="cart-item-actions">
+                        <button class="quantity-btn decrease-btn">-</button><span class="quantity">${
+                          item.quantity
+                        }</span>
+                        <button class="quantity-btn increase-btn">+</button><button class="remove-btn"><i class="fas fa-trash-alt"></i></button>
+                    </div>`;
+            cartItemsList.appendChild(li);
+          });
+          totalPriceEl.textContent = formatCurrency(total);
+        };
+
+        document
+          .getElementById("order-menu-grid")
+          .addEventListener("click", (e) => {
+            const addButton = e.target.closest(".add-to-cart-btn");
+            if (!addButton) return;
+            const menuCard = addButton.closest(".menu-card");
+            const name = menuCard.dataset.name;
+            const price = parseInt(menuCard.dataset.price, 10);
+            if (cart[name]) {
+              cart[name].quantity++;
+            } else {
+              cart[name] = { price, quantity: 1 };
+            }
+            renderCart();
+          });
+
+        cartItemsList.addEventListener("click", (e) => {
+          const button = e.target.closest("button");
+          if (!button) return;
+          const itemName = button.closest(".cart-item").dataset.name;
+          if (button.classList.contains("increase-btn")) {
+            cart[itemName].quantity++;
+          } else if (button.classList.contains("decrease-btn")) {
+            if (cart[itemName].quantity > 1) {
+              cart[itemName].quantity--;
+            } else {
+              delete cart[itemName];
+            }
+          } else if (button.classList.contains("remove-btn")) {
+            delete cart[itemName];
+          }
+          renderCart();
+        });
+
+        document
+          .getElementById("checkout-btn")
+          .addEventListener("click", () => {
+            if (Object.keys(cart).length === 0) return alert("Giỏ hàng trống!");
+            alert(
+              `Cảm ơn bạn đã đặt hàng! Tổng hóa đơn: ${totalPriceEl.textContent}.`
+            );
+            cart = {};
+            renderCart();
+          });
+      });
+    </script>
+    
+    <!-- Firebase SDK (Hosting/Analytics) -->
+    <script type="module">
+      // Import Firebase SDKs via ESM CDN
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+      import {
+        getAnalytics,
+        isSupported as analyticsIsSupported,
+      } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-analytics.js";
+
+      // Your web app's Firebase configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyCbUNjBPEaZOtI_cNCcCJ1DBXUUdrP_6oE",
+        authDomain: "order-yummy.firebaseapp.com",
+        projectId: "order-yummy",
+        storageBucket: "order-yummy.firebasestorage.app",
+        messagingSenderId: "142798840175",
+        appId: "1:142798840175:web:1091d97784312c1fe4089a",
+        measurementId: "G-GQ7MEPZSSJ",
+      };
+
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+      // Initialize Analytics only if supported and running on secure origin
+      analyticsIsSupported()
+        .then((supported) => {
+          if (supported) {
+            getAnalytics(app);
+          }
+        })
+        .catch((err) => console.warn("Firebase Analytics not available:", err));
+    </script>
+  </body>
+</html>
