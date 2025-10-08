@@ -52,6 +52,7 @@
         <li><a data-page="menu-management" class="nav-link"><i class="fa-solid fa-utensils"></i>Menu</a></li>
         <li><a data-page="orders" class="nav-link"><i class="fa-solid fa-receipt"></i>Đơn hàng</a></li>
         <li><a data-page="tables" class="nav-link"><i class="fa-solid fa-table"></i>Bàn</a></li>
+        <li><a data-page="kitchen" class="nav-link"><i class="fa-solid fa-fire"></i>Bếp</a></li>
         <li><a href="../landing-home.html" class="nav-link"><i class="fa-solid fa-house"></i>Trang chủ</a></li>
         <li><a href="#" id="logout-btn" class="nav-link"><i class="fa-solid fa-sign-out-alt"></i>Đăng xuất</a></li>
       </ul>
@@ -110,6 +111,50 @@
       </div>
       <div class="tables-management" id="tables-grid">
         <div class="loading">Đang tải danh sách bàn...</div>
+      </div>
+    </div>
+
+    <!-- KITCHEN DISPLAY -->
+    <div class="subpage" id="page-kitchen">
+      <div class="page-header">
+        <h1><i class="fa-solid fa-fire"></i> Màn hình Bếp</h1>
+        <p>Theo dõi và xử lý các đơn hàng từ admin panel</p>
+        <div style="margin-top: 1rem;">
+          <a href="../kitchen/kitchen-admin-view.html" class="btn btn-primary" target="_blank">
+            <i class="fa-solid fa-external-link-alt"></i> Mở trang Bếp trong tab mới
+          </a>
+        </div>
+      </div>
+      
+      <div class="kitchen-info" style="background: #f8f9fa; padding: 2rem; border-radius: 10px; text-align: center;">
+        <div style="font-size: 3rem; color: #ff6b35; margin-bottom: 1rem;">
+          <i class="fa-solid fa-fire"></i>
+        </div>
+        <h3>Truy cập Màn hình Bếp</h3>
+        <p style="color: #666; margin-bottom: 1.5rem;">
+          Nhấn nút bên trên để mở màn hình bếp trong tab mới. 
+          Admin có thể theo dõi trực tiếp hoạt động của bếp mà không cần đăng nhập riêng.
+        </p>
+        
+        <div class="kitchen-features" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 2rem;">
+          <div style="background: white; padding: 1rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <i class="fa-solid fa-eye" style="color: #10b981; font-size: 1.5rem; margin-bottom: 0.5rem;"></i>
+            <h4>Theo dõi đơn hàng</h4>
+            <p style="font-size: 0.9rem; color: #666;">Xem trạng thái tất cả đơn hàng realtime</p>
+          </div>
+          
+          <div style="background: white; padding: 1rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <i class="fa-solid fa-clock" style="color: #f59e0b; font-size: 1.5rem; margin-bottom: 0.5rem;"></i>
+            <h4>Thời gian chế biến</h4>
+            <p style="font-size: 0.9rem; color: #666;">Giám sát thời gian xử lý đơn hàng</p>
+          </div>
+          
+          <div style="background: white; padding: 1rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <i class="fa-solid fa-chart-line" style="color: #3b82f6; font-size: 1.5rem; margin-bottom: 0.5rem;"></i>
+            <h4>Hiệu suất bếp</h4>
+            <p style="font-size: 0.9rem; color: #666;">Đánh giá hiệu suất làm việc</p>
+          </div>
+        </div>
       </div>
     </div>
   </div>

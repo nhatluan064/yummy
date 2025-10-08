@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>YUMMY - Kitchen Display (Admin View)</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/styles.css" />
+  <link rel="stylesheet" href="../css/kitchen.css" />
+  <style>
+    .admin-kitchen-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 1rem;
+      text-align: center;
+      margin-bottom: 1rem;
+      border-radius: 10px;
+    }
+    
+    .admin-kitchen-header h2 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+    
+    .admin-kitchen-header p {
+      margin: 0.5rem 0 0 0;
+      opacity: 0.9;
+      font-size: 0.95rem;
+    }
+    
+    .back-to-admin {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: var(--primary-color);
+      color: white;
+      padding: 0.75rem 1rem;
+      border-radius: 50px;
+      text-decoration: none;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      z-index: 1001;
+      transition: all 0.3s;
+    }
+    
+    .back-to-admin:hover {
+      background: #e64a19;
+      transform: translateY(-2px);
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <a href="../admin/admin-panel.html" class="back-to-admin">
+    <i class="fa-solid fa-arrow-left"></i> Về Admin
+  </a>
+
+  <div class="container">
+    <div class="admin-kitchen-header">
+      <h2><i class="fa-solid fa-shield-halved"></i> Chế độ Admin - Màn hình Bếp</h2>
+      <p>Admin đang xem màn hình bếp (chỉ xem, không tương tác)</p>
+    </div>
+    
+    <header class="main-header">
+      <h1>Màn hình bếp</h1>
+      <p>Theo dõi và xử lý các đơn hàng</p>
+    </header>
+    
+    <section class="kitchen-orders">
+      <div class="order-status-group" data-status="pending">
+        <h2><i class="fa-solid fa-hourglass-half"></i> Chờ xử lý</h2>
+        <div class="orders-grid" id="orders-pending"></div>
+      </div>
+      <div class="order-status-group" data-status="preparing">
+        <h2><i class="fa-solid fa-fire-burner"></i> Đang nấu</h2>
+        <div class="orders-grid" id="orders-preparing"></div>
+      </div>
+      <div class="order-status-group" data-status="completed">
+        <h2><i class="fa-solid fa-check"></i> Hoàn tất</h2>
+        <div class="orders-grid" id="orders-completed"></div>
+      </div>
+    </section>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+    import { getAnalytics, isSupported as analyticsIsSupported } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-analytics.js";
+    
+    const firebaseConfig = {
+      apiKey: "AIzaSyCbUNjBPEaZOtI_cNCcCJ1DBXUUdrP_6oE",
+      authDomain: "order-yummy.firebaseapp.com",
+      projectId: "order-yummy",
+      storageBucket: "order-yummy.firebasestorage.app",
+      messagingSenderId: "142798840175",
+      appId: "1:142798840175:web:1091d97784312c1fe4089a",
+      measurementId: "G-GQ7MEPZSSJ"
+    };
+    
+    const app = initializeApp(firebaseConfig);
+    
+    // Initialize analytics if supported
+    analyticsIsSupported().then(supported => {
+      if (supported) {
+        getAnalytics(app);
+      }
+    }).catch(e => console.warn("Analytics unavailable", e));
+    
+    // Check if accessed from admin (no authentication required for admin view)
+    // This is a read-only view for admin oversight
+    console.log('Kitchen display loaded in admin mode');
+    
+    // Add sample orders for demo (in real app, this would load from Firebase)
+    function loadSampleOrders() {
+      const sampleOrders = [
+        {
+          id: 'ORD-001',
+          table: 'Bàn 1',
+          time: '14:30',
+          items: [
+            { name: 'Phở Bò', quantity: 2, notes: 'Ít hành' },
+            { name: 'Gỏi Cuốn', quantity: 1, notes: '' }
+          ],
+          status: 'pending'
+        },
+        {
+          id: 'ORD-002',
+          table: 'Bàn 3',
+          time: '14:45',
+          items: [
+            { name: 'Bún Bò Huế', quantity: 1, notes: 'Cay nhẹ' },
+            { name: 'Chả Cá', quantity: 1, notes: '' }
+          ],
+          status: 'preparing'
+        }
+      ];
+      
+      sampleOrders.forEach(order => {
+        const orderCard = createOrderCard(order);
+        const container = document.getElementById(`orders-${order.status}`);
+        if (container) {
+          container.appendChild(orderCard);
+        }
+      });
+    }
+    
+    function createOrderCard(order) {
+      const card = document.createElement('div');
+      card.className = `order-card ${order.status}`;
+      card.innerHTML = `
+        <div class="order-header">
+          <div class="order-info">
+            <div class="table-number">${order.table}</div>
+            <div class="order-time">${order.time}</div>
+          </div>
+          <div class="order-status">
+            <span class="status-badge ${order.status}">
+              ${order.status === 'pending' ? 'Chờ' : order.status === 'preparing' ? 'Nấu' : 'Xong'}
+            </span>
+          </div>
+        </div>
+        <div class="order-items">
+          <ul class="item-list">
+            ${order.items.map(item => `
+              <li class="order-item">
+                <div class="item-details">
+                  <div class="item-name">${item.name}</div>
+                  ${item.notes ? `<div class="item-notes">${item.notes}</div>` : ''}
+                </div>
+                <span class="item-quantity">${item.quantity}</span>
+              </li>
+            `).join('')}
+          </ul>
+        </div>
+        <div class="admin-notice" style="background: #f3f4f6; padding: 0.5rem; border-radius: 6px; font-size: 0.8rem; color: #6b7280; text-align: center; margin-top: 1rem;">
+          <i class="fa-solid fa-eye"></i> Chế độ xem Admin - Không thể tương tác
+        </div>
+      `;
+      return card;
+    }
+    
+    // Load demo data
+    setTimeout(loadSampleOrders, 500);
+  </script>
+</body>
+</html>

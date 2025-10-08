@@ -19,10 +19,10 @@
       <li><a href="../landing-home.html"><i class="fa-solid fa-house"></i>Trang chủ</a></li>
       <li><a href="../customer/order-booking.html"><i class="fa-solid fa-bag-shopping"></i>Order</a></li>
       <li><a href="../menu/public-menu.html"><i class="fa-solid fa-list"></i>Menu Hôm Nay</a></li>
-      <li><a href="../customer/order-booking.html" data-page="booking"><i class="fa-solid fa-calendar-days"></i>Đặt bàn</a></li>
+      <li><a href="../customer/order-booking.html#booking"><i class="fa-solid fa-calendar-days"></i>Đặt bàn</a></li>
       <li><a class="active"><i class="fa-solid fa-fire"></i>Bếp</a></li>
       <li><a href="../admin/admin-panel.html"><i class="fa-solid fa-user-shield"></i>Admin</a></li>
-      <li><button id="kitchenLogoutBtn" style="background:none;border:none;color:#fff;cursor:pointer;padding:.5rem .75rem;font:inherit;display:flex;align-items:center;gap:.35rem;"><i class="fa-solid fa-right-from-bracket"></i>Thoát</button></li>
+      <li><a href="#" id="kitchenLogoutBtn"><i class="fa-solid fa-right-from-bracket"></i>Thoát</a></li>
     </ul>
   </nav>
 
@@ -46,23 +46,80 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+    import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
     import { getAnalytics, isSupported as analyticsIsSupported } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-analytics.js";
-    const firebaseConfig={apiKey:"AIzaSyCbUNjBPEaZOtI_cNCcCJ1DBXUUdrP_6oE",authDomain:"order-yummy.firebaseapp.com",projectId:"order-yummy",storageBucket:"order-yummy.firebasestorage.app",messagingSenderId:"142798840175",appId:"1:142798840175:web:1091d97784312c1fe4089a",measurementId:"G-GQ7MEPZSSJ"};
-    const app=initializeApp(firebaseConfig);analyticsIsSupported().then(s=>{if(s){getAnalytics(app);}}).catch(e=>console.warn("Analytics unavailable",e));
-    // Attach logout if firebase service loaded elsewhere
-    const btn=document.getElementById('kitchenLogoutBtn');
-    if(btn){
-      btn.addEventListener('click', async ()=>{
-        try {
-          if(window.yummyFirebaseService){
-            await window.yummyFirebaseService.signOut();
-            alert('Đã đăng xuất');
-          }
-          window.location.href='../landing-home.html';
-        } catch(e){
-          console.warn('Logout failed',e);alert('Không thể đăng xuất');
+    
+    const firebaseConfig = {
+      apiKey: "AIzaSyCbUNjBPEaZOtI_cNCcCJ1DBXUUdrP_6oE",
+      authDomain: "order-yummy.firebaseapp.com",
+      projectId: "order-yummy",
+      storageBucket: "order-yummy.firebasestorage.app",
+      messagingSenderId: "142798840175",
+      appId: "1:142798840175:web:1091d97784312c1fe4089a",
+      measurementId: "G-GQ7MEPZSSJ"
+    };
+    
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    
+    // Initialize analytics if supported
+    analyticsIsSupported().then(supported => {
+      if (supported) {
+        getAnalytics(app);
+      }
+    }).catch(e => console.warn("Analytics unavailable", e));
+    
+    // Check kitchen staff authentication
+    function checkKitchenAuth() {
+      const kitchenStaff = localStorage.getItem('kitchenStaff');
+      if (!kitchenStaff) {
+        // Redirect to kitchen login if not authenticated
+        window.location.href = 'kitchen-login.html';
+        return false;
+      }
+      
+      try {
+        const staffData = JSON.parse(kitchenStaff);
+        // Check if login is still valid (24 hours)
+        const loginTime = staffData.loginTime;
+        const currentTime = Date.now();
+        const twentyFourHours = 24 * 60 * 60 * 1000;
+        
+        if (currentTime - loginTime > twentyFourHours) {
+          localStorage.removeItem('kitchenStaff');
+          window.location.href = 'kitchen-login.html';
+          return false;
         }
-      });
+        
+        return true;
+      } catch (e) {
+        localStorage.removeItem('kitchenStaff');
+        window.location.href = 'kitchen-login.html';
+        return false;
+      }
+    }
+    
+    // Check authentication on page load
+    if (!checkKitchenAuth()) {
+      // Don't continue if not authenticated
+    } else {
+      // Kitchen logout functionality
+      const btn = document.getElementById('kitchenLogoutBtn');
+      if (btn) {
+        btn.addEventListener('click', async (e) => {
+          e.preventDefault();
+          try {
+            await signOut(auth);
+            localStorage.removeItem('kitchenStaff');
+            alert('Đã đăng xuất khỏi hệ thống bếp');
+            window.location.href = 'kitchen-login.html';
+          } catch (error) {
+            console.warn('Logout failed', error);
+            localStorage.removeItem('kitchenStaff');
+            window.location.href = 'kitchen-login.html';
+          }
+        });
+      }
     }
   </script>
 </body>

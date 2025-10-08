@@ -20,11 +20,9 @@
     </div>
     <ul class="navbar-links">
       <li><a href="../landing-home.html"><i class="fa-solid fa-house"></i>Trang chủ</a></li>
-      <li><a data-page="menu" class="nav-link active"><i class="fa-solid fa-utensils"></i>Order</a></li>
+      <li><a data-page="menu" class="nav-link active"><i class="fa-solid fa-bag-shopping"></i>Order</a></li>
       <li><a href="../menu/public-menu.html"><i class="fa-solid fa-list"></i>Menu Hôm Nay</a></li>
       <li><a data-page="booking" class="nav-link"><i class="fa-solid fa-calendar-days"></i>Đặt bàn</a></li>
-      <li><a href="../kitchen/kitchen-display.html"><i class="fa-solid fa-fire"></i>Bếp</a></li>
-      <li><a href="../admin/admin-panel.html"><i class="fa-solid fa-user-shield"></i>Admin</a></li>
     </ul>
   </nav>
 
@@ -111,6 +109,51 @@
       window.cartManager=new CartManager();
       const tableGrid=document.querySelector('.table-grid');
       if(tableGrid){for(let i=1;i<=20;i++){const d=document.createElement('div');d.className='table-card';d.dataset.table=i;d.innerHTML=`<div class="table-number">${i}</div><div class="table-status">Trống</div>`;tableGrid.appendChild(d);}}
+      
+      // Handle tab navigation
+      const navLinks = document.querySelectorAll('.nav-link');
+      const pages = document.querySelectorAll('.page');
+      
+      function switchTab(targetPage) {
+        // Remove active class from all nav links and pages
+        navLinks.forEach(link => link.classList.remove('active'));
+        pages.forEach(page => page.classList.remove('active'));
+        
+        // Activate target
+        const targetLink = document.querySelector(`a[data-page="${targetPage}"]`);
+        const targetPageEl = document.getElementById(`page-${targetPage}`);
+        
+        if (targetLink) targetLink.classList.add('active');
+        if (targetPageEl) targetPageEl.classList.add('active');
+      }
+      
+      // Handle nav clicks
+      navLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+          const page = link.getAttribute('data-page');
+          if (page) {
+            e.preventDefault();
+            switchTab(page);
+            history.pushState(null, null, `#${page}`);
+          }
+        });
+      });
+      
+      // Handle hash navigation on load
+      function handleHashNavigation() {
+        const hash = window.location.hash.substring(1); // Remove #
+        if (hash === 'booking') {
+          switchTab('booking');
+        } else if (hash === 'menu' || !hash) {
+          switchTab('menu');
+        }
+      }
+      
+      // Handle browser back/forward
+      window.addEventListener('hashchange', handleHashNavigation);
+      
+      // Handle initial load with hash
+      handleHashNavigation();
     });
   </script>
 </body>
