@@ -10,6 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../css/styles.css" />
   <link rel="stylesheet" href="../css/admin.css" />
+  <link rel="stylesheet" href="../css/kitchen.css" />
 </head>
 <body>
   <!-- AUTH PAGE -->
@@ -118,44 +119,23 @@
     <div class="subpage" id="page-kitchen">
       <div class="page-header">
         <h1><i class="fa-solid fa-fire"></i> Màn hình Bếp</h1>
-        <p>Theo dõi và xử lý các đơn hàng từ admin panel</p>
-        <div style="margin-top: 1rem;">
-          <a href="../kitchen/kitchen-admin-view.html" class="btn btn-primary" target="_blank">
-            <i class="fa-solid fa-external-link-alt"></i> Mở trang Bếp trong tab mới
-          </a>
-        </div>
+        <p>Theo dõi và xử lý các đơn hàng</p>
       </div>
       
-      <div class="kitchen-info" style="background: #f8f9fa; padding: 2rem; border-radius: 10px; text-align: center;">
-        <div style="font-size: 3rem; color: #ff6b35; margin-bottom: 1rem;">
-          <i class="fa-solid fa-fire"></i>
+      <section class="kitchen-orders">
+        <div class="order-status-group" data-status="pending">
+          <h2><i class="fa-solid fa-hourglass-half"></i> Chờ xử lý</h2>
+          <div class="orders-grid" id="orders-pending"></div>
         </div>
-        <h3>Truy cập Màn hình Bếp</h3>
-        <p style="color: #666; margin-bottom: 1.5rem;">
-          Nhấn nút bên trên để mở màn hình bếp trong tab mới. 
-          Admin có thể theo dõi trực tiếp hoạt động của bếp mà không cần đăng nhập riêng.
-        </p>
-        
-        <div class="kitchen-features" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 2rem;">
-          <div style="background: white; padding: 1rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-            <i class="fa-solid fa-eye" style="color: #10b981; font-size: 1.5rem; margin-bottom: 0.5rem;"></i>
-            <h4>Theo dõi đơn hàng</h4>
-            <p style="font-size: 0.9rem; color: #666;">Xem trạng thái tất cả đơn hàng realtime</p>
-          </div>
-          
-          <div style="background: white; padding: 1rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-            <i class="fa-solid fa-clock" style="color: #f59e0b; font-size: 1.5rem; margin-bottom: 0.5rem;"></i>
-            <h4>Thời gian chế biến</h4>
-            <p style="font-size: 0.9rem; color: #666;">Giám sát thời gian xử lý đơn hàng</p>
-          </div>
-          
-          <div style="background: white; padding: 1rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-            <i class="fa-solid fa-chart-line" style="color: #3b82f6; font-size: 1.5rem; margin-bottom: 0.5rem;"></i>
-            <h4>Hiệu suất bếp</h4>
-            <p style="font-size: 0.9rem; color: #666;">Đánh giá hiệu suất làm việc</p>
-          </div>
+        <div class="order-status-group" data-status="preparing">
+          <h2><i class="fa-solid fa-fire-burner"></i> Đang nấu</h2>
+          <div class="orders-grid" id="orders-preparing"></div>
         </div>
-      </div>
+        <div class="order-status-group" data-status="completed">
+          <h2><i class="fa-solid fa-check"></i> Hoàn tất</h2>
+          <div class="orders-grid" id="orders-completed"></div>
+        </div>
+      </section>
     </div>
   </div>
 
@@ -347,6 +327,141 @@
           document.getElementById('page-auth').classList.add('active');
         }
       });
+
+      // Kitchen Orders Management
+      function loadKitchenOrders() {
+        const sampleOrders = [
+          {
+            id: 'ORD-001',
+            table: 'Bàn 1',
+            time: '14:30',
+            customer: 'Nguyễn Văn A',
+            items: [
+              { name: 'Phở Bò', quantity: 2, notes: 'Ít hành, không rau mùi' },
+              { name: 'Gỏi Cuốn', quantity: 1, notes: '' },
+              { name: 'Trà Đá', quantity: 2, notes: '' }
+            ],
+            status: 'pending',
+            orderTime: '14:25'
+          },
+          {
+            id: 'ORD-002',
+            table: 'Bàn 3',
+            time: '14:45',
+            customer: 'Trần Thị B',
+            items: [
+              { name: 'Bún Bò Huế', quantity: 1, notes: 'Cay vừa' },
+              { name: 'Chả Cá Lá Vọng', quantity: 1, notes: 'Không rau thơm' }
+            ],
+            status: 'preparing',
+            orderTime: '14:40'
+          },
+          {
+            id: 'ORD-003',
+            table: 'Bàn 5',
+            time: '15:00',
+            customer: 'Lê Văn C',
+            items: [
+              { name: 'Cơm Tấm', quantity: 1, notes: '' },
+              { name: 'Nước Chanh', quantity: 1, notes: 'Ít đường' }
+            ],
+            status: 'completed',
+            orderTime: '14:55'
+          }
+        ];
+        
+        // Clear existing orders
+        document.getElementById('orders-pending').innerHTML = '';
+        document.getElementById('orders-preparing').innerHTML = '';
+        document.getElementById('orders-completed').innerHTML = '';
+        
+        sampleOrders.forEach(order => {
+          const orderCard = createKitchenOrderCard(order);
+          const container = document.getElementById(`orders-${order.status}`);
+          if (container) {
+            container.appendChild(orderCard);
+          }
+        });
+      }
+      
+      function createKitchenOrderCard(order) {
+        const card = document.createElement('div');
+        card.className = `order-card ${order.status}`;
+        card.innerHTML = `
+          <div class="order-header">
+            <div class="order-info">
+              <div class="table-number">${order.table}</div>
+              <div class="order-time">Đặt lúc: ${order.orderTime}</div>
+              <div class="order-type">Khách: ${order.customer}</div>
+            </div>
+            <div class="order-status">
+              <span class="status-badge ${order.status}">
+                ${order.status === 'pending' ? 'Chờ xử lý' : 
+                  order.status === 'preparing' ? 'Đang nấu' : 'Hoàn tất'}
+              </span>
+              <div class="order-timer">${order.time}</div>
+            </div>
+          </div>
+          <div class="order-items">
+            <div class="section-title">
+              <i class="fa-solid fa-utensils"></i>
+              Món ăn (${order.items.length})
+            </div>
+            <ul class="item-list">
+              ${order.items.map(item => `
+                <li class="order-item">
+                  <div class="item-details">
+                    <div class="item-name">${item.name}</div>
+                    ${item.notes ? `<div class="item-notes">${item.notes}</div>` : ''}
+                  </div>
+                  <span class="item-quantity">${item.quantity}</span>
+                </li>
+              `).join('')}
+            </ul>
+          </div>
+          <div class="order-actions">
+            ${order.status === 'pending' ? `
+              <button class="action-btn start" onclick="updateOrderStatus('${order.id}', 'preparing')">
+                <i class="fa-solid fa-play"></i> Bắt đầu nấu
+              </button>
+            ` : ''}
+            ${order.status === 'preparing' ? `
+              <button class="action-btn complete" onclick="updateOrderStatus('${order.id}', 'completed')">
+                <i class="fa-solid fa-check"></i> Hoàn thành
+              </button>
+            ` : ''}
+            ${order.status === 'completed' ? `
+              <button class="action-btn undo" onclick="updateOrderStatus('${order.id}', 'preparing')">
+                <i class="fa-solid fa-undo"></i> Quay lại nấu
+              </button>
+            ` : ''}
+            <button class="action-btn view" onclick="viewOrderDetails('${order.id}')">
+              <i class="fa-solid fa-eye"></i> Xem chi tiết
+            </button>
+          </div>
+        `;
+        return card;
+      }
+      
+      // Kitchen functions
+      window.updateOrderStatus = (orderId, newStatus) => {
+        alert(`Cập nhật đơn hàng ${orderId} thành trạng thái: ${newStatus}`);
+        // Reload orders to show changes
+        setTimeout(loadKitchenOrders, 500);
+      };
+      
+      window.viewOrderDetails = (orderId) => {
+        alert(`Xem chi tiết đơn hàng: ${orderId}`);
+      };
+      
+      // Load kitchen orders when kitchen page is shown
+      const originalShowPage = window.showPage;
+      window.showPage = (pageId) => {
+        originalShowPage(pageId);
+        if (pageId === 'kitchen') {
+          setTimeout(loadKitchenOrders, 100);
+        }
+      };
     });
   </script>
 </body>

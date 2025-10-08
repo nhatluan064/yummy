@@ -45,82 +45,9 @@
   </div>
 
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
-    import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
-    import { getAnalytics, isSupported as analyticsIsSupported } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-analytics.js";
-    
-    const firebaseConfig = {
-      apiKey: "AIzaSyCbUNjBPEaZOtI_cNCcCJ1DBXUUdrP_6oE",
-      authDomain: "order-yummy.firebaseapp.com",
-      projectId: "order-yummy",
-      storageBucket: "order-yummy.firebasestorage.app",
-      messagingSenderId: "142798840175",
-      appId: "1:142798840175:web:1091d97784312c1fe4089a",
-      measurementId: "G-GQ7MEPZSSJ"
-    };
-    
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    
-    // Initialize analytics if supported
-    analyticsIsSupported().then(supported => {
-      if (supported) {
-        getAnalytics(app);
-      }
-    }).catch(e => console.warn("Analytics unavailable", e));
-    
-    // Check kitchen staff authentication
-    function checkKitchenAuth() {
-      const kitchenStaff = localStorage.getItem('kitchenStaff');
-      if (!kitchenStaff) {
-        // Redirect to kitchen login if not authenticated
-        window.location.href = 'kitchen-login.html';
-        return false;
-      }
-      
-      try {
-        const staffData = JSON.parse(kitchenStaff);
-        // Check if login is still valid (24 hours)
-        const loginTime = staffData.loginTime;
-        const currentTime = Date.now();
-        const twentyFourHours = 24 * 60 * 60 * 1000;
-        
-        if (currentTime - loginTime > twentyFourHours) {
-          localStorage.removeItem('kitchenStaff');
-          window.location.href = 'kitchen-login.html';
-          return false;
-        }
-        
-        return true;
-      } catch (e) {
-        localStorage.removeItem('kitchenStaff');
-        window.location.href = 'kitchen-login.html';
-        return false;
-      }
-    }
-    
-    // Check authentication on page load
-    if (!checkKitchenAuth()) {
-      // Don't continue if not authenticated
-    } else {
-      // Kitchen logout functionality
-      const btn = document.getElementById('kitchenLogoutBtn');
-      if (btn) {
-        btn.addEventListener('click', async (e) => {
-          e.preventDefault();
-          try {
-            await signOut(auth);
-            localStorage.removeItem('kitchenStaff');
-            alert('Đã đăng xuất khỏi hệ thống bếp');
-            window.location.href = 'kitchen-login.html';
-          } catch (error) {
-            console.warn('Logout failed', error);
-            localStorage.removeItem('kitchenStaff');
-            window.location.href = 'kitchen-login.html';
-          }
-        });
-      }
-    }
+    // Redirect to admin panel - Kitchen is now integrated into admin
+    alert('Trang bếp đã được tích hợp vào Admin Panel. Đang chuyển hướng...');
+    window.location.href = '../admin/admin-panel.html';
   </script>
 </body>
 </html>
