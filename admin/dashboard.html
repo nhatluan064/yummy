@@ -14,24 +14,94 @@
   <link rel="stylesheet" href="../css/admin.css" />
 </head>
 <body>
-  <nav class="navbar">
-    <div class="navbar-logo">
-      <a href="../index.html"><i class="fa-solid fa-utensils"></i>YUMMY Admin</a>
+  <!-- Admin Authentication Page -->
+  <div class="page active" id="auth-page">
+    <div class="auth-container">
+      <div class="auth-card">
+        <div class="auth-header">
+          <h2><i class="fa-solid fa-utensils"></i> Admin Login</h2>
+          <p>Đăng nhập để truy cập quản lý</p>
+        </div>
+        
+        <form id="auth-form">
+          <div class="form-group">
+            <label for="auth-email">Email</label>
+            <input type="email" id="auth-email" name="email" required placeholder="admin@yummy.com" />
+          </div>
+          
+          <div class="form-group">
+            <label for="auth-password">Mật khẩu</label>
+            <input type="password" id="auth-password" name="password" required placeholder="••••••••" />
+          </div>
+          
+          <button type="submit" class="btn btn-primary auth-btn">
+            <i class="fa-solid fa-sign-in-alt"></i> Đăng nhập
+          </button>
+        </form>
+        
+        <div class="auth-footer">
+          <p>Demo: admin@yummy.vn / password</p>
+        </div>
+      </div>
     </div>
-    <ul class="navbar-links">
+  </div>
+
+  <!-- Admin Dashboard -->
+  <div class="page" id="dashboard-page">
+    <nav class="navbar">
+      <div class="navbar-logo">
+        <i class="fa-solid fa-utensils"></i>YUMMY Admin
+      </div>
+      <ul class="navbar-links">
+        <li><a data-page="dashboard" class="nav-link active"><i class="fa-solid fa-chart-line"></i>Dashboard</a></li>
+        <li><a data-page="menu" class="nav-link"><i class="fa-solid fa-utensils"></i>Menu</a></li>
+        <li><a data-page="tables" class="nav-link"><i class="fa-solid fa-chair"></i>Bàn</a></li>
+        <li><a data-page="orders" class="nav-link"><i class="fa-solid fa-receipt"></i>Đơn hàng</a></li>
+        <li><a href="#" id="logout-btn" class="nav-link"><i class="fa-solid fa-sign-out-alt"></i>Đăng xuất</a></li>
+      </ul>
+    </nav>
       <li><a href="../index.html"><i class="fa-solid fa-house"></i>Trang chủ</a></li>
       <li><a href="../customer/index.html"><i class="fa-solid fa-utensils"></i>Order</a></li>
       <li><a href="../menu/index.html"><i class="fa-solid fa-list"></i>Menu</a></li>
       <li><a href="../kitchen/index.html"><i class="fa-solid fa-fire"></i>Bếp</a></li>
       <li><a data-page="dashboard" class="nav-link active"><i class="fa-solid fa-chart-line"></i>Dashboard</a></li>
+      <li><a data-page="menu-management" class="nav-link"><i class="fa-solid fa-utensils"></i>Quản lý Menu</a></li>
       <li><a data-page="orders" class="nav-link"><i class="fa-solid fa-receipt"></i>Đơn hàng</a></li>
       <li><a data-page="tables" class="nav-link"><i class="fa-solid fa-table"></i>Quản lý bàn</a></li>
-      <li><a data-page="expenses" class="nav-link"><i class="fa-solid fa-money-bill-wave"></i>Chi tiêu</a></li>
+      <li><a data-page="auth" class="nav-link"><i class="fa-solid fa-user-shield"></i>Đăng nhập</a></li>
     </ul>
   </nav>
 
+  <!-- ========= AUTHENTICATION PAGE ========= -->
+  <div id="page-auth" class="page">
+    <div class="auth-container">
+      <div class="auth-card">
+        <div class="auth-header">
+          <h2><i class="fa-solid fa-shield-halved"></i> Admin Login</h2>
+          <p>Đăng nhập để truy cập quản lý</p>
+        </div>
+        <form id="admin-login-form">
+          <div class="form-group">
+            <label for="admin-email">Email</label>
+            <input type="email" id="admin-email" required placeholder="admin@yummy.vn">
+          </div>
+          <div class="form-group">
+            <label for="admin-password">Mật khẩu</label>
+            <input type="password" id="admin-password" required placeholder="••••••••">
+          </div>
+          <button type="submit" class="btn btn-primary auth-btn">
+            <i class="fa-solid fa-sign-in-alt"></i> Đăng nhập
+          </button>
+        </form>
+        <div class="auth-footer">
+          <p>Demo: admin@yummy.vn / password</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- ========= DASHBOARD OVERVIEW ========= -->
-  <div id="page-dashboard" class="page active">
+  <div id="page-dashboard" class="page">
     <div class="admin-container">
       <header class="main-header">
         <h1>Dashboard Quản lý</h1>
@@ -49,295 +119,314 @@
         </div>
         <div class="stat-card">
           <div class="stat-info">
-            <div class="number" id="bookings-today">0</div>
-            <div class="label">Đặt bàn hôm nay</div>
-          </div>
-          <div class="icon"><i class="fa-solid fa-calendar-check"></i></div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-info">
             <div class="number" id="revenue-today">0đ</div>
             <div class="label">Doanh thu hôm nay</div>
           </div>
-          <div class="icon"><i class="fa-solid fa-dollar-sign"></i></div>
+          <div class="icon"><i class="fa-solid fa-money-bill-wave"></i></div>
         </div>
         <div class="stat-card">
           <div class="stat-info">
-            <div class="number" id="total-customers">0</div>
-            <div class="label">Tổng khách hàng</div>
+            <div class="number" id="tables-occupied">0</div>
+            <div class="label">Bàn đang sử dụng</div>
           </div>
-          <div class="icon"><i class="fa-solid fa-users"></i></div>
+          <div class="icon"><i class="fa-solid fa-table"></i></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-info">
+            <div class="number" id="menu-items-active">0</div>
+            <div class="label">Món ăn đang bán</div>
+          </div>
+          <div class="icon"><i class="fa-solid fa-utensils"></i></div>
         </div>
       </div>
 
       <!-- Quick Actions -->
-      <div class="dashboard-section">
-        <div class="section-header">
-          <h2 class="section-title">Hành động nhanh</h2>
+      <div class="quick-actions-grid">
+        <button class="action-card" onclick="switchToPage('menu-management')">
+          <i class="fa-solid fa-utensils"></i>
+          <h3>Quản lý Menu</h3>
+          <p>Thêm, sửa, xóa món ăn</p>
+        </button>
+        <button class="action-card" onclick="switchToPage('tables')">
+          <i class="fa-solid fa-table"></i>
+          <h3>Quản lý Bàn</h3>
+          <p>Mở bàn, đóng bàn, xem trạng thái</p>
+        </button>
+        <button class="action-card" onclick="switchToPage('orders')">
+          <i class="fa-solid fa-receipt"></i>
+          <h3>Đơn Hàng</h3>
+          <p>Theo dõi và xử lý đơn hàng</p>
+        </button>
+        <button class="action-card" onclick="initializeSampleData()">
+          <i class="fa-solid fa-database"></i>
+          <h3>Khởi tạo Dữ liệu</h3>
+          <p>Tạo dữ liệu mẫu (Dev only)</p>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========= MENU MANAGEMENT PAGE ========= -->
+  <div id="page-menu-management" class="page">
+    <div class="admin-container">
+      <header class="main-header">
+        <h1>Quản lý Menu</h1>
+        <p>Tạo, chỉnh sửa và quản lý thực đơn nhà hàng</p>
+        <div class="header-actions">
+          <button id="add-menu-item-btn" class="btn btn-primary">
+            <i class="fa-solid fa-plus"></i> Thêm món mới
+          </button>
+          <button id="sync-menu-btn" class="btn btn-secondary">
+            <i class="fa-solid fa-sync"></i> Đồng bộ
+          </button>
         </div>
-        <div class="quick-actions" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
-          <button class="btn btn-primary" onclick="adminManager.showExpenseForm()">
-            <i class="fa-solid fa-plus"></i> Thêm chi tiêu
-          </button>
-          <button class="btn btn-success" onclick="Navigation.showPage('orders')">
-            <i class="fa-solid fa-eye"></i> Xem đơn hàng
-          </button>
-          <button class="btn btn-warning" onclick="Navigation.showPage('tables')">
-            <i class="fa-solid fa-table"></i> Quản lý bàn
-          </button>
-          <button class="btn btn-primary" onclick="exportReport()">
-            <i class="fa-solid fa-download"></i> Xuất báo cáo
-          </button>
+      </header>
+
+      <!-- Menu Categories Filter -->
+      <div class="filters-section">
+        <div class="filter-group">
+          <label for="menu-category-filter">Danh mục:</label>
+          <select id="menu-category-filter" title="Chọn danh mục">
+            <option value="">Tất cả danh mục</option>
+            <option value="Món chính">Món chính</option>
+            <option value="Món khai vị">Món khai vị</option>
+            <option value="Món tráng miệng">Món tráng miệng</option>
+            <option value="Đồ uống">Đồ uống</option>
+            <option value="Món nhẹ">Món nhẹ</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="menu-status-filter">Trạng thái:</label>
+          <select id="menu-status-filter" title="Chọn trạng thái">
+            <option value="">Tất cả</option>
+            <option value="active">Đang bán</option>
+            <option value="inactive">Ngừng bán</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="menu-search">Tìm kiếm:</label>
+          <input type="text" id="menu-search" placeholder="Tìm tên món ăn..." title="Tìm kiếm món ăn">
         </div>
       </div>
 
-      <!-- Recent Orders -->
-      <div class="dashboard-section" id="recent-orders-container">
-        <!-- Will be populated by JavaScript -->
+      <!-- Menu Items Grid -->
+      <div class="menu-items-grid" id="menu-items-grid">
+        <div class="loading-spinner">
+          <i class="fa-solid fa-spinner fa-spin"></i>
+          <p>Đang tải menu...</p>
+        </div>
       </div>
 
-      <!-- Revenue Chart -->
-      <div class="dashboard-section">
-        <div class="section-header">
-          <h2 class="section-title">Biểu đồ doanh thu</h2>
-        </div>
-        <div class="chart-container">
-          <div class="chart-placeholder">
-            <i class="fa-solid fa-chart-line" style="font-size: 3rem; margin-bottom: 1rem;"></i>
-            <p>Biểu đồ doanh thu 7 ngày gần đây</p>
-            <small>Tích hợp với thư viện biểu đồ sẽ được thêm vào sau</small>
+      <!-- Menu Statistics -->
+      <div class="menu-stats">
+        <div class="stats-row">
+          <div class="stat-box">
+            <div class="stat-number" id="total-menu-items">0</div>
+            <div class="stat-label">Tổng món ăn</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-number" id="active-menu-items">0</div>
+            <div class="stat-label">Đang bán</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-number" id="inactive-menu-items">0</div>
+            <div class="stat-label">Ngừng bán</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-number" id="avg-menu-price">0đ</div>
+            <div class="stat-label">Giá trung bình</div>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ========= ORDERS MANAGEMENT ========= -->
+  <!-- ========= ORDERS PAGE ========= -->
   <div id="page-orders" class="page">
     <div class="admin-container">
       <header class="main-header">
-        <h1>Quản lý đơn hàng</h1>
-        <p>Theo dõi và xử lý tất cả đơn hàng</p>
+        <h1>Quản lý Đơn hàng</h1>
+        <p>Theo dõi và xử lý đơn hàng</p>
       </header>
 
-      <div class="dashboard-section">
-        <div class="section-header">
-          <h2 class="section-title">Danh sách đơn hàng</h2>
-          <div class="filters">
-            <div class="filter-group">
-              <label>Ngày:</label>
-              <input type="date" id="orders-date-filter">
-            </div>
-            <div class="filter-group">
-              <label>Trạng thái:</label>
-              <select id="orders-status-filter">
-                <option value="">Tất cả</option>
-                <option value="pending">Chờ xác nhận</option>
-                <option value="preparing">Đang chuẩn bị</option>
-                <option value="ready">Sẵn sàng</option>
-                <option value="completed">Hoàn thành</option>
-                <option value="cancelled">Đã hủy</option>
-              </select>
-            </div>
-            <div class="filter-group">
-              <label>Loại:</label>
-              <select id="orders-type-filter">
-                <option value="">Tất cả</option>
-                <option value="dine-in">Tại chỗ</option>
-                <option value="delivery">Giao hàng</option>
-                <option value="reservation">Đặt bàn</option>
-              </select>
-            </div>
+      <div class="orders-filters">
+        <div class="filters-row">
+          <div class="filter-group">
+            <label for="orders-date-filter">Ngày:</label>
+            <input type="date" id="orders-date-filter" title="Chọn ngày">
+          </div>
+          <div class="filter-group">
+            <label for="orders-status-filter">Trạng thái:</label>
+            <select id="orders-status-filter" title="Chọn trạng thái">
+              <option value="">Tất cả</option>
+              <option value="pending">Chờ xử lý</option>
+              <option value="confirmed">Đã xác nhận</option>
+              <option value="preparing">Đang chuẩn bị</option>
+              <option value="ready">Sẵn sàng</option>
+              <option value="served">Đã phục vụ</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label for="orders-type-filter">Loại đơn:</label>
+            <select id="orders-type-filter" title="Chọn loại đơn">
+              <option value="">Tất cả</option>
+              <option value="dine-in">Tại bàn</option>
+              <option value="takeaway">Mang về</option>
+              <option value="delivery">Giao hàng</option>
+            </select>
           </div>
         </div>
-        <div class="orders-list" id="all-orders-container">
-          <!-- Will be populated by JavaScript -->
+      </div>
+
+      <div class="orders-list" id="orders-list">
+        <div class="loading-spinner">
+          <i class="fa-solid fa-spinner fa-spin"></i>
+          <p>Đang tải đơn hàng...</p>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ========= TABLES MANAGEMENT ========= -->
+  <!-- ========= TABLES PAGE ========= -->
   <div id="page-tables" class="page">
     <div class="admin-container">
       <header class="main-header">
-        <h1>Quản lý bàn</h1>
-        <p>Theo dõi trạng thái và quản lý tất cả bàn trong nhà hàng</p>
+        <h1>Quản lý Bàn</h1>
+        <p>Theo dõi và quản lý bàn ăn</p>
+        <button id="add-table-btn" class="btn btn-primary">
+          <i class="fa-solid fa-plus"></i> Thêm bàn mới
+        </button>
       </header>
 
-      <div class="dashboard-section" id="table-management-container">
-        <!-- Will be populated by JavaScript -->
-      </div>
-
-      <!-- Table Statistics -->
-      <div class="dashboard-section">
-        <div class="section-header">
-          <h2 class="section-title">Thống kê bàn</h2>
-        </div>
-        <div class="stats-grid">
-          <div class="stat-card">
-            <div class="stat-info">
-              <div class="number" id="tables-available">0</div>
-              <div class="label">Bàn trống</div>
-            </div>
-            <div class="icon" style="color: var(--success-color);"><i class="fa-solid fa-check-circle"></i></div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-info">
-              <div class="number" id="tables-occupied">0</div>
-              <div class="label">Bàn có khách</div>
-            </div>
-            <div class="icon" style="color: var(--danger-color);"><i class="fa-solid fa-users"></i></div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-info">
-              <div class="number" id="tables-reserved">0</div>
-              <div class="label">Bàn đã đặt</div>
-            </div>
-            <div class="icon" style="color: var(--warning-color);"><i class="fa-solid fa-calendar"></i></div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-info">
-              <div class="number" id="table-turnover">0</div>
-              <div class="label">Lượt khách hôm nay</div>
-            </div>
-            <div class="icon"><i class="fa-solid fa-refresh"></i></div>
-          </div>
+      <div class="tables-grid" id="tables-grid">
+        <div class="loading-spinner">
+          <i class="fa-solid fa-spinner fa-spin"></i>
+          <p>Đang tải danh sách bàn...</p>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ========= EXPENSES MANAGEMENT ========= -->
-  <div id="page-expenses" class="page">
-    <div class="admin-container">
-      <header class="main-header">
-        <h1>Quản lý chi tiêu</h1>
-        <p>Theo dõi nguồn chi và lợi nhuận nhà hàng</p>
-      </header>
-
-      <div id="expense-tracking-container">
-        <!-- Will be populated by JavaScript -->
+  <!-- ========= ADD/EDIT MENU ITEM MODAL ========= -->
+  <div id="menu-item-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modal-title">Thêm món mới</h3>
+        <button class="close-modal" onclick="closeMenuItemModal()" title="Đóng">
+          <i class="fa-solid fa-times"></i>
+        </button>
       </div>
+      <div class="modal-body">
+        <form id="menu-item-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="item-name">Tên món ăn *</label>
+              <input type="text" id="item-name" required placeholder="Nhập tên món ăn">
+            </div>
+            <div class="form-group">
+              <label for="item-category">Danh mục *</label>
+              <select id="item-category" required>
+                <option value="">Chọn danh mục</option>
+                <option value="Món chính">Món chính</option>
+                <option value="Món khai vị">Món khai vị</option>
+                <option value="Món tráng miệng">Món tráng miệng</option>
+                <option value="Đồ uống">Đồ uống</option>
+                <option value="Món nhẹ">Món nhẹ</option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="item-price">Giá (VNĐ) *</label>
+              <input type="number" id="item-price" required min="0" step="1000" placeholder="50000">
+            </div>
+            <div class="form-group">
+              <label for="item-status">Trạng thái</label>
+              <select id="item-status">
+                <option value="true">Đang bán</option>
+                <option value="false">Ngừng bán</option>
+              </select>
+            </div>
+          </div>
 
-      <!-- Monthly Report -->
-      <div class="dashboard-section">
-        <div class="section-header">
-          <h2 class="section-title">Báo cáo tháng này</h2>
-          <button class="btn btn-primary" onclick="generateMonthlyReport()">
-            <i class="fa-solid fa-file-pdf"></i> Xuất báo cáo PDF
-          </button>
-        </div>
-        <div class="expense-summary">
-          <div class="expense-card">
-            <div class="expense-amount" id="monthly-revenue">0đ</div>
-            <div class="expense-label">Tổng doanh thu</div>
+          <div class="form-group">
+            <label for="item-description">Mô tả</label>
+            <textarea id="item-description" rows="3" placeholder="Mô tả món ăn..."></textarea>
           </div>
-          <div class="expense-card">
-            <div class="expense-amount" id="monthly-expenses">0đ</div>
-            <div class="expense-label">Tổng chi tiêu</div>
+
+          <div class="form-group">
+            <label for="item-image">URL hình ảnh</label>
+            <input type="url" id="item-image" placeholder="https://example.com/image.jpg">
+            <small>Hoặc sử dụng placeholder tự động</small>
           </div>
-          <div class="expense-card">
-            <div class="expense-amount" id="monthly-profit">0đ</div>
-            <div class="expense-label">Lợi nhuận ròng</div>
+
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" onclick="closeMenuItemModal()">Hủy</button>
+            <button type="submit" class="btn btn-primary">
+              <i class="fa-solid fa-save"></i> Lưu món ăn
+            </button>
           </div>
-          <div class="expense-card">
-            <div class="expense-amount" id="profit-margin">0%</div>
-            <div class="expense-label">Tỷ suất lợi nhuận</div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========= ADD TABLE MODAL ========= -->
+  <div id="table-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Thêm bàn mới</h3>
+        <button class="close-modal" onclick="closeTableModal()" title="Đóng">
+          <i class="fa-solid fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="table-form">
+          <div class="form-group">
+            <label for="table-number">Số bàn *</label>
+            <input type="number" id="table-number" required min="1" placeholder="Nhập số bàn">
           </div>
-        </div>
+          <div class="form-group">
+            <label for="table-capacity">Số ghế</label>
+            <input type="number" id="table-capacity" min="1" max="20" value="4" placeholder="Số ghế">
+          </div>
+          <div class="form-group">
+            <label for="table-location">Vị trí</label>
+            <input type="text" id="table-location" placeholder="Ví dụ: Tầng 1, gần cửa sổ">
+          </div>
+          <div class="form-group">
+            <label for="table-notes">Ghi chú</label>
+            <textarea id="table-notes" rows="2" placeholder="Ghi chú thêm về bàn..."></textarea>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" onclick="closeTableModal()">Hủy</button>
+            <button type="submit" class="btn btn-primary">
+              <i class="fa-solid fa-save"></i> Tạo bàn
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
 
   <!-- Scripts -->
-  <script src="../js/app.js"></script>
-  <script src="../js/shared-menu.js"></script>
-  <script src="../js/admin.js"></script>
-
-  <script>
-    // Additional admin functions
-    function exportReport() {
-      const today = new Date().toLocaleDateString('vi-VN');
-      const orders = Utils.loadFromStorage('orders', []);
-      const expenses = Utils.loadFromStorage('expenses', []);
+  <script type="module">
+    // Import Firebase Service và khởi tạo Admin
+    import { YummyFirebaseService } from '../js/firebase-service.js';
+    import('../js/admin-setup.js');
+    
+    // Khởi tạo admin sau khi DOM loaded
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Import admin class
+      const { YummyAdmin } = await import('../js/admin.js');
       
-      let reportContent = `BÁO CÁO NHẬT HÀN - ${today}\n\n`;
-      reportContent += `Số đơn hàng: ${orders.length}\n`;
-      reportContent += `Tổng doanh thu: ${Utils.formatCurrency(adminManager.calculateTodayRevenue())}\n`;
-      reportContent += `Tổng chi tiêu: ${Utils.formatCurrency(expenses.reduce((sum, exp) => sum + exp.amount, 0))}\n`;
+      // Khởi tạo admin
+      window.admin = new YummyAdmin();
       
-      // Create downloadable file
-      const blob = new Blob([reportContent], { type: 'text/plain' });
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `bao-cao-${today}.txt`;
-      a.click();
-      window.URL.revokeObjectURL(url);
-      
-      Utils.showNotification('Đã xuất báo cáo thành công!', 'success');
-    }
-
-    function generateMonthlyReport() {
-      const currentMonth = new Date().toISOString().substring(0, 7);
-      const orders = Utils.loadFromStorage('orders', []);
-      const expenses = Utils.loadFromStorage('expenses', []);
-      
-      const monthlyOrders = orders.filter(order => 
-        (order.timestamp || order.createdAt)?.startsWith(currentMonth)
-      );
-      const monthlyExpenses = expenses.filter(expense => 
-        expense.date?.startsWith(currentMonth)
-      );
-      
-      const revenue = monthlyOrders
-        .filter(order => order.status === 'completed')
-        .reduce((sum, order) => sum + (order.total || 0), 0);
-      
-      const totalExpenses = monthlyExpenses.reduce((sum, exp) => sum + exp.amount, 0);
-      const profit = revenue - totalExpenses;
-      const profitMargin = revenue > 0 ? ((profit / revenue) * 100).toFixed(1) : 0;
-      
-      // Update monthly report display
-      document.getElementById('monthly-revenue').textContent = Utils.formatCurrency(revenue);
-      document.getElementById('monthly-expenses').textContent = Utils.formatCurrency(totalExpenses);
-      document.getElementById('monthly-profit').textContent = Utils.formatCurrency(profit);
-      document.getElementById('profit-margin').textContent = profitMargin + '%';
-      
-      Utils.showNotification('Đã cập nhật báo cáo tháng!', 'success');
-    }
-
-    // Initialize monthly report on page load
-    document.addEventListener('DOMContentLoaded', () => {
-      setTimeout(generateMonthlyReport, 1000);
-      
-      // Update table statistics
-      setTimeout(() => {
-        const tables = Array.from({length: 20}, (_, i) => i + 1);
-        const available = tables.filter(t => adminManager.getTableStatus(t) === 'available').length;
-        const occupied = tables.filter(t => adminManager.getTableStatus(t) === 'occupied').length;
-        const reserved = tables.filter(t => adminManager.getTableStatus(t) === 'reserved').length;
-        
-        document.getElementById('tables-available').textContent = available;
-        document.getElementById('tables-occupied').textContent = occupied;
-        document.getElementById('tables-reserved').textContent = reserved;
-        
-        // Calculate table turnover (simplified)
-        const todayOrders = Utils.loadFromStorage('orders', [])
-          .filter(order => order.timestamp?.startsWith(new Date().toISOString().split('T')[0]));
-        document.getElementById('table-turnover').textContent = todayOrders.length;
-      }, 1500);
+      // Make admin setup available globally
+      window.firebaseService = new YummyFirebaseService();
     });
-
-    // Auto-refresh data every 30 seconds
-    setInterval(() => {
-      if (document.getElementById('page-dashboard').classList.contains('active')) {
-        adminManager.loadData();
-        adminManager.updateStats();
-        generateMonthlyReport();
-      }
-    }, 30000);
   </script>
 
   <!-- Firebase SDK -->
@@ -352,17 +441,15 @@
       storageBucket: "order-yummy.firebasestorage.app",
       messagingSenderId: "142798840175",
       appId: "1:142798840175:web:1091d97784312c1fe4089a",
-      measurementId: "G-GQ7MEPZSSJ",
+      measurementId: "G-GQ7MEPZSSJ"
     };
 
     const app = initializeApp(firebaseConfig);
-    analyticsIsSupported()
-      .then((supported) => {
-        if (supported) {
-          getAnalytics(app);
-        }
-      })
-      .catch((err) => console.warn("Firebase Analytics not available:", err));
+    analyticsIsSupported().then((supported) => {
+      if (supported) {
+        getAnalytics(app);
+      }
+    }).catch((err) => console.warn("Firebase Analytics not available:", err));
   </script>
 </body>
 </html>

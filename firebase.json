@@ -3,12 +3,40 @@
     "public": ".",
     "ignore": [
       "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
+      "**/.*", 
+      "**/node_modules/**",
+      "firestore.rules",
+      "js/admin-setup.js"
     ],
     "cleanUrls": true,
     "rewrites": [
-      { "source": "**", "destination": "/index.html" }
+      {
+        "source": "/admin",
+        "destination": "/admin/admin-panel.html"
+      },
+      {
+        "source": "/admin/**", 
+        "destination": "/admin/admin-panel.html"
+      },
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ],
+    "headers": [
+      {
+        "source": "**/*.@(js|css|png|jpg|jpeg|gif|svg)",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "max-age=86400"
+          }
+        ]
+      }
     ]
+  },
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
   }
 }
