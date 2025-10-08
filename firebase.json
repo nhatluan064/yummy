@@ -13,9 +13,9 @@
       { "source": "/", "destination": "/index.html" },
       { "source": "/admin", "destination": "/admin/admin-panel.html" },
       { "source": "/admin/**", "destination": "/admin/admin-panel.html" },
-      { "source": "/customer", "destination": "/customer/index.html" },
-      { "source": "/menu", "destination": "/menu/index.html" },
-      { "source": "/kitchen", "destination": "/kitchen/index.html" }
+  { "source": "/customer", "destination": "/customer/order-booking.html" },
+  { "source": "/menu", "destination": "/menu/public-menu.html" },
+  { "source": "/kitchen", "destination": "/kitchen/kitchen-display.html" }
     ],
     "headers": [
       {

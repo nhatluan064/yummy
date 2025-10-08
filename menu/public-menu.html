@@ -1,0 +1,46 @@
+<!-- Renamed from menu/index.html -->
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>YUMMY - Public Menu</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/styles.css" />
+  <link rel="stylesheet" href="../css/menu.css" />
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-logo"><a href="../landing-home.html"><i class="fa-solid fa-utensils"></i>YUMMY</a></div>
+    <ul class="navbar-links">
+      <li><a href="../landing-home.html"><i class="fa-solid fa-house"></i>Trang chủ</a></li>
+      <li><a href="../customer/order-booking.html"><i class="fa-solid fa-bag-shopping"></i>Order</a></li>
+      <li><a class="active"><i class="fa-solid fa-list"></i>Menu Hôm Nay</a></li>
+      <li><a href="../customer/order-booking.html" data-page="booking"><i class="fa-solid fa-calendar-days"></i>Đặt bàn</a></li>
+      <li><a href="../kitchen/kitchen-display.html"><i class="fa-solid fa-fire"></i>Bếp</a></li>
+      <li><a href="../admin/admin-panel.html"><i class="fa-solid fa-user-shield"></i>Admin</a></li>
+    </ul>
+  </nav>
+
+  <div class="container">
+    <header class="main-header"><h1>Menu hôm nay</h1><p>Khám phá thực đơn phong phú của chúng tôi</p></header>
+    <section class="menu-section">
+      <div class="menu-category">
+        <h2><i class="fa-solid fa-star"></i> Món phổ biến</h2>
+        <div class="menu-grid" id="public-menu-grid"><!-- dynamic --></div>
+      </div>
+    </section>
+  </div>
+
+  <script src="../js/shared-menu.js"></script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+    import { getAnalytics, isSupported as analyticsIsSupported } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-analytics.js";
+    const firebaseConfig={apiKey:"AIzaSyCbUNjBPEaZOtI_cNCcCJ1DBXUUdrP_6oE",authDomain:"order-yummy.firebaseapp.com",projectId:"order-yummy",storageBucket:"order-yummy.firebasestorage.app",messagingSenderId:"142798840175",appId:"1:142798840175:web:1091d97784312c1fe4089a",measurementId:"G-GQ7MEPZSSJ"};
+    const app=initializeApp(firebaseConfig);analyticsIsSupported().then(s=>{if(s){getAnalytics(app);}}).catch(e=>console.warn("Analytics unavailable",e));
+  </script>
+</body>
+</html>

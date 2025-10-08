@@ -6,18 +6,8 @@ Hệ thống quản lý nhà hàng hiện đại với chức năng order tại 
 ## 🚀 Tính năng chính
 
 ### Cho khách hàng:
-- **Order tại bàn**: Chọn bàn và order trực tiếp
-- **Order giao hàng**: Đặt món và giao hàng tận nơi
-- **Đặt bàn trước**: Đặt chỗ ngồi theo thời gian
-- **Giỏ hàng thông minh**: Quản lý món ăn và tính toán tự động
-- **Tính phí ship**: Tự động tính phí giao hàng theo khu vực
 
 ### Cho admin:
-- **Dashboard tổng quan**: Thống kê doanh thu, đơn hàng, khách hàng
-- **Quản lý đơn hàng**: Theo dõi và cập nhật trạng thái đơn hàng
-- **Quản lý bàn**: Theo dõi trạng thái tất cả bàn trong nhà hàng
-- **Quản lý chi tiêu**: Ghi nhận chi phí và tính toán lợi nhuận
-- **Báo cáo**: Xuất báo cáo hàng ngày/tháng
 
 ## 📁 Cấu trúc thư mục
 
@@ -62,26 +52,12 @@ yummy/
 ## 💾 Lưu trữ dữ liệu
 
 Ứng dụng sử dụng `localStorage` để lưu trữ:
-- Giỏ hàng khách hàng
-- Đơn hàng và đặt bàn
-- Chi tiêu và doanh thu
-- Cài đặt người dùng
 
 ## 🛠️ Công nghệ sử dụng
 
-- **Frontend**: HTML5, CSS3, JavaScript (ES6+)
-- **Framework CSS**: Custom CSS với CSS Variables
-- **Icons**: Font Awesome 6.4.2
-- **Fonts**: Be Vietnam Pro
-- **Hosting**: Firebase Hosting
-- **Analytics**: Firebase Analytics
 
 ## 🎨 Thiết kế
 
-- **Responsive**: Tối ưu cho mobile, tablet và desktop
-- **Modern UI**: Giao diện hiện đại với màu sắc nhã nhặn
-- **UX tối ưu**: Phân chia rõ ràng cho từng loại người dùng
-- **Performance**: Load nhanh với CSS/JS được tối ưu
 
 ## 🚀 Triển khai
 
@@ -107,11 +83,6 @@ firebase deploy
 
 ## 📱 Tính năng Mobile
 
-- Touch-friendly interface
-- Swipe gestures
-- Responsive menu layout
-- Optimized for small screens
-- Fast loading on mobile networks
 
 ## 🔧 Tùy chỉnh
 
@@ -129,17 +100,9 @@ firebase deploy
 
 ## 📊 Analytics & Tracking
 
-- Firebase Analytics integration
-- Order tracking
-- Revenue monitoring
-- Customer behavior analysis
 
 ## 🔒 Bảo mật
 
-- Input validation
-- XSS protection
-- Safe data handling
-- Firebase security rules
 
 ## 🤝 Đóng góp
 
@@ -155,17 +118,114 @@ MIT License - xem file LICENSE để biết thêm chi tiết
 
 ## 📞 Liên hệ
 
-- Email: contact@yummy.vn
-- Phone: 0123 456 789
-- Website: https://order-yummy.web.app
 
----
 
 **YUMMY Restaurant Management System** - Được phát triển với ❤️ bởi nhóm phát triển YUMMY
 Mỳ cay Yummy - Oder Table, Shipping
-=======
-# Yummy Restaurant Website
+<!-- CLEAN MERGED README -->
+# YUMMY – Hệ thống Order & Quản lý Nhà hàng
 
+=======
+
+
+## 🚀 Tính năng
+### Khách hàng
+- Order tại bàn (chọn số bàn) hoặc giao hàng (form địa chỉ, phí ship động)
+- Đặt bàn trước theo ngày/giờ
+- Giỏ hàng + tính tổng / phí ship
+- Xem menu công khai (public)
+
+### Bếp / Kitchen
+- Màn hình hiển thị đơn theo trạng thái: pending / preparing / completed
+- Phục vụ việc cập nhật real-time (qua Firestore listeners – planned)
+
+### Admin
+- Đăng nhập / bootstrap tài khoản admin đầu tiên (rule đặc biệt)
+- Dashboard tổng quan (đơn hôm nay, doanh thu, bàn đang dùng, món active)
+- Quản lý menu (CRUD món, trạng thái bán)
+- Quản lý đơn hàng (lọc theo ngày / trạng thái / loại)
+- Quản lý bàn (thêm bàn, theo dõi trạng thái)
+- Khởi tạo dữ liệu mẫu (dev seed)
+
+## �️ Cấu trúc thư mục hiện tại
+```
+admin/
+   admin-panel.html        # (Đã gộp nội dung dashboard) – điểm vào /admin/**
+   admin-auth-debug.html   # Trang thử nghiệm đăng nhập / bootstrap admin
+   dashboard.html          # Bản cũ (có thể xóa sau khi xác nhận không còn dùng)
+customer/
+   order-booking.html      # Trang order (tại chỗ / giao hàng) + đặt bàn
+menu/
+   public-menu.html        # Menu công khai cho khách
+kitchen/
+   kitchen-display.html    # Màn hình bếp theo dõi đơn
+css/                      # styles.css, admin.css, customer.css, ...
+js/                       # firebase-service.js, admin.js, cart.js...
+index.html                # Router: lần đầu -> landing-home.html, tái truy cập -> order booking
+landing-home.html         # Landing marketing
+firebase.json             # Hosting rewrites (trỏ tới file đã rename)
+firestore.rules           # Quy tắc bảo mật (bootstrap admin)
+.firebaserc               # Firebase project mapping
+```
+
+## � Bản đồ đổi tên (Migration Map)
+| Cũ | Mới |
+|----|-----|
+| customer/index.html | customer/order-booking.html |
+| menu/index.html | menu/public-menu.html |
+| kitchen/index.html | kitchen/kitchen-display.html |
+| admin/simple.html | admin/admin-auth-debug.html |
+| (placeholder) admin-panel.html | (đã gộp dashboard) admin/admin-panel.html |
+
+Sau khi xác nhận: `dashboard.html` có thể xóa (hiện giữ lại để rollback nhanh).
+
+## � Firebase & Bảo mật
+- Auth: Email/Password, trang debug để tạo admin đầu tiên
+- Firestore: Rule cho phép tạo document user đầu tiên (bootstrap) với UID = doc id
+- Service layer: `js/firebase-service.js` bao đóng CRUD (menu, tables, orders)
+
+## 🧭 Điều hướng & Redirect
+- `index.html` chạy script: lần đầu → `landing-home.html`, tái truy cập → `customer/order-booking.html` (localStorage key `yummyVisitCount`)
+- Hosting rewrites: `/admin/**` → `admin/admin-panel.html`, `/customer` → order-booking, `/menu` → public-menu, `/kitchen` → kitchen-display
+
+## 🛠️ Dev nhanh
+```powershell
+# Chạy server tĩnh (PowerShell)
+python -m http.server 8000
+# hoặc
+npx serve .
+```
+
+## 🚀 Triển khai Firebase Hosting
+```powershell
+firebase login
+firebase use --add   # nếu cần chọn project
+firebase deploy --only hosting
+```
+
+## 🧪 Tạo dữ liệu mẫu
+- Trong Admin Panel: nút “Dữ liệu mẫu” (gọi `initializeSampleData()` trong service)
+
+## 📦 Các file quan trọng
+- `firebase.json` – rewrites + headers cache
+- `firestore.rules` – rule bootstrap admin
+- `js/firebase-service.js` – API lớp dịch vụ
+- `admin/admin-panel.html` – SPA admin sau khi gộp
+
+## 📄 Kế hoạch tiếp theo (Đề xuất)
+1. Xoá `admin/dashboard.html` sau khi verify mọi chức năng hoạt động trong `admin-panel.html`
+2. Loại bỏ inline styles (lint)
+3. Bổ sung listener Firestore real-time cho kitchen & orders
+4. Thêm test nhẹ (smoke) bằng Playwright/GHA (tùy chọn)
+
+## 🤝 Đóng góp
+Fork → Branch → Commit → PR.
+
+## License
+MIT
+
+---
+Made with ❤️ for YUMMY.
 A simple single-page restaurant site with booking and ordering UI, deployed to Firebase Hosting.
 
 - Live: https://order-yummy.web.app
