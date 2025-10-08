@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>YUMMY - Thực đơn hôm nay</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700&display=swap" rel="stylesheet" />
+  
+  <!-- Styles -->
+  <link rel="stylesheet" href="../css/styles.css" />
+  <link rel="stylesheet" href="../css/customer.css" />
+  <link rel="stylesheet" href="../css/menu.css" />
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-logo">
+      <a href="../index.html"><i class="fa-solid fa-utensils"></i>YUMMY</a>
+    </div>
+    <ul class="navbar-links">
+      <li><a href="../index.html"><i class="fa-solid fa-house"></i>Trang chủ</a></li>
+      <li><a href="../customer/index.html"><i class="fa-solid fa-utensils"></i>Order</a></li>
+      <li><a href="#" class="active"><i class="fa-solid fa-list"></i>Menu Hôm Nay</a></li>
+      <li><a href="../kitchen/index.html"><i class="fa-solid fa-fire"></i>Bếp</a></li>
+      <li><a href="../admin/dashboard.html"><i class="fa-solid fa-user-shield"></i>Admin</a></li>
+    </ul>
+  </nav>
+
+  <div class="container">
+    <!-- Header Section -->
+    <header class="menu-header">
+      <div class="header-content">
+        <h1><i class="fa-solid fa-calendar-day"></i> Thực đơn hôm nay</h1>
+        <p class="date-display">
+          <i class="fa-solid fa-clock"></i>
+          <span id="current-date"></span>
+        </p>
+        <div class="menu-stats">
+          <div class="stat-item">
+            <span class="stat-number" id="available-count">0</span>
+            <span class="stat-label">Món có sẵn</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number" id="soldout-count">0</span>
+            <span class="stat-label">Hết món</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number" id="total-count">0</span>
+            <span class="stat-label">Tổng món</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Filter and Search Section -->
+    <section class="menu-controls">
+      <div class="search-filters">
+        <div class="search-box">
+          <i class="fa-solid fa-search"></i>
+          <input type="text" id="search-input" placeholder="Tìm kiếm món ăn...">
+        </div>
+        <div class="filter-buttons">
+          <button class="filter-btn active" data-filter="all">
+            <i class="fa-solid fa-list"></i> Tất cả
+          </button>
+          <button class="filter-btn" data-filter="available">
+            <i class="fa-solid fa-check-circle"></i> Có sẵn
+          </button>
+          <button class="filter-btn" data-filter="soldout">
+            <i class="fa-solid fa-times-circle"></i> Hết món
+          </button>
+        </div>
+        <div class="category-filters">
+          <select id="category-filter">
+            <option value="all">Tất cả danh mục</option>
+            <option value="main">Món chính</option>
+            <option value="appetizer">Khai vị</option>
+            <option value="beverage">Đồ uống</option>
+            <option value="dessert">Tráng miệng</option>
+          </select>
+        </div>
+      </div>
+      
+      <!-- Admin Controls (Show only if admin) -->
+      <div class="admin-controls" id="admin-controls" style="display: none;">
+        <button class="btn btn-primary" id="add-item-btn">
+          <i class="fa-solid fa-plus"></i> Thêm món mới
+        </button>
+        <button class="btn btn-warning" id="bulk-update-btn">
+          <i class="fa-solid fa-edit"></i> Cập nhật hàng loạt
+        </button>
+      </div>
+      
+      <!-- Quick Navigation -->
+      <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-color);">
+        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+          <a href="../customer/index.html" class="btn btn-primary">
+            <i class="fas fa-utensils"></i> Đi Đến Trang Order
+          </a>
+          <button class="btn btn-success" onclick="menuManager.orderByCategory('Món Chính')">
+            <i class="fas fa-star"></i> Order Món Chính
+          </button>
+          <button class="btn btn-info" onclick="menuManager.orderByCategory('Đồ Uống')">
+            <i class="fas fa-coffee"></i> Order Đồ Uống
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Menu Items Grid -->
+    <main class="menu-main">
+      <div class="menu-categories" id="menu-categories">
+        <!-- Categories will be populated by JavaScript -->
+      </div>
+    </main>
+
+    <!-- Quick Order Summary (if items selected) -->
+    <aside class="quick-order" id="quick-order" style="display: none;">
+      <div class="quick-order-header">
+        <h3><i class="fa-solid fa-shopping-cart"></i> Order nhanh</h3>
+        <button class="close-quick-order" id="close-quick-order">×</button>
+      </div>
+      <div class="quick-order-items" id="quick-order-items"></div>
+      <div class="quick-order-footer">
+        <div class="quick-total">
+          <strong>Tổng: <span id="quick-total">0đ</span></strong>
+        </div>
+        <button class="btn btn-primary" id="proceed-order">
+          <i class="fa-solid fa-arrow-right"></i> Đặt hàng
+        </button>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Add/Edit Item Modal -->
+  <div class="modal" id="item-modal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modal-title">Thêm món mới</h3>
+        <button class="modal-close" id="modal-close">×</button>
+      </div>
+      <form id="item-form" class="modal-body">
+        <div class="form-group">
+          <label for="item-name">Tên món *</label>
+          <input type="text" id="item-name" required>
+        </div>
+        <div class="form-group">
+          <label for="item-description">Mô tả</label>
+          <textarea id="item-description" rows="3"></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="item-price">Giá (VND) *</label>
+            <input type="number" id="item-price" required min="0">
+          </div>
+          <div class="form-group">
+            <label for="item-category">Danh mục *</label>
+            <select id="item-category" required>
+              <option value="main">Món chính</option>
+              <option value="appetizer">Khai vị</option>
+              <option value="beverage">Đồ uống</option>
+              <option value="dessert">Tráng miệng</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="item-image">URL ảnh</label>
+            <input type="url" id="item-image">
+          </div>
+          <div class="form-group">
+            <label for="item-status">Trạng thái *</label>
+            <select id="item-status" required>
+              <option value="available">Có sẵn</option>
+              <option value="soldout">Hết món</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="item-inventory">Số lượng tồn kho</label>
+          <input type="number" id="item-inventory" min="0" value="0">
+        </div>
+      </form>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="modal-cancel">Hủy</button>
+        <button type="submit" form="item-form" class="btn btn-primary" id="modal-save">Lưu</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bulk Update Modal -->
+  <div class="modal" id="bulk-modal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Cập nhật hàng loạt</h3>
+        <button class="modal-close" id="bulk-modal-close">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="bulk-actions">
+          <button class="btn btn-success bulk-action-btn" data-action="mark-available">
+            <i class="fa-solid fa-check"></i> Đánh dấu có sẵn
+          </button>
+          <button class="btn btn-danger bulk-action-btn" data-action="mark-soldout">
+            <i class="fa-solid fa-times"></i> Đánh dấu hết món
+          </button>
+          <button class="btn btn-warning bulk-action-btn" data-action="update-prices">
+            <i class="fa-solid fa-dollar-sign"></i> Cập nhật giá
+          </button>
+        </div>
+        <p>Chọn các món ăn từ danh sách bên dưới và áp dụng hành động:</p>
+        <div class="bulk-items" id="bulk-items"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="bulk-cancel">Hủy</button>
+        <button type="button" class="btn btn-primary" id="bulk-apply">Áp dụng</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="../js/app.js"></script>
+  <script src="../js/shared-menu.js"></script>
+  <script src="../js/menu.js"></script>
+
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+    import { getAnalytics, isSupported as analyticsIsSupported } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-analytics.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCbUNjBPEaZOtI_cNCcCJ1DBXUUdrP_6oE",
+      authDomain: "order-yummy.firebaseapp.com",
+      projectId: "order-yummy",
+      storageBucket: "order-yummy.firebasestorage.app",
+      messagingSenderId: "142798840175",
+      appId: "1:142798840175:web:1091d97784312c1fe4089a",
+      measurementId: "G-GQ7MEPZSSJ",
+    };
+
+    const app = initializeApp(firebaseConfig);
+    analyticsIsSupported()
+      .then((supported) => {
+        if (supported) {
+          getAnalytics(app);
+        }
+      })
+      .catch((err) => console.warn("Firebase Analytics not available:", err));
+  </script>
+
+  <script>
+    // Set current date
+    document.addEventListener('DOMContentLoaded', function() {
+      const currentDate = new Date().toLocaleDateString('vi-VN', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+      document.getElementById('current-date').textContent = currentDate;
+    });
+  </script>
+</body>
+</html>
