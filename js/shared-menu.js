@@ -113,8 +113,8 @@ class SharedMenuManager {
             });
         }
 
-        // Navigate to customer page
-        window.location.href = '../customer/index.html';
+    // Navigate to customer order/booking page (renamed from index.html)
+    window.location.href = '../customer/order-booking.html';
     }
 
     // Get default menu data
@@ -126,7 +126,7 @@ class SharedMenuManager {
                 description: 'Phở truyền thống với thịt bò tái, hành tây, ngò gai',
                 price: 45000,
                 category: 'Món Chính',
-                image: 'https://via.placeholder.com/300x200/FF6B35/FFFFFF?text=Phở+Bò',
+                image: 'https://placehold.co/300x200/FF6B35/FFFFFF?text=Phở+Bò',
                 status: 'available',
                 inventory: 20,
                 soldToday: 15
@@ -137,7 +137,7 @@ class SharedMenuManager {
                 description: 'Bánh mì giòn với thịt nướng, đồ chua, rau thơm',
                 price: 25000,
                 category: 'Món Chính',
-                image: 'https://via.placeholder.com/300x200/FF6B35/FFFFFF?text=Bánh+Mì',
+                image: 'https://placehold.co/300x200/FF6B35/FFFFFF?text=Bánh+Mì',
                 status: 'available',
                 inventory: 30,
                 soldToday: 8
@@ -148,7 +148,7 @@ class SharedMenuManager {
                 description: 'Gỏi cuốn tươi với tôm, bún, rau thơm, chấm nước mắm',
                 price: 35000,
                 category: 'Khai Vị',
-                image: 'https://via.placeholder.com/300x200/FF6B35/FFFFFF?text=Gỏi+Cuốn',
+                image: 'https://placehold.co/300x200/FF6B35/FFFFFF?text=Gỏi+Cuốn',
                 status: 'available',
                 inventory: 15,
                 soldToday: 12
@@ -159,7 +159,7 @@ class SharedMenuManager {
                 description: 'Chè truyền thống 3 lớp với đậu xanh, đậu đỏ, thạch',
                 price: 20000,
                 category: 'Tráng Miệng',
-                image: 'https://via.placeholder.com/300x200/FF6B35/FFFFFF?text=Chè',
+                image: 'https://placehold.co/300x200/FF6B35/FFFFFF?text=Chè',
                 status: 'soldout',
                 inventory: 0,
                 soldToday: 25
@@ -170,7 +170,7 @@ class SharedMenuManager {
                 description: 'Nước chanh dây tươi mát, pha chế theo công thức riêng',
                 price: 15000,
                 category: 'Đồ Uống',
-                image: 'https://via.placeholder.com/300x200/FF6B35/FFFFFF?text=Chanh+Dây',
+                image: 'https://placehold.co/300x200/FF6B35/FFFFFF?text=Chanh+Dây',
                 status: 'available',
                 inventory: 50,
                 soldToday: 30
@@ -181,7 +181,7 @@ class SharedMenuManager {
                 description: 'Bún bò Huế cay nồng, đậm đà hương vị miền Trung',
                 price: 42000,
                 category: 'Món Chính',
-                image: 'https://via.placeholder.com/300x200/FF6B35/FFFFFF?text=Bún+Bò',
+                image: 'https://placehold.co/300x200/FF6B35/FFFFFF?text=Bún+Bò',
                 status: 'available',
                 inventory: 18,
                 soldToday: 7
@@ -192,7 +192,7 @@ class SharedMenuManager {
                 description: 'Bánh xèo giòn rụm với tôm, thịt, giá đỗ, rau sống',
                 price: 38000,
                 category: 'Món Chính',
-                image: 'https://via.placeholder.com/300x200/FF6B35/FFFFFF?text=Bánh+Xèo',
+                image: 'https://placehold.co/300x200/FF6B35/FFFFFF?text=Bánh+Xèo',
                 status: 'available',
                 inventory: 12,
                 soldToday: 9
@@ -203,7 +203,7 @@ class SharedMenuManager {
                 description: 'Nem nướng thơm lừng, ăn kèm bánh tráng, rau thơm',
                 price: 48000,
                 category: 'Khai Vị',
-                image: 'https://via.placeholder.com/300x200/FF6B35/FFFFFF?text=Nem+Nướng',
+                image: 'https://placehold.co/300x200/FF6B35/FFFFFF?text=Nem+Nướng',
                 status: 'available',
                 inventory: 25,
                 soldToday: 5
@@ -214,7 +214,7 @@ class SharedMenuManager {
                 description: 'Cơm tấm với sườn nướng, chả, bì, trứng ốp la',
                 price: 52000,
                 category: 'Món Chính',
-                image: 'https://via.placeholder.com/300x200/FF6B35/FFFFFF?text=Cơm+Tấm',
+                image: 'https://placehold.co/300x200/FF6B35/FFFFFF?text=Cơm+Tấm',
                 status: 'available',
                 inventory: 22,
                 soldToday: 18
@@ -225,7 +225,7 @@ class SharedMenuManager {
                 description: 'Trà đá chanh tươi mát, giải khát tuyệt vời',
                 price: 8000,
                 category: 'Đồ Uống',
-                image: 'https://via.placeholder.com/300x200/FF6B35/FFFFFF?text=Trà+Chanh',
+                image: 'https://placehold.co/300x200/FF6B35/FFFFFF?text=Trà+Chanh',
                 status: 'available',
                 inventory: 100,
                 soldToday: 45
@@ -248,11 +248,11 @@ class SharedMenuManager {
     // Generate URL with cart data for navigation
     generateOrderURL(cartItems = []) {
         if (cartItems.length === 0) {
-            return '../customer/index.html';
+            return '../customer/order-booking.html';
         }
 
         const cartData = encodeURIComponent(JSON.stringify(cartItems));
-        return `../customer/index.html?cart=${cartData}`;
+    return `../customer/order-booking.html?cart=${cartData}`;
     }
 }
 

@@ -297,7 +297,7 @@ class MenuManager {
         
         return `
             <div class="menu-item ${item.status}" data-item-id="${item.id}">
-                <img src="${item.image}" alt="${item.name}" class="item-image" onerror="this.src='https://via.placeholder.com/300x200/FF6B35/FFFFFF?text=No+Image'">
+                <img src="${item.image}" alt="${item.name}" class="item-image" onerror="this.src='https://placehold.co/300x200/FF6B35/FFFFFF?text=No+Image'">
                 
                 <div class="item-header">
                     <h4 class="item-name">${item.name}</h4>
@@ -350,7 +350,7 @@ class MenuManager {
             description: formData.get('itemDescription'),
             price: parseInt(formData.get('itemPrice')),
             category: formData.get('itemCategory'),
-            image: formData.get('itemImage') || 'https://via.placeholder.com/300x200/FF6B35/FFFFFF?text=No+Image',
+            image: formData.get('itemImage') || 'https://placehold.co/300x200/FF6B35/FFFFFF?text=No+Image',
             status: 'available',
             inventory: parseInt(formData.get('itemInventory')) || 0,
             soldToday: 0
@@ -612,7 +612,7 @@ class MenuManager {
             timestamp: Date.now()
         });
         
-        window.location.href = '../customer/index.html';
+    window.location.href = '../customer/order-booking.html';
     }
 
     // Modal Management

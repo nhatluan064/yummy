@@ -22,6 +22,7 @@
       <li><a href="../customer/order-booking.html" data-page="booking"><i class="fa-solid fa-calendar-days"></i>Đặt bàn</a></li>
       <li><a class="active"><i class="fa-solid fa-fire"></i>Bếp</a></li>
       <li><a href="../admin/admin-panel.html"><i class="fa-solid fa-user-shield"></i>Admin</a></li>
+      <li><button id="kitchenLogoutBtn" style="background:none;border:none;color:#fff;cursor:pointer;padding:.5rem .75rem;font:inherit;display:flex;align-items:center;gap:.35rem;"><i class="fa-solid fa-right-from-bracket"></i>Thoát</button></li>
     </ul>
   </nav>
 
@@ -48,6 +49,21 @@
     import { getAnalytics, isSupported as analyticsIsSupported } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-analytics.js";
     const firebaseConfig={apiKey:"AIzaSyCbUNjBPEaZOtI_cNCcCJ1DBXUUdrP_6oE",authDomain:"order-yummy.firebaseapp.com",projectId:"order-yummy",storageBucket:"order-yummy.firebasestorage.app",messagingSenderId:"142798840175",appId:"1:142798840175:web:1091d97784312c1fe4089a",measurementId:"G-GQ7MEPZSSJ"};
     const app=initializeApp(firebaseConfig);analyticsIsSupported().then(s=>{if(s){getAnalytics(app);}}).catch(e=>console.warn("Analytics unavailable",e));
+    // Attach logout if firebase service loaded elsewhere
+    const btn=document.getElementById('kitchenLogoutBtn');
+    if(btn){
+      btn.addEventListener('click', async ()=>{
+        try {
+          if(window.yummyFirebaseService){
+            await window.yummyFirebaseService.signOut();
+            alert('Đã đăng xuất');
+          }
+          window.location.href='../landing-home.html';
+        } catch(e){
+          console.warn('Logout failed',e);alert('Không thể đăng xuất');
+        }
+      });
+    }
   </script>
 </body>
 </html>

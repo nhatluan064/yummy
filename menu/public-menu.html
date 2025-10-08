@@ -26,16 +26,55 @@
   </nav>
 
   <div class="container">
-    <header class="main-header"><h1>Menu hôm nay</h1><p>Khám phá thực đơn phong phú của chúng tôi</p></header>
-    <section class="menu-section">
-      <div class="menu-category">
-        <h2><i class="fa-solid fa-star"></i> Món phổ biến</h2>
-        <div class="menu-grid" id="public-menu-grid"><!-- dynamic --></div>
-      </div>
+    <header class="main-header">
+      <h1>Menu hôm nay</h1>
+      <p>Khám phá thực đơn phong phú của chúng tôi</p>
+    </header>
+
+    <!-- Stats bar expected by menu.js -->
+    <section class="menu-stats" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1rem;margin-bottom:1.5rem;">
+      <div class="stat-card"><h4>Tổng món</h4><div id="totalItems">0</div></div>
+      <div class="stat-card"><h4>Còn món</h4><div id="availableItems">0</div></div>
+      <div class="stat-card"><h4>Hết món</h4><div id="soldOutItems">0</div></div>
+      <div class="stat-card"><h4>Bán hôm nay</h4><div id="todaySales">0</div></div>
     </section>
+
+    <!-- Controls (admin toggle hidden by default) -->
+    <div style="margin-bottom:1rem;display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;">
+      <input id="searchMenu" type="search" placeholder="Tìm món..." style="padding:.55rem .75rem;border:1px solid #ddd;border-radius:8px;min-width:180px;" />
+      <select id="categoryFilter" style="padding:.55rem .75rem;border:1px solid #ddd;border-radius:8px;">
+        <option value="all">Tất cả danh mục</option>
+        <option value="Món Chính">Món Chính</option>
+        <option value="Khai Vị">Khai Vị</option>
+        <option value="Tráng Miệng">Tráng Miệng</option>
+        <option value="Đồ Uống">Đồ Uống</option>
+        <option value="Món Chay">Món Chay</option>
+      </select>
+      <div class="filter-buttons" style="display:flex;gap:.5rem;">
+        <button class="filter-btn active" data-filter="all">Tất cả</button>
+        <button class="filter-btn" data-filter="available">Còn</button>
+        <button class="filter-btn" data-filter="soldout">Hết</button>
+      </div>
+      <button id="toggleAdminBtn" class="btn btn-sm" style="margin-left:auto;display:none;">
+        <i class="fas fa-cog"></i> Quản Lý Menu
+      </button>
+    </div>
+
+    <div class="admin-controls hidden" style="display:none;"></div>
+
+    <!-- Container expected by menu.js -->
+    <section id="menuCategories" class="menu-section"></section>
   </div>
 
   <script src="../js/shared-menu.js"></script>
+  <script>
+    // Minimal Utils stub for menu.js if not already defined
+    window.Utils = window.Utils || {
+      formatCurrency(v){return new Intl.NumberFormat('vi-VN',{style:'currency',currency:'VND'}).format(v||0)},
+      showNotification(msg,type='info'){console.log('[NOTICE]',type,msg);}
+    };
+  </script>
+  <script src="../js/menu.js"></script>
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
     import { getAnalytics, isSupported as analyticsIsSupported } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-analytics.js";

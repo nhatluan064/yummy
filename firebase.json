@@ -5,8 +5,7 @@
       "firebase.json",
       "**/.*", 
       "**/node_modules/**",
-      "firestore.rules",
-      "js/admin-setup.js"
+      "firestore.rules"
     ],
     "cleanUrls": true,
     "rewrites": [
