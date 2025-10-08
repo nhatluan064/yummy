@@ -10,18 +10,12 @@
     ],
     "cleanUrls": true,
     "rewrites": [
-      {
-        "source": "/admin",
-        "destination": "/admin/admin-panel.html"
-      },
-      {
-        "source": "/admin/**", 
-        "destination": "/admin/admin-panel.html"
-      },
-      {
-        "source": "**",
-        "destination": "/index.html"
-      }
+      { "source": "/", "destination": "/index.html" },
+      { "source": "/admin", "destination": "/admin/admin-panel.html" },
+      { "source": "/admin/**", "destination": "/admin/admin-panel.html" },
+      { "source": "/customer", "destination": "/customer/index.html" },
+      { "source": "/menu", "destination": "/menu/index.html" },
+      { "source": "/kitchen", "destination": "/kitchen/index.html" }
     ],
     "headers": [
       {
