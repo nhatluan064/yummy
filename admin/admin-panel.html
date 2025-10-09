@@ -1,437 +1,705 @@
 <!DOCTYPE html>
 <html lang="vi">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>YUMMY Admin Panel</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="../css/styles.css" />
-  <link rel="stylesheet" href="../css/admin.css" />
-  <link rel="stylesheet" href="../css/kitchen.css" />
-</head>
-<body>
-  <!-- AUTH PAGE -->
-  <div class="page active" id="page-auth">
-    <div class="auth-container">
-      <div class="auth-card">
-        <div class="auth-header">
-          <h2><i class="fa-solid fa-shield-halved"></i> Admin Login</h2>
-          <p>Đăng nhập để truy cập quản lý</p>
-        </div>
-        <form id="admin-login-form">
-          <div class="form-group">
-            <label for="admin-email">Email</label>
-            <input type="email" id="admin-email" required placeholder="admin@yummy.vn" />
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>YUMMY Admin Panel</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../css/styles.css" />
+    <link rel="stylesheet" href="../css/admin.css" />
+  </head>
+  <body>
+    <div class="page" id="page-auth">
+      <div class="auth-container">
+        <div class="auth-card">
+          <div class="auth-header">
+            <h2 id="auth-title">
+              <i class="fa-solid fa-shield-halved"></i> Admin Login
+            </h2>
+            <p id="auth-subtitle">Đăng nhập để truy cập trang quản lý</p>
           </div>
-          <div class="form-group">
-            <label for="admin-password">Mật khẩu</label>
-            <input type="password" id="admin-password" required placeholder="••••••••" />
-          </div>
-          <button type="submit" class="btn btn-primary auth-btn">
-            <i class="fa-solid fa-sign-in-alt"></i> Đăng nhập
-          </button>
-        </form>
-        <div class="auth-footer">
-          <p>Demo: admin@yummy.vn / password</p>
-          <button onclick="setupFirstAdmin()" class="btn btn-secondary" style="margin-top:1rem;">
-            <i class="fa-solid fa-user-plus"></i> Tạo Admin đầu tiên
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- MAIN NAV + PAGES WRAPPER -->
-  <div class="page" id="page-shell">
-    <nav class="navbar">
-      <div class="navbar-logo"><i class="fa-solid fa-utensils"></i>YUMMY Admin</div>
-      <ul class="navbar-links">
-        <li><a data-page="dashboard" class="nav-link active"><i class="fa-solid fa-chart-line"></i>Dashboard</a></li>
-        <li><a data-page="menu-management" class="nav-link"><i class="fa-solid fa-utensils"></i>Menu</a></li>
-        <li><a data-page="orders" class="nav-link"><i class="fa-solid fa-receipt"></i>Đơn hàng</a></li>
-        <li><a data-page="tables" class="nav-link"><i class="fa-solid fa-table"></i>Bàn</a></li>
-        <li><a data-page="kitchen" class="nav-link"><i class="fa-solid fa-fire"></i>Bếp</a></li>
-        <li><a href="../landing-home.html" class="nav-link"><i class="fa-solid fa-house"></i>Trang chủ</a></li>
-        <li><a href="#" id="logout-btn" class="nav-link"><i class="fa-solid fa-sign-out-alt"></i>Đăng xuất</a></li>
-      </ul>
-    </nav>
-
-    <!-- DASHBOARD -->
-    <div class="subpage active" id="page-dashboard">
-      <h1>Dashboard</h1>
-      <div class="stats-grid">
-        <div class="stat-card"><h3>Đơn hàng hôm nay</h3><div class="stat-number" id="orders-today">0</div></div>
-        <div class="stat-card"><h3>Doanh thu hôm nay</h3><div class="stat-number" id="revenue-today">0đ</div></div>
-        <div class="stat-card"><h3>Bàn đang sử dụng</h3><div class="stat-number" id="tables-occupied">0</div></div>
-        <div class="stat-card"><h3>Món đang bán</h3><div class="stat-number" id="menu-items-active">0</div></div>
-      </div>
-      <div style="text-align:center;margin-top:2rem;">
-        <button id="init-sample" class="btn btn-primary">
-          <i class="fa-solid fa-database"></i> Khởi tạo dữ liệu mẫu
-        </button>
-      </div>
-    </div>
-
-    <!-- MENU MANAGEMENT -->
-    <div class="subpage" id="page-menu-management">
-      <div class="page-header">
-        <h1>Quản lý Menu</h1>
-        <button id="add-menu-item-btn" class="btn btn-primary">
-          <i class="fa-solid fa-plus"></i> Thêm món
-        </button>
-      </div>
-      <div class="menu-stats">
-        <div class="stat-card"><h4>Tổng món</h4><div id="total-menu-items">0</div></div>
-        <div class="stat-card"><h4>Đang bán</h4><div id="active-menu-items">0</div></div>
-        <div class="stat-card"><h4>Ngừng bán</h4><div id="inactive-menu-items">0</div></div>
-        <div class="stat-card"><h4>Giá trung bình</h4><div id="avg-menu-price">0đ</div></div>
-      </div>
-      <div class="menu-management" id="menu-items-grid">
-        <div class="loading">Đang tải menu...</div>
-      </div>
-    </div>
-
-    <!-- ORDERS -->
-    <div class="subpage" id="page-orders">
-      <h1>Quản lý Đơn hàng</h1>
-      <div class="orders-management" id="orders-list">
-        <div class="loading">Đang tải đơn hàng...</div>
-      </div>
-    </div>
-
-    <!-- TABLES -->
-    <div class="subpage" id="page-tables">
-      <div class="page-header">
-        <h1>Quản lý Bàn</h1>
-        <button id="add-table-btn" class="btn btn-primary">
-          <i class="fa-solid fa-plus"></i> Thêm bàn
-        </button>
-      </div>
-      <div class="tables-management" id="tables-grid">
-        <div class="loading">Đang tải danh sách bàn...</div>
-      </div>
-    </div>
-
-    <!-- KITCHEN DISPLAY -->
-    <div class="subpage" id="page-kitchen">
-      <div class="page-header">
-        <h1><i class="fa-solid fa-fire"></i> Màn hình Bếp</h1>
-        <p>Theo dõi và xử lý các đơn hàng</p>
-      </div>
-      
-      <section class="kitchen-orders">
-        <div class="order-status-group" data-status="pending">
-          <h2><i class="fa-solid fa-hourglass-half"></i> Chờ xử lý</h2>
-          <div class="orders-grid" id="orders-pending"></div>
-        </div>
-        <div class="order-status-group" data-status="preparing">
-          <h2><i class="fa-solid fa-fire-burner"></i> Đang nấu</h2>
-          <div class="orders-grid" id="orders-preparing"></div>
-        </div>
-        <div class="order-status-group" data-status="completed">
-          <h2><i class="fa-solid fa-check"></i> Hoàn tất</h2>
-          <div class="orders-grid" id="orders-completed"></div>
-        </div>
-      </section>
-    </div>
-  </div>
-
-  <!-- MODALS -->
-  <div id="menu-item-modal" class="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3 id="modal-title">Thêm món mới</h3>
-        <button class="close-modal" onclick="closeMenuItemModal()" title="Đóng">
-          <i class="fa-solid fa-times"></i>
-        </button>
-      </div>
-      <div class="modal-body">
-        <form id="menu-item-form">
-          <div class="form-row">
+          <form id="auth-form">
             <div class="form-group">
-              <label for="item-name">Tên món *</label>
-              <input id="item-name" required />
+              <label for="auth-email">Email</label>
+              <input
+                type="email"
+                id="auth-email"
+                required
+                placeholder="admin@yummy.vn"
+              />
             </div>
             <div class="form-group">
-              <label for="item-category">Danh mục *</label>
+              <label for="auth-password">Mật khẩu</label>
+              <input
+                type="password"
+                id="auth-password"
+                required
+                placeholder="••••••••"
+              />
+            </div>
+            <button
+              type="submit"
+              class="btn btn-primary auth-btn"
+              id="auth-submit-btn"
+            >
+              <i class="fa-solid fa-sign-in-alt"></i> Đăng nhập
+            </button>
+          </form>
+          <div class="auth-footer">
+            <button id="auth-toggle-btn" class="btn-link">
+              Chưa có tài khoản? Đăng ký ngay
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="page" id="page-shell">
+      <nav class="navbar">
+        <div class="navbar-logo">
+          <i class="fa-solid fa-utensils"></i>YUMMY Admin
+        </div>
+        <ul class="navbar-links">
+          <li>
+            <a data-page="dashboard" class="nav-link active"
+              ><i class="fa-solid fa-chart-line"></i>Dashboard</a
+            >
+          </li>
+          <li>
+            <a data-page="menu" class="nav-link"
+              ><i class="fa-solid fa-utensils"></i>Quản lý Menu</a
+            >
+          </li>
+          <li>
+            <a data-page="orders" class="nav-link"
+              ><i class="fa-solid fa-clipboard-list"></i>Đơn hàng</a
+            >
+          </li>
+          <li>
+            <a data-page="kitchen" class="nav-link"
+              ><i class="fa-solid fa-fire-burner"></i>Bếp</a
+            >
+          </li>
+          <li>
+            <a href="#" id="logout-btn" class="nav-link"
+              ><i class="fa-solid fa-sign-out-alt"></i>Đăng xuất (<span
+                id="user-email-display"
+              ></span
+              >)</a
+            >
+          </li>
+        </ul>
+      </nav>
+
+      <div class="subpage active" id="page-dashboard">
+        <div class="admin-container">
+          <h1>Chào mừng trở lại!</h1>
+          <p>Đây là trang quản trị chính của bạn.</p>
+        </div>
+      </div>
+
+      <div class="subpage" id="page-menu">
+        <div class="admin-container">
+          <div class="page-header">
+            <h1><i class="fa-solid fa-utensils"></i> Quản lý Menu</h1>
+            <button class="btn btn-primary" id="add-menu-item-btn">
+              <i class="fa-solid fa-plus"></i> Thêm món mới
+            </button>
+          </div>
+
+          <div class="menu-stats">
+            <div class="stat-card">
+              <i class="fa-solid fa-list"></i>
+              <div class="stat-info">
+                <span class="stat-value" id="total-menu-items">0</span>
+                <span class="stat-label">Tổng món</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <i class="fa-solid fa-check-circle"></i>
+              <div class="stat-info">
+                <span class="stat-value" id="available-menu-items">0</span>
+                <span class="stat-label">Còn món</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <i class="fa-solid fa-times-circle"></i>
+              <div class="stat-info">
+                <span class="stat-value" id="unavailable-menu-items">0</span>
+                <span class="stat-label">Hết món</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="menu-filters">
+            <select id="category-filter" class="form-control">
+              <option value="">Tất cả danh mục</option>
+              <option value="Món chính">Món chính</option>
+              <option value="Món khai vị">Món khai vị</option>
+              <option value="Tráng miệng">Tráng miệng</option>
+              <option value="Đồ uống">Đồ uống</option>
+              <option value="Khác">Khác</option>
+            </select>
+            <select id="status-filter" class="form-control">
+              <option value="">Tất cả trạng thái</option>
+              <option value="true">Còn món</option>
+              <option value="false">Hết món</option>
+            </select>
+          </div>
+
+          <div class="menu-list" id="menu-items-list">
+            <div class="loading-spinner">
+              <i class="fa-solid fa-spinner fa-spin"></i>
+              <p>Đang tải danh sách món ăn...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal thêm/sửa món ăn -->
+      <div class="modal" id="menu-item-modal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3 id="modal-title">Thêm món mới</h3>
+            <button class="modal-close" id="close-modal-btn">
+              <i class="fa-solid fa-times"></i>
+            </button>
+          </div>
+          <form id="menu-item-form">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="item-name">Tên món</label>
+                <input type="text" id="item-name" required />
+              </div>
+              <div class="form-group">
+                <label for="item-price">Giá (VNĐ)</label>
+                <input type="number" id="item-price" min="0" required />
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="item-category">Danh mục</label>
               <select id="item-category" required>
-                <option value="">Chọn</option>
-                <option>Món chính</option>
-                <option>Món khai vị</option>
-                <option>Món tráng miệng</option>
-                <option>Đồ uống</option>
-                <option>Món nhẹ</option>
+                <option value="">Chọn danh mục</option>
+                <option value="Món chính">Món chính</option>
+                <option value="Món khai vị">Món khai vị</option>
+                <option value="Tráng miệng">Tráng miệng</option>
+                <option value="Đồ uống">Đồ uống</option>
+                <option value="Khác">Khác</option>
               </select>
             </div>
-          </div>
-          <div class="form-row">
             <div class="form-group">
-              <label for="item-price">Giá *</label>
-              <input type="number" id="item-price" min="0" step="1000" required />
+              <label for="item-description">Mô tả</label>
+              <textarea id="item-description" rows="3"></textarea>
             </div>
             <div class="form-group">
-              <label for="item-status">Trạng thái</label>
-              <select id="item-status">
-                <option value="true">Đang bán</option>
-                <option value="false">Ngừng bán</option>
-              </select>
+              <label for="item-image">URL hình ảnh</label>
+              <input type="url" id="item-image" placeholder="https://example.com/image.jpg" />
             </div>
-          </div>
-          <div class="form-group">
-            <label for="item-description">Mô tả</label>
-            <textarea id="item-description" rows="2"></textarea>
-          </div>
-          <div class="form-group">
-            <label for="item-image">URL hình</label>
-            <input id="item-image" type="url" placeholder="https://..." />
-          </div>
-          <div class="form-actions">
-            <button type="button" class="btn btn-secondary" onclick="closeMenuItemModal()">Hủy</button>
-            <button type="submit" class="btn btn-primary">
-              <i class="fa-solid fa-save"></i> Lưu
-            </button>
-          </div>
-        </form>
+            <div class="form-group">
+              <label class="checkbox-label">
+                <input type="checkbox" id="item-available" checked />
+                <span class="checkmark"></span>
+                Món hiện có sẵn
+              </label>
+            </div>
+            <div class="form-actions">
+              <button type="button" class="btn btn-secondary" id="cancel-btn">
+                Hủy
+              </button>
+              <button type="submit" class="btn btn-primary" id="save-btn">
+                <i class="fa-solid fa-save"></i> Lưu
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="subpage" id="page-orders">
+        <div class="admin-container">
+          <h1><i class="fa-solid fa-clipboard-list"></i> Quản lý Đơn hàng</h1>
+          <p>Chức năng đang phát triển...</p>
+        </div>
+      </div>
+
+      <div class="subpage" id="page-kitchen">
+        <div class="admin-container">
+          <h1><i class="fa-solid fa-fire-burner"></i> Bếp</h1>
+          <p>Chức năng đang phát triển...</p>
+        </div>
       </div>
     </div>
-  </div>
 
-  <div id="table-modal" class="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3>Thêm bàn mới</h3>
-        <button class="close-modal" onclick="closeTableModal()" title="Đóng">
-          <i class="fa-solid fa-times"></i>
-        </button>
-      </div>
-      <div class="modal-body">
-        <form id="table-form">
-          <div class="form-group">
-            <label for="table-number">Số bàn *</label>
-            <input type="number" id="table-number" required min="1" />
-          </div>
-          <div class="form-group">
-            <label for="table-capacity">Số ghế</label>
-            <input type="number" id="table-capacity" value="4" min="1" max="20" />
-          </div>
-          <div class="form-group">
-            <label for="table-location">Vị trí</label>
-            <input id="table-location" />
-          </div>
-          <div class="form-group">
-            <label for="table-notes">Ghi chú</label>
-            <textarea id="table-notes" rows="2"></textarea>
-          </div>
-          <div class="form-actions">
-            <button type="button" class="btn btn-secondary" onclick="closeTableModal()">Hủy</button>
-            <button type="submit" class="btn btn-primary">
-              <i class="fa-solid fa-save"></i> Tạo bàn
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
+    <script type="module">
+      // Import các module cần thiết từ Firebase SDK
+      import {
+        initializeApp,
+        getApps,
+        getApp,
+      } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+      import {
+        getAuth,
+        onAuthStateChanged,
+        createUserWithEmailAndPassword,
+        signInWithEmailAndPassword,
+        signOut,
+      } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+      import {
+        getFirestore,
+        doc,
+        setDoc,
+        getDoc,
+        collection,
+        getDocs,
+        deleteDoc,
+      } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 
-  <!-- Scripts -->
-  <script type="module">
-    // Import Firebase modules for authentication
-    import { initializeApp, getApps } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js';
-    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js';
-    import { getAnalytics, isSupported as analyticsIsSupported } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-analytics.js';
-    
-    const firebaseConfig = {
-      apiKey: "AIzaSyCbUNjBPEaZOtI_cNCcCJ1DBXUUdrP_6oE",
-      authDomain: "order-yummy.firebaseapp.com",
-      projectId: "order-yummy",
-      storageBucket: "order-yummy.firebasestorage.app",
-      messagingSenderId: "142798840175",
-      appId: "1:142798840175:web:1091d97784312c1fe4089a",
-      measurementId: "G-GQ7MEPZSSJ"
-    };
-    
-    // Initialize Firebase
-    let app;
-    if (!getApps().length) {
-      app = initializeApp(firebaseConfig);
-      analyticsIsSupported().then(s => {
-        if (s) getAnalytics(app);
-      }).catch(e => console.warn('Analytics unavailable', e));
-    } else {
-      app = getApps()[0];
-    }
-    
-    const auth = getAuth(app);
-    
-    // Import Firebase service and admin scripts
-    import('../js/firebase-service.js').then(module => {
-      window.yummyFirebaseService = module.default || module.yummyFirebaseService;
-      console.log('✅ Firebase service loaded');
-    }).catch(e => console.error('❌ Failed to load firebase service:', e));
-    
-    // Import admin scripts
-    Promise.all([
-      import('../js/admin-setup.js').catch(e => console.warn('Admin setup not available:', e)),
-      import('../js/admin.js').catch(e => console.error('Admin script failed:', e))
-    ]).then(() => {
-      console.log('✅ Admin scripts loaded');
-    });
+      // --- 1. CẤU HÌNH FIREBASE ---
+      const firebaseConfig = {
+        apiKey: "AIzaSyCbUNjBPEaZOtI_cNCcCJ1DBXUUdrP_6oE",
+        authDomain: "order-yummy.firebaseapp.com",
+        projectId: "order-yummy",
+        storageBucket: "order-yummy.firebasestorage.app",
+        messagingSenderId: "142798840175",
+        appId: "1:142798840175:web:1091d97784312c1fe4089a",
+      };
 
-    // Authentication state listener
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        // User is signed in
-        console.log('✅ User authenticated:', user.email);
-        document.getElementById('page-auth').classList.remove('active');
-        document.getElementById('page-shell').classList.add('active');
-      } else {
-        // User is signed out
-        console.log('❌ User not authenticated');
-        document.getElementById('page-shell').classList.remove('active');
-        document.getElementById('page-auth').classList.add('active');
-      }
-    });
+      // --- 2. KHỞI TẠO FIREBASE ---
+      const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const db = getFirestore(app);
 
-    // Admin login form handler & other DOM setup
-    document.addEventListener('DOMContentLoaded', () => {
-      const loginForm = document.getElementById('admin-login-form');
-      const loginBtn = loginForm.querySelector('button[type="submit"]');
-      
-      loginForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        const email = document.getElementById('admin-email').value;
-        const password = document.getElementById('admin-password').value;
-        
-        if (!email || !password) {
-          alert('Vui lòng nhập đầy đủ email và mật khẩu');
-          return;
+      // --- 3. QUẢN LÝ TRẠNG THÁI GIAO DIỆN (UI) ---
+      let isRegisterMode = false;
+
+      const pageAuth = document.getElementById("page-auth");
+      const pageShell = document.getElementById("page-shell");
+
+      const authForm = document.getElementById("auth-form");
+      const authTitle = document.getElementById("auth-title");
+      const authSubtitle = document.getElementById("auth-subtitle");
+      const authSubmitBtn = document.getElementById("auth-submit-btn");
+      const authToggleBtn = document.getElementById("auth-toggle-btn");
+      const logoutBtn = document.getElementById("logout-btn");
+      const userEmailDisplay = document.getElementById("user-email-display");
+
+      // Hàm cập nhật UI giữa 2 chế độ Đăng nhập/Đăng ký
+      function updateAuthUI() {
+        if (isRegisterMode) {
+          authTitle.innerHTML = `<i class="fa-solid fa-user-plus"></i> Đăng Ký Admin`;
+          authSubtitle.textContent = "Tạo tài khoản quản trị viên đầu tiên";
+          authSubmitBtn.innerHTML = `<i class="fa-solid fa-user-plus"></i> Đăng Ký`;
+          authToggleBtn.textContent = "Đã có tài khoản? Đăng nhập";
+        } else {
+          authTitle.innerHTML = `<i class="fa-solid fa-shield-halved"></i> Admin Login`;
+          authSubtitle.textContent = "Đăng nhập để truy cập trang quản lý";
+          authSubmitBtn.innerHTML = `<i class="fa-solid fa-sign-in-alt"></i> Đăng nhập`;
+          authToggleBtn.textContent = "Chưa có tài khoản? Đăng ký ngay";
         }
-        
-        // Show loading state
-        loginBtn.disabled = true;
-        loginBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang đăng nhập...';
-        
+      }
+
+      // --- 4. LOGIC XỬ LÝ SỰ KIỆN ---
+
+      // Chuyển đổi giữa Đăng nhập và Đăng ký
+      authToggleBtn.addEventListener("click", () => {
+        isRegisterMode = !isRegisterMode;
+        updateAuthUI();
+      });
+
+      // Xử lý form submit
+      authForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const email = document.getElementById("auth-email").value;
+        const password = document.getElementById("auth-password").value;
+
+        // Vô hiệu hóa nút và hiển thị loading
+        authSubmitBtn.disabled = true;
+        authSubmitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Đang xử lý...`;
+
         try {
-          const userCredential = await signInWithEmailAndPassword(auth, email, password);
-          const user = userCredential.user;
-          console.log('✅ Login successful:', user.email);
-          // The onAuthStateChanged listener will handle the UI transition
-        } catch (error) {
-          console.error('❌ Login error:', error);
-          
-          let errorMessage = 'Đăng nhập thất bại. Vui lòng thử lại.';
-          
-          switch (error.code) {
-            case 'auth/user-not-found':
-              errorMessage = 'Không tìm thấy tài khoản với email này.';
-              break;
-            case 'auth/wrong-password':
-              errorMessage = 'Mật khẩu không đúng.';
-              break;
-            case 'auth/invalid-email':
-              errorMessage = 'Email không hợp lệ.';
-              break;
-            case 'auth/too-many-requests':
-              errorMessage = 'Quá nhiều lần thử. Vui lòng đợi một lúc.';
-              break;
-            case 'auth/invalid-credential':
-              errorMessage = 'Email hoặc mật khẩu không đúng.';
-              break;
+          if (isRegisterMode) {
+            // Chế độ Đăng ký
+            const userCredential = await createUserWithEmailAndPassword(
+              auth,
+              email,
+              password
+            );
+            const user = userCredential.user;
+
+            // Ghi vai trò admin vào Firestore để security rules hoạt động
+            await setDoc(doc(db, "admins", user.uid), {
+              email: user.email,
+              role: "admin",
+              createdAt: new Date(),
+            });
+
+            alert("Đăng ký tài khoản admin thành công!");
+            // Auth state listener sẽ tự động chuyển trang
+          } else {
+            // Chế độ Đăng nhập
+            await signInWithEmailAndPassword(auth, email, password);
+            // Auth state listener sẽ tự động chuyển trang
           }
-          
-          alert(errorMessage);
+        } catch (error) {
+          alert("Lỗi: " + error.message);
         } finally {
-          // Reset button state
-          loginBtn.disabled = false;
-          loginBtn.innerHTML = '<i class="fa-solid fa-sign-in-alt"></i> Đăng nhập';
+          // Kích hoạt lại nút
+          authSubmitBtn.disabled = false;
+          updateAuthUI(); // Reset lại nội dung nút
         }
       });
 
-      // Simple nav switching
-      document.querySelectorAll('.navbar-links a.nav-link').forEach(a=>{
-        a.addEventListener('click',e=>{
-          const page = a.getAttribute('data-page');
-          if(!page) return;
-          e.preventDefault();
-          document.querySelectorAll('.navbar-links a.nav-link').forEach(n=>n.classList.remove('active'));
-          a.classList.add('active');
-          document.querySelectorAll('.subpage').forEach(p=>p.classList.remove('active'));
-          const target = document.getElementById('page-'+page);
-          if(target) target.classList.add('active');
+      // Xử lý Đăng xuất
+      logoutBtn.addEventListener("click", async () => {
+        if (confirm("Bạn có chắc chắn muốn đăng xuất?")) {
+          await signOut(auth);
+        }
+      });
+
+      // --- 5. LẮNG NGHE TRẠNG THÁI ĐĂNG NHẬP ---
+      onAuthStateChanged(auth, async (user) => {
+        if (user) {
+          // Người dùng đã đăng nhập
+          // Kiểm tra xem user có phải là admin không
+          const adminDocRef = doc(db, "admins", user.uid);
+          const adminDocSnap = await getDoc(adminDocRef);
+
+          if (adminDocSnap.exists() && adminDocSnap.data().role === "admin") {
+            // Là admin -> Hiển thị trang quản trị
+            pageAuth.classList.remove("active");
+            pageShell.classList.add("active");
+            userEmailDisplay.textContent = user.email;
+            
+            // Khởi tạo navigation và load menu data
+            initializeNavigation();
+            loadMenuItems();
+          } else {
+            // Không phải admin -> Đăng xuất và báo lỗi
+            alert("Tài khoản của bạn không có quyền truy cập trang quản trị.");
+            await signOut(auth);
+          }
+        } else {
+          // Người dùng đã đăng xuất hoặc chưa đăng nhập
+          pageShell.classList.remove("active");
+          pageAuth.classList.add("active");
+          isRegisterMode = false; // Reset về chế độ login
+          updateAuthUI();
+        }
+      });
+
+      // --- 6. NAVIGATION SYSTEM ---
+      function initializeNavigation() {
+        const navLinks = document.querySelectorAll('.nav-link[data-page]');
+        const subpages = document.querySelectorAll('.subpage');
+
+        navLinks.forEach(link => {
+          link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetPage = link.getAttribute('data-page');
+            
+            // Update active nav link
+            navLinks.forEach(l => l.classList.remove('active'));
+            link.classList.add('active');
+            
+            // Show target subpage
+            subpages.forEach(page => page.classList.remove('active'));
+            const targetSubpage = document.getElementById(`page-${targetPage}`);
+            if (targetSubpage) {
+              targetSubpage.classList.add('active');
+              
+              // Load specific page data
+              if (targetPage === 'menu') {
+                loadMenuItems();
+              }
+            }
+          });
+        });
+      }
+
+      // --- 7. MENU MANAGEMENT SYSTEM ---
+      let currentEditingItem = null;
+
+      // Utility functions
+      const formatCurrency = (amount) =>
+        new Intl.NumberFormat("vi-VN", {
+          style: "currency",
+          currency: "VND",
+        }).format(amount || 0);
+
+      // Modal controls
+      const menuItemModal = document.getElementById('menu-item-modal');
+      const addMenuItemBtn = document.getElementById('add-menu-item-btn');
+      const closeModalBtn = document.getElementById('close-modal-btn');
+      const cancelBtn = document.getElementById('cancel-btn');
+      const menuItemForm = document.getElementById('menu-item-form');
+
+      // Open modal for adding new item
+      addMenuItemBtn?.addEventListener('click', () => {
+        currentEditingItem = null;
+        document.getElementById('modal-title').textContent = 'Thêm món mới';
+        menuItemForm.reset();
+        document.getElementById('item-available').checked = true;
+        menuItemModal.classList.add('active');
+      });
+
+      // Close modal
+      [closeModalBtn, cancelBtn].forEach(btn => {
+        btn?.addEventListener('click', () => {
+          menuItemModal.classList.remove('active');
+          currentEditingItem = null;
         });
       });
 
-      // Modal functions
-      window.closeMenuItemModal = () => {
-        document.getElementById('menu-item-modal').classList.remove('show');
-      };
-      window.closeTableModal = () => {
-        document.getElementById('table-modal').classList.remove('show');
-      };
-
-      // Sample data init
-      document.getElementById('init-sample')?.addEventListener('click',async ()=>{
-        if (window.yummyFirebaseService) {
-          const result = await window.yummyFirebaseService.initializeSampleData();
-          if (result.success) {
-            alert('Khởi tạo dữ liệu mẫu thành công!');
-          } else {
-            alert('Lỗi: ' + result.error);
-          }
-        } else {
-          alert('Firebase service chưa được tải');
+      // Close modal when clicking outside
+      menuItemModal?.addEventListener('click', (e) => {
+        if (e.target === menuItemModal) {
+          menuItemModal.classList.remove('active');
+          currentEditingItem = null;
         }
       });
 
-      // Logout
-      document.getElementById('logout-btn')?.addEventListener('click', async (e) => {
+      // Form submission
+      menuItemForm?.addEventListener('submit', async (e) => {
         e.preventDefault();
-        try {
-          await signOut(auth);
-          console.log('✅ Logout successful');
-          // The onAuthStateChanged listener will handle the UI transition
-        } catch (error) {
-          console.error('❌ Logout error:', error);
-          alert('Đăng xuất thất bại: ' + error.message);
-        }
+        await saveMenuItem();
       });
 
-    // Setup first admin function
-    window.setupFirstAdmin = async function() {
-      const email = prompt('Nhập email admin:', 'admin@yummy.vn');
-      const password = prompt('Nhập mật khẩu admin:', 'admin123');
-      
-      if (email && password) {
+      // Filter controls
+      const categoryFilter = document.getElementById('category-filter');
+      const statusFilter = document.getElementById('status-filter');
+
+      categoryFilter?.addEventListener('change', loadMenuItems);
+      statusFilter?.addEventListener('change', loadMenuItems);
+
+      // Load and display menu items
+      async function loadMenuItems() {
+        const menuList = document.getElementById('menu-items-list');
+        if (!menuList) return;
+
+        menuList.innerHTML = `
+          <div class="loading-spinner">
+            <i class="fa-solid fa-spinner fa-spin"></i>
+            <p>Đang tải danh sách món ăn...</p>
+          </div>
+        `;
+
         try {
-          const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-          const user = userCredential.user;
-          console.log('✅ Admin created:', user.email);
-          alert(`Tạo admin thành công!\nEmail: ${email}\nMật khẩu: ${password}\n\nHãy đăng nhập với thông tin này.`);
-        } catch (error) {
-          console.error('❌ Create admin error:', error);
-          
-          let errorMessage = 'Tạo admin thất bại.';
-          
-          switch (error.code) {
-            case 'auth/email-already-in-use':
-              errorMessage = 'Email này đã được sử dụng.';
-              break;
-            case 'auth/invalid-email':
-              errorMessage = 'Email không hợp lệ.';
-              break;
-            case 'auth/weak-password':
-              errorMessage = 'Mật khẩu quá yếu. Tối thiểu 6 ký tự.';
-              break;
+          const menuCollectionRef = collection(db, "menuItems");
+          const querySnapshot = await getDocs(menuCollectionRef);
+
+          const menuItems = [];
+          querySnapshot.forEach((doc) => {
+            menuItems.push({ id: doc.id, ...doc.data() });
+          });
+
+          // Apply filters
+          const categoryFilter = document.getElementById('category-filter')?.value;
+          const statusFilter = document.getElementById('status-filter')?.value;
+
+          let filteredItems = menuItems;
+          if (categoryFilter) {
+            filteredItems = filteredItems.filter(item => item.category === categoryFilter);
           }
-          
-          alert(errorMessage);
+          if (statusFilter !== '') {
+            filteredItems = filteredItems.filter(item => item.isAvailable === (statusFilter === 'true'));
+          }
+
+          // Update stats
+          updateMenuStats(menuItems);
+
+          // Render items
+          if (filteredItems.length === 0) {
+            menuList.innerHTML = `
+              <div class="empty-state">
+                <i class="fa-solid fa-utensils"></i>
+                <h3>Chưa có món ăn nào</h3>
+                <p>Bắt đầu thêm món ăn đầu tiên cho thực đơn của bạn</p>
+              </div>
+            `;
+          } else {
+            menuList.innerHTML = filteredItems.map(item => createMenuItemCard(item)).join('');
+          }
+        } catch (error) {
+          console.error("Error loading menu items:", error);
+          menuList.innerHTML = `
+            <div class="error-message">
+              <i class="fa-solid fa-triangle-exclamation"></i>
+              <h3>Không thể tải danh sách món ăn</h3>
+              <p>Đã có lỗi xảy ra. Vui lòng thử lại.</p>
+            </div>
+          `;
         }
       }
-    };
-  </script>
-</body>
+
+      // Create menu item card HTML
+      function createMenuItemCard(item) {
+        const placeholderImg = `https://placehold.co/400x300/f97316/FFFFFF?text=${encodeURIComponent(item.name)}`;
+        
+        return `
+          <div class="menu-item-card">
+            <div class="menu-item-header">
+              <img 
+                src="${item.image || placeholderImg}" 
+                alt="${item.name}" 
+                class="menu-item-image"
+                onerror="this.src='${placeholderImg}'"
+              />
+              <div class="menu-item-status ${item.isAvailable ? 'available' : 'unavailable'}">
+                ${item.isAvailable ? 'Còn món' : 'Hết món'}
+              </div>
+            </div>
+            <div class="menu-item-content">
+              <h4 class="menu-item-title">${item.name}</h4>
+              <div class="menu-item-category">${item.category || 'Chưa phân loại'}</div>
+              <p class="menu-item-description">${item.description || 'Chưa có mô tả'}</p>
+              <div class="menu-item-price">${formatCurrency(item.price)}</div>
+              <div class="menu-item-actions">
+                <button class="btn btn-sm btn-primary" onclick="editMenuItem('${item.id}')">
+                  <i class="fa-solid fa-edit"></i> Sửa
+                </button>
+                <button class="btn btn-sm ${item.isAvailable ? 'btn-warning' : 'btn-success'}" 
+                        onclick="toggleMenuItemStatus('${item.id}', ${!item.isAvailable})">
+                  <i class="fa-solid fa-${item.isAvailable ? 'eye-slash' : 'eye'}"></i> 
+                  ${item.isAvailable ? 'Ẩn món' : 'Hiện món'}
+                </button>
+                <button class="btn btn-sm btn-danger" onclick="deleteMenuItem('${item.id}', '${item.name}')">
+                  <i class="fa-solid fa-trash"></i> Xóa
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      // Update menu statistics
+      function updateMenuStats(items) {
+        const totalItems = items.length;
+        const availableItems = items.filter(item => item.isAvailable).length;
+        const unavailableItems = totalItems - availableItems;
+
+        document.getElementById('total-menu-items').textContent = totalItems;
+        document.getElementById('available-menu-items').textContent = availableItems;
+        document.getElementById('unavailable-menu-items').textContent = unavailableItems;
+      }
+
+      // Save menu item (create or update)
+      async function saveMenuItem() {
+        const submitBtn = document.getElementById('save-btn');
+        const originalText = submitBtn.innerHTML;
+        
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang lưu...';
+
+        try {
+          const formData = {
+            name: document.getElementById('item-name').value.trim(),
+            price: parseInt(document.getElementById('item-price').value) || 0,
+            category: document.getElementById('item-category').value,
+            description: document.getElementById('item-description').value.trim(),
+            image: document.getElementById('item-image').value.trim(),
+            isAvailable: document.getElementById('item-available').checked,
+            updatedAt: new Date()
+          };
+
+          if (currentEditingItem) {
+            // Update existing item
+            await setDoc(doc(db, "menuItems", currentEditingItem), formData, { merge: true });
+            showNotification('Cập nhật món ăn thành công!', 'success');
+          } else {
+            // Create new item
+            formData.createdAt = new Date();
+            await setDoc(doc(db, "menuItems", Date.now().toString()), formData);
+            showNotification('Thêm món ăn mới thành công!', 'success');
+          }
+
+          menuItemModal.classList.remove('active');
+          currentEditingItem = null;
+          loadMenuItems();
+        } catch (error) {
+          console.error("Error saving menu item:", error);
+          showNotification('Có lỗi xảy ra khi lưu món ăn: ' + error.message, 'error');
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalText;
+        }
+      }
+
+      // Global functions for menu item actions
+      window.editMenuItem = async function(itemId) {
+        try {
+          const itemDoc = await getDoc(doc(db, "menuItems", itemId));
+          if (itemDoc.exists()) {
+            const item = itemDoc.data();
+            currentEditingItem = itemId;
+
+            document.getElementById('modal-title').textContent = 'Sửa món ăn';
+            document.getElementById('item-name').value = item.name || '';
+            document.getElementById('item-price').value = item.price || '';
+            document.getElementById('item-category').value = item.category || '';
+            document.getElementById('item-description').value = item.description || '';
+            document.getElementById('item-image').value = item.image || '';
+            document.getElementById('item-available').checked = item.isAvailable !== false;
+
+            menuItemModal.classList.add('active');
+          }
+        } catch (error) {
+          console.error("Error loading menu item for edit:", error);
+          showNotification('Không thể tải thông tin món ăn', 'error');
+        }
+      };
+
+      window.toggleMenuItemStatus = async function(itemId, newStatus) {
+        try {
+          await setDoc(doc(db, "menuItems", itemId), { 
+            isAvailable: newStatus,
+            updatedAt: new Date()
+          }, { merge: true });
+          
+          showNotification(
+            newStatus ? 'Đã hiện món trong thực đơn' : 'Đã ẩn món khỏi thực đơn', 
+            'success'
+          );
+          loadMenuItems();
+        } catch (error) {
+          console.error("Error toggling menu item status:", error);
+          showNotification('Có lỗi xảy ra khi thay đổi trạng thái món ăn', 'error');
+        }
+      };
+
+      window.deleteMenuItem = async function(itemId, itemName) {
+        if (confirm(`Bạn có chắc chắn muốn xóa món "${itemName}"? Hành động này không thể hoàn tác.`)) {
+          try {
+            await deleteDoc(doc(db, "menuItems", itemId));
+            showNotification('Đã xóa món ăn thành công', 'success');
+            loadMenuItems();
+          } catch (error) {
+            console.error("Error deleting menu item:", error);
+            showNotification('Có lỗi xảy ra khi xóa món ăn', 'error');
+          }
+        }
+      };
+
+      // Notification system
+      function showNotification(message, type = 'info') {
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        notification.innerHTML = `
+          <i class="fa-solid fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-triangle' : 'info-circle'}"></i>
+          ${message}
+        `;
+        
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+          notification.remove();
+        }, 5000);
+      }
+    </script>
+  </body>
 </html>

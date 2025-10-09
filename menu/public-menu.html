@@ -1,83 +1,228 @@
-<!-- Renamed from menu/index.html -->
 <!DOCTYPE html>
 <html lang="vi">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>YUMMY - Public Menu</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="../css/styles.css" />
-  <link rel="stylesheet" href="../css/menu.css" />
-</head>
-<body>
-  <nav class="navbar">
-    <div class="navbar-logo"><a href="../landing-home.html"><i class="fa-solid fa-utensils"></i>YUMMY</a></div>
-    <ul class="navbar-links">
-      <li><a href="../landing-home.html"><i class="fa-solid fa-house"></i>Trang chủ</a></li>
-      <li><a href="../customer/order-booking.html"><i class="fa-solid fa-bag-shopping"></i>Order</a></li>
-      <li><a class="active"><i class="fa-solid fa-list"></i>Menu Hôm Nay</a></li>
-      <li><a href="../customer/order-booking.html#booking"><i class="fa-solid fa-calendar-days"></i>Đặt bàn</a></li>
-    </ul>
-  </nav>
-
-  <div class="container">
-    <header class="main-header">
-      <h1>Menu hôm nay</h1>
-      <p>Khám phá thực đơn phong phú của chúng tôi</p>
-    </header>
-
-    <!-- Stats bar expected by menu.js -->
-    <section class="menu-stats" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1rem;margin-bottom:1.5rem;">
-      <div class="stat-card"><h4>Tổng món</h4><div id="totalItems">0</div></div>
-      <div class="stat-card"><h4>Còn món</h4><div id="availableItems">0</div></div>
-      <div class="stat-card"><h4>Hết món</h4><div id="soldOutItems">0</div></div>
-      <div class="stat-card"><h4>Bán hôm nay</h4><div id="todaySales">0</div></div>
-    </section>
-
-    <!-- Controls (admin toggle hidden by default) -->
-    <div style="margin-bottom:1rem;display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;">
-      <input id="searchMenu" type="search" placeholder="Tìm món..." style="padding:.55rem .75rem;border:1px solid #ddd;border-radius:8px;min-width:180px;" />
-      <select id="categoryFilter" style="padding:.55rem .75rem;border:1px solid #ddd;border-radius:8px;">
-        <option value="all">Tất cả danh mục</option>
-        <option value="Món Chính">Món Chính</option>
-        <option value="Khai Vị">Khai Vị</option>
-        <option value="Tráng Miệng">Tráng Miệng</option>
-        <option value="Đồ Uống">Đồ Uống</option>
-        <option value="Món Chay">Món Chay</option>
-      </select>
-      <div class="filter-buttons" style="display:flex;gap:.5rem;">
-        <button class="filter-btn active" data-filter="all">Tất cả</button>
-        <button class="filter-btn" data-filter="available">Còn</button>
-        <button class="filter-btn" data-filter="soldout">Hết</button>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>YUMMY - Menu Hôm Nay</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../css/styles.css" />
+    <link rel="stylesheet" href="../css/menu.css" />
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="navbar-logo">
+        <a href="../landing-home.html"
+          ><i class="fa-solid fa-utensils"></i>YUMMY</a
+        >
       </div>
-      <button id="toggleAdminBtn" class="btn btn-sm" style="margin-left:auto;display:none;">
-        <i class="fas fa-cog"></i> Quản Lý Menu
-      </button>
+      <ul class="navbar-links">
+        <li>
+          <a href="../landing-home.html"
+            ><i class="fa-solid fa-house"></i>Trang chủ</a
+          >
+        </li>
+        <li>
+          <a href="../customer/order-booking.html"
+            ><i class="fa-solid fa-bag-shopping"></i>Order</a
+          >
+        </li>
+        <li>
+          <a href="#" class="active"
+            ><i class="fa-solid fa-list"></i>Menu Hôm Nay</a
+          >
+        </li>
+        <li>
+          <a href="../customer/order-booking.html#booking"
+            ><i class="fa-solid fa-calendar-days"></i>Đặt bàn</a
+          >
+        </li>
+      </ul>
+    </nav>
+
+    <div class="container">
+      <header class="main-header">
+        <h1>Menu hôm nay</h1>
+        <p>Khám phá thực đơn phong phú được cập nhật trực tiếp từ bếp</p>
+      </header>
+
+      <section
+        class="menu-stats"
+        style="
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+          gap: 1rem;
+          margin-bottom: 1.5rem;
+        "
+      >
+        <div class="stat-card">
+          <h4>Tổng món</h4>
+          <div id="totalItems">0</div>
+        </div>
+        <div class="stat-card">
+          <h4>Còn món</h4>
+          <div id="availableItems">0</div>
+        </div>
+        <div class="stat-card">
+          <h4>Hết món</h4>
+          <div id="soldOutItems">0</div>
+        </div>
+      </section>
+
+      <section id="menuCategories" class="menu-categories"></section>
     </div>
 
-    <div class="admin-controls hidden" style="display:none;"></div>
+    <script type="module">
+      // Import các module cần thiết từ Firebase SDK
+      import {
+        initializeApp,
+        getApps,
+        getApp,
+      } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+      import {
+        getFirestore,
+        collection,
+        query,
+        where,
+        orderBy,
+        getDocs,
+      } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 
-    <!-- Container expected by menu.js -->
-    <section id="menuCategories" class="menu-section"></section>
-  </div>
+      // 1. CẤU HÌNH FIREBASE (Giống hệt trang Admin)
+      const firebaseConfig = {
+        apiKey: "AIzaSyCbUNjBPEaZOtI_cNCcCJ1DBXUUdrP_6oE",
+        authDomain: "order-yummy.firebaseapp.com",
+        projectId: "order-yummy",
+        storageBucket: "order-yummy.firebasestorage.app",
+        messagingSenderId: "142798840175",
+        appId: "1:142798840175:web:1091d97784312c1fe4089a",
+      };
 
-  <script src="../js/shared-menu.js"></script>
-  <script>
-    // Minimal Utils stub for menu.js if not already defined
-    window.Utils = window.Utils || {
-      formatCurrency(v){return new Intl.NumberFormat('vi-VN',{style:'currency',currency:'VND'}).format(v||0)},
-      showNotification(msg,type='info'){console.log('[NOTICE]',type,msg);}
-    };
-  </script>
-  <script src="../js/menu.js"></script>
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
-    import { getAnalytics, isSupported as analyticsIsSupported } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-analytics.js";
-    const firebaseConfig={apiKey:"AIzaSyCbUNjBPEaZOtI_cNCcCJ1DBXUUdrP_6oE",authDomain:"order-yummy.firebaseapp.com",projectId:"order-yummy",storageBucket:"order-yummy.firebasestorage.app",messagingSenderId:"142798840175",appId:"1:142798840175:web:1091d97784312c1fe4089a",measurementId:"G-GQ7MEPZSSJ"};
-    const app=initializeApp(firebaseConfig);analyticsIsSupported().then(s=>{if(s){getAnalytics(app);}}).catch(e=>console.warn("Analytics unavailable",e));
-  </script>
-</body>
+      // 2. KHỞI TẠO FIREBASE
+      const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+
+      // Hàm tiện ích
+      const formatCurrency = (amount) =>
+        new Intl.NumberFormat("vi-VN", {
+          style: "currency",
+          currency: "VND",
+        }).format(amount || 0);
+
+      // 3. HÀM CHÍNH: LẤY VÀ HIỂN THỊ MENU TỪ FIRESTORE
+      async function loadAndRenderMenu() {
+        const menuContainer = document.getElementById("menuCategories");
+        menuContainer.innerHTML = `<div class="loading-spinner"><i class="fa-solid fa-spinner fa-spin"></i><p>Đang tải thực đơn...</p></div>`;
+
+        try {
+          // Tạo query để lấy các món ăn đang được bán, sắp xếp theo danh mục
+          const menuCollectionRef = collection(db, "menuItems"); // Sử dụng collection 'menuItems'
+          const q = query(
+            menuCollectionRef,
+            where("isAvailable", "==", true),
+            orderBy("category"),
+            orderBy("name")
+          );
+
+          const querySnapshot = await getDocs(q);
+
+          const menuItems = [];
+          querySnapshot.forEach((doc) => {
+            menuItems.push({ id: doc.id, ...doc.data() });
+          });
+
+          if (menuItems.length === 0) {
+            menuContainer.innerHTML = `<div class="empty-state"><h3><i class="fa-solid fa-face-sad-tear"></i> Rất tiếc, hôm nay chưa có món nào</h3><p>Vui lòng quay lại sau nhé!</p></div>`;
+            updateStats(0, 0, 0);
+            return;
+          }
+
+          // Gom nhóm món ăn theo danh mục
+          const itemsByCategory = menuItems.reduce((acc, item) => {
+            const category = item.category || "Chưa phân loại";
+            if (!acc[category]) {
+              acc[category] = [];
+            }
+            acc[category].push(item);
+            return acc;
+          }, {});
+
+          // Tạo HTML và hiển thị
+          menuContainer.innerHTML = ""; // Xóa loading
+          for (const category in itemsByCategory) {
+            const items = itemsByCategory[category];
+            const categoryHtml = `
+                    <div class="menu-category">
+                        <div class="category-header">
+                            <h3 class="category-title">${category}</h3>
+                            <span class="category-count">${
+                              items.length
+                            } món</span>
+                        </div>
+                        <div class="category-items">
+                            ${items
+                              .map((item) => createItemElement(item))
+                              .join("")}
+                        </div>
+                    </div>
+                `;
+            menuContainer.innerHTML += categoryHtml;
+          }
+
+          // Cập nhật các thẻ thống kê
+          const allItemsSnapshot = await getDocs(collection(db, "menuItems"));
+          const totalItems = allItemsSnapshot.size;
+          const availableItems = menuItems.length;
+          updateStats(totalItems, availableItems, totalItems - availableItems);
+        } catch (error) {
+          console.error("Lỗi khi tải menu:", error);
+          menuContainer.innerHTML = `<div class="error-message"><h3><i class="fa-solid fa-triangle-exclamation"></i> Không thể tải thực đơn</h3><p>Đã có lỗi xảy ra. Vui lòng thử lại.</p></div>`;
+        }
+      }
+
+      // Hàm tạo HTML cho một món ăn
+      function createItemElement(item) {
+        const placeholderImg = `https://placehold.co/400x300/f97316/FFFFFF?text=${encodeURIComponent(
+          item.name
+        )}`;
+        return `
+            <div class="menu-item">
+                <img src="${item.image || placeholderImg}" alt="${
+          item.name
+        }" class="item-image" onerror="this.src='${placeholderImg}'">
+                <div class="item-header">
+                    <h4 class="item-name">${item.name}</h4>
+                    <span class="item-price">${formatCurrency(
+                      item.price
+                    )}</span>
+                </div>
+                <p class="item-description">${
+                  item.description || "Chưa có mô tả"
+                }</p>
+                 <div class="item-actions">
+                    <button class="btn btn-primary" onclick="window.location.href='../customer/order-booking.html'">
+                        <i class="fa-solid fa-plus"></i> Thêm vào giỏ
+                    </button>
+                </div>
+            </div>
+        `;
+      }
+
+      // Hàm cập nhật các thẻ thống kê
+      function updateStats(total, available, soldOut) {
+        document.getElementById("totalItems").textContent = total;
+        document.getElementById("availableItems").textContent = available;
+        document.getElementById("soldOutItems").textContent = soldOut;
+      }
+
+      // Chạy hàm chính khi trang được tải
+      document.addEventListener("DOMContentLoaded", loadAndRenderMenu);
+    </script>
+  </body>
 </html>

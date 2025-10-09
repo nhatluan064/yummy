@@ -10,11 +10,12 @@ service cloud.firestore {
     
     // Admin collection - chỉ admin có thể access
     match /admins/{adminId} {
-      // Cho phép user tạo document admin của chính mình (first admin bootstrap)
+      // User có thể tạo document admin của chính họ
       allow create: if request.auth != null && request.auth.uid == adminId;
-      // Các thao tác khác yêu cầu đã là admin (tức doc của chính họ đã tồn tại)
-      allow read, update, delete: if request.auth != null && 
-        exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+
+      // User có quyền đọc, sửa, xóa document admin của chính họ
+      // ĐÂY LÀ DÒNG QUAN TRỌNG ĐÃ SỬA:
+      allow read, update, delete: if request.auth != null && request.auth.uid == adminId;
     }
     
     // Menu items - Admin có thể CRUD, Users chỉ đọc
