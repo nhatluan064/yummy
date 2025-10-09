@@ -121,30 +121,62 @@
         menuContainer.innerHTML = `<div class="loading-spinner"><i class="fa-solid fa-spinner fa-spin"></i><p>Đang tải thực đơn...</p></div>`;
 
         try {
-          // Tạo query để lấy các món ăn đang được bán, sắp xếp theo danh mục
-          const menuCollectionRef = collection(db, "menuItems"); // Sử dụng collection 'menuItems'
-          const q = query(
-            menuCollectionRef,
-            where("isAvailable", "==", true),
-            orderBy("category"),
-            orderBy("name")
-          );
+          // Lấy tất cả món ăn từ collection menuItems
+          const menuCollectionRef = collection(db, "menuItems");
+          const querySnapshot = await getDocs(menuCollectionRef);
 
-          const querySnapshot = await getDocs(q);
-
-          const menuItems = [];
+          const allMenuItems = [];
           querySnapshot.forEach((doc) => {
-            menuItems.push({ id: doc.id, ...doc.data() });
+            allMenuItems.push({ id: doc.id, ...doc.data() });
           });
 
-          if (menuItems.length === 0) {
-            menuContainer.innerHTML = `<div class="empty-state"><h3><i class="fa-solid fa-face-sad-tear"></i> Rất tiếc, hôm nay chưa có món nào</h3><p>Vui lòng quay lại sau nhé!</p></div>`;
-            updateStats(0, 0, 0);
+          // Lọc chỉ những món đang có sẵn và sắp xếp
+          const availableMenuItems = allMenuItems
+            .filter(item => item.isAvailable === true)
+            .sort((a, b) => {
+              // Sắp xếp theo category trước, sau đó theo name
+              if (a.category !== b.category) {
+                return (a.category || '').localeCompare(b.category || '');
+              }
+              return (a.name || '').localeCompare(b.name || '');
+            });
+
+          // Cập nhật stats với tất cả món ăn
+          const totalItems = allMenuItems.length;
+          const availableItems = availableMenuItems.length;
+          updateStats(totalItems, availableItems, totalItems - availableItems);
+
+          // Kiểm tra và hiển thị nội dung phù hợp
+          if (totalItems === 0) {
+            // Chưa có món ăn nào trong hệ thống
+            menuContainer.innerHTML = `
+              <div class="empty-state">
+                <i class="fa-solid fa-utensils" style="font-size: 4rem; color: #ccc; margin-bottom: 1rem;"></i>
+                <h3 style="color: #666; margin-bottom: 0.5rem;">Thực đơn đang được chuẩn bị</h3>
+                <p style="color: #999;">Chúng tôi đang cập nhật các món ăn mới. Vui lòng quay lại sau nhé!</p>
+                <p style="color: #999; font-size: 0.9rem; margin-top: 1rem;">
+                  <i class="fa-solid fa-clock"></i> Thời gian cập nhật: Sớm nhất có thể
+                </p>
+              </div>
+            `;
+            return;
+          } else if (availableItems === 0) {
+            // Có món ăn nhưng tất cả đều hết
+            menuContainer.innerHTML = `
+              <div class="empty-state">
+                <i class="fa-solid fa-face-sad-tear" style="font-size: 4rem; color: #f59e0b; margin-bottom: 1rem;"></i>
+                <h3 style="color: #666; margin-bottom: 0.5rem;">Rất tiếc, hôm nay các món đã hết</h3>
+                <p style="color: #999;">Tất cả món ăn ngon đã được order hết. Vui lòng quay lại vào ngày mai!</p>
+                <p style="color: #999; font-size: 0.9rem; margin-top: 1rem;">
+                  <i class="fa-solid fa-heart"></i> Cảm ơn bạn đã quan tâm đến YUMMY
+                </p>
+              </div>
+            `;
             return;
           }
 
           // Gom nhóm món ăn theo danh mục
-          const itemsByCategory = menuItems.reduce((acc, item) => {
+          const itemsByCategory = availableMenuItems.reduce((acc, item) => {
             const category = item.category || "Chưa phân loại";
             if (!acc[category]) {
               acc[category] = [];
@@ -175,14 +207,18 @@
             menuContainer.innerHTML += categoryHtml;
           }
 
-          // Cập nhật các thẻ thống kê
-          const allItemsSnapshot = await getDocs(collection(db, "menuItems"));
-          const totalItems = allItemsSnapshot.size;
-          const availableItems = menuItems.length;
-          updateStats(totalItems, availableItems, totalItems - availableItems);
         } catch (error) {
           console.error("Lỗi khi tải menu:", error);
-          menuContainer.innerHTML = `<div class="error-message"><h3><i class="fa-solid fa-triangle-exclamation"></i> Không thể tải thực đơn</h3><p>Đã có lỗi xảy ra. Vui lòng thử lại.</p></div>`;
+          menuContainer.innerHTML = `
+            <div class="empty-state">
+              <i class="fa-solid fa-triangle-exclamation" style="font-size: 4rem; color: #ef4444; margin-bottom: 1rem;"></i>
+              <h3 style="color: #666; margin-bottom: 0.5rem;">Không thể tải thực đơn</h3>
+              <p style="color: #999;">Đã có lỗi kết nối. Vui lòng thử tải lại trang.</p>
+              <button onclick="window.location.reload()" class="btn btn-primary" style="margin-top: 1rem;">
+                <i class="fa-solid fa-refresh"></i> Tải lại
+              </button>
+            </div>
+          `;
         }
       }
 

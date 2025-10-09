@@ -1,5 +1,35 @@
 /* === MENU PAGE STYLES === */
 
+/* --- EMPTY STATE --- */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+  color: var(--text-light-color);
+  min-height: 400px;
+}
+
+.empty-state i {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  color: var(--border-color);
+}
+
+.empty-state h3 {
+  color: var(--text-color);
+  margin-bottom: 0.5rem;
+  font-size: 1.5rem;
+}
+
+.empty-state p {
+  margin-bottom: 0.5rem;
+  max-width: 400px;
+  line-height: 1.6;
+}
+
 /* --- MENU HEADER --- */
 .menu-header {
   background: linear-gradient(135deg, var(--primary-color), var(--primary-color-dark));
