@@ -238,6 +238,34 @@
 
   <!-- Scripts -->
   <script type="module">
+    // Import Firebase modules for authentication
+    import { initializeApp, getApps } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js';
+    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js';
+    import { getAnalytics, isSupported as analyticsIsSupported } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-analytics.js';
+    
+    const firebaseConfig = {
+      apiKey: "AIzaSyCbUNjBPEaZOtI_cNCcCJ1DBXUUdrP_6oE",
+      authDomain: "order-yummy.firebaseapp.com",
+      projectId: "order-yummy",
+      storageBucket: "order-yummy.firebasestorage.app",
+      messagingSenderId: "142798840175",
+      appId: "1:142798840175:web:1091d97784312c1fe4089a",
+      measurementId: "G-GQ7MEPZSSJ"
+    };
+    
+    // Initialize Firebase
+    let app;
+    if (!getApps().length) {
+      app = initializeApp(firebaseConfig);
+      analyticsIsSupported().then(s => {
+        if (s) getAnalytics(app);
+      }).catch(e => console.warn('Analytics unavailable', e));
+    } else {
+      app = getApps()[0];
+    }
+    
+    const auth = getAuth(app);
+    
     // Import Firebase service and admin scripts
     import('../js/firebase-service.js').then(module => {
       window.yummyFirebaseService = module.default || module.yummyFirebaseService;
@@ -252,36 +280,77 @@
       console.log('✅ Admin scripts loaded');
     });
 
-    // Firebase init (avoid duplicate with defensive check)
-    import { initializeApp, getApps } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js';
-    import { getAnalytics, isSupported as analyticsIsSupported } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-analytics.js';
-    
-    const firebaseConfig={apiKey:"AIzaSyCbUNjBPEaZOtI_cNCcCJ1DBXUUdrP_6oE",authDomain:"order-yummy.firebaseapp.com",projectId:"order-yummy",storageBucket:"order-yummy.firebasestorage.app",messagingSenderId:"142798840175",appId:"1:142798840175:web:1091d977784312c1fe4089a",measurementId:"G-GQ7MEPZSSJ"};
-    
-    if (!getApps().length) {
-      const app = initializeApp(firebaseConfig);
-      analyticsIsSupported().then(s=>{if(s) getAnalytics(app);}).catch(e=>console.warn('Analytics unavailable',e));
-    }
-
-    // Setup first admin function
-    window.setupFirstAdmin = async function() {
-      const email = prompt('Nhập email admin:');
-      const password = prompt('Nhập mật khẩu admin:');
-      if (email && password) {
-        try {
-          const result = await window.yummyFirebaseService.signUp(email, password, { role: 'admin' });
-          if (result.success) {
-            alert('Tạo admin thành công! Hãy đăng nhập.');
-          } else {
-            alert('Lỗi: ' + result.error);
-          }
-        } catch (e) {
-          alert('Lỗi tạo admin: ' + e.message);
-        }
+    // Authentication state listener
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // User is signed in
+        console.log('✅ User authenticated:', user.email);
+        document.getElementById('page-auth').classList.remove('active');
+        document.getElementById('page-shell').classList.add('active');
+      } else {
+        // User is signed out
+        console.log('❌ User not authenticated');
+        document.getElementById('page-shell').classList.remove('active');
+        document.getElementById('page-auth').classList.add('active');
       }
-    };
+    });
 
-    document.addEventListener('DOMContentLoaded', ()=>{
+    // Admin login form handler & other DOM setup
+    document.addEventListener('DOMContentLoaded', () => {
+      const loginForm = document.getElementById('admin-login-form');
+      const loginBtn = loginForm.querySelector('button[type="submit"]');
+      
+      loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const email = document.getElementById('admin-email').value;
+        const password = document.getElementById('admin-password').value;
+        
+        if (!email || !password) {
+          alert('Vui lòng nhập đầy đủ email và mật khẩu');
+          return;
+        }
+        
+        // Show loading state
+        loginBtn.disabled = true;
+        loginBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang đăng nhập...';
+        
+        try {
+          const userCredential = await signInWithEmailAndPassword(auth, email, password);
+          const user = userCredential.user;
+          console.log('✅ Login successful:', user.email);
+          // The onAuthStateChanged listener will handle the UI transition
+        } catch (error) {
+          console.error('❌ Login error:', error);
+          
+          let errorMessage = 'Đăng nhập thất bại. Vui lòng thử lại.';
+          
+          switch (error.code) {
+            case 'auth/user-not-found':
+              errorMessage = 'Không tìm thấy tài khoản với email này.';
+              break;
+            case 'auth/wrong-password':
+              errorMessage = 'Mật khẩu không đúng.';
+              break;
+            case 'auth/invalid-email':
+              errorMessage = 'Email không hợp lệ.';
+              break;
+            case 'auth/too-many-requests':
+              errorMessage = 'Quá nhiều lần thử. Vui lòng đợi một lúc.';
+              break;
+            case 'auth/invalid-credential':
+              errorMessage = 'Email hoặc mật khẩu không đúng.';
+              break;
+          }
+          
+          alert(errorMessage);
+        } finally {
+          // Reset button state
+          loginBtn.disabled = false;
+          loginBtn.innerHTML = '<i class="fa-solid fa-sign-in-alt"></i> Đăng nhập';
+        }
+      });
+
       // Simple nav switching
       document.querySelectorAll('.navbar-links a.nav-link').forEach(a=>{
         a.addEventListener('click',e=>{
@@ -321,148 +390,48 @@
       // Logout
       document.getElementById('logout-btn')?.addEventListener('click', async (e) => {
         e.preventDefault();
-        if (window.yummyFirebaseService) {
-          await window.yummyFirebaseService.signOut();
-          document.getElementById('page-shell').classList.remove('active');
-          document.getElementById('page-auth').classList.add('active');
+        try {
+          await signOut(auth);
+          console.log('✅ Logout successful');
+          // The onAuthStateChanged listener will handle the UI transition
+        } catch (error) {
+          console.error('❌ Logout error:', error);
+          alert('Đăng xuất thất bại: ' + error.message);
         }
       });
 
-      // Kitchen Orders Management
-      function loadKitchenOrders() {
-        const sampleOrders = [
-          {
-            id: 'ORD-001',
-            table: 'Bàn 1',
-            time: '14:30',
-            customer: 'Nguyễn Văn A',
-            items: [
-              { name: 'Phở Bò', quantity: 2, notes: 'Ít hành, không rau mùi' },
-              { name: 'Gỏi Cuốn', quantity: 1, notes: '' },
-              { name: 'Trà Đá', quantity: 2, notes: '' }
-            ],
-            status: 'pending',
-            orderTime: '14:25'
-          },
-          {
-            id: 'ORD-002',
-            table: 'Bàn 3',
-            time: '14:45',
-            customer: 'Trần Thị B',
-            items: [
-              { name: 'Bún Bò Huế', quantity: 1, notes: 'Cay vừa' },
-              { name: 'Chả Cá Lá Vọng', quantity: 1, notes: 'Không rau thơm' }
-            ],
-            status: 'preparing',
-            orderTime: '14:40'
-          },
-          {
-            id: 'ORD-003',
-            table: 'Bàn 5',
-            time: '15:00',
-            customer: 'Lê Văn C',
-            items: [
-              { name: 'Cơm Tấm', quantity: 1, notes: '' },
-              { name: 'Nước Chanh', quantity: 1, notes: 'Ít đường' }
-            ],
-            status: 'completed',
-            orderTime: '14:55'
+    // Setup first admin function
+    window.setupFirstAdmin = async function() {
+      const email = prompt('Nhập email admin:', 'admin@yummy.vn');
+      const password = prompt('Nhập mật khẩu admin:', 'admin123');
+      
+      if (email && password) {
+        try {
+          const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+          const user = userCredential.user;
+          console.log('✅ Admin created:', user.email);
+          alert(`Tạo admin thành công!\nEmail: ${email}\nMật khẩu: ${password}\n\nHãy đăng nhập với thông tin này.`);
+        } catch (error) {
+          console.error('❌ Create admin error:', error);
+          
+          let errorMessage = 'Tạo admin thất bại.';
+          
+          switch (error.code) {
+            case 'auth/email-already-in-use':
+              errorMessage = 'Email này đã được sử dụng.';
+              break;
+            case 'auth/invalid-email':
+              errorMessage = 'Email không hợp lệ.';
+              break;
+            case 'auth/weak-password':
+              errorMessage = 'Mật khẩu quá yếu. Tối thiểu 6 ký tự.';
+              break;
           }
-        ];
-        
-        // Clear existing orders
-        document.getElementById('orders-pending').innerHTML = '';
-        document.getElementById('orders-preparing').innerHTML = '';
-        document.getElementById('orders-completed').innerHTML = '';
-        
-        sampleOrders.forEach(order => {
-          const orderCard = createKitchenOrderCard(order);
-          const container = document.getElementById(`orders-${order.status}`);
-          if (container) {
-            container.appendChild(orderCard);
-          }
-        });
-      }
-      
-      function createKitchenOrderCard(order) {
-        const card = document.createElement('div');
-        card.className = `order-card ${order.status}`;
-        card.innerHTML = `
-          <div class="order-header">
-            <div class="order-info">
-              <div class="table-number">${order.table}</div>
-              <div class="order-time">Đặt lúc: ${order.orderTime}</div>
-              <div class="order-type">Khách: ${order.customer}</div>
-            </div>
-            <div class="order-status">
-              <span class="status-badge ${order.status}">
-                ${order.status === 'pending' ? 'Chờ xử lý' : 
-                  order.status === 'preparing' ? 'Đang nấu' : 'Hoàn tất'}
-              </span>
-              <div class="order-timer">${order.time}</div>
-            </div>
-          </div>
-          <div class="order-items">
-            <div class="section-title">
-              <i class="fa-solid fa-utensils"></i>
-              Món ăn (${order.items.length})
-            </div>
-            <ul class="item-list">
-              ${order.items.map(item => `
-                <li class="order-item">
-                  <div class="item-details">
-                    <div class="item-name">${item.name}</div>
-                    ${item.notes ? `<div class="item-notes">${item.notes}</div>` : ''}
-                  </div>
-                  <span class="item-quantity">${item.quantity}</span>
-                </li>
-              `).join('')}
-            </ul>
-          </div>
-          <div class="order-actions">
-            ${order.status === 'pending' ? `
-              <button class="action-btn start" onclick="updateOrderStatus('${order.id}', 'preparing')">
-                <i class="fa-solid fa-play"></i> Bắt đầu nấu
-              </button>
-            ` : ''}
-            ${order.status === 'preparing' ? `
-              <button class="action-btn complete" onclick="updateOrderStatus('${order.id}', 'completed')">
-                <i class="fa-solid fa-check"></i> Hoàn thành
-              </button>
-            ` : ''}
-            ${order.status === 'completed' ? `
-              <button class="action-btn undo" onclick="updateOrderStatus('${order.id}', 'preparing')">
-                <i class="fa-solid fa-undo"></i> Quay lại nấu
-              </button>
-            ` : ''}
-            <button class="action-btn view" onclick="viewOrderDetails('${order.id}')">
-              <i class="fa-solid fa-eye"></i> Xem chi tiết
-            </button>
-          </div>
-        `;
-        return card;
-      }
-      
-      // Kitchen functions
-      window.updateOrderStatus = (orderId, newStatus) => {
-        alert(`Cập nhật đơn hàng ${orderId} thành trạng thái: ${newStatus}`);
-        // Reload orders to show changes
-        setTimeout(loadKitchenOrders, 500);
-      };
-      
-      window.viewOrderDetails = (orderId) => {
-        alert(`Xem chi tiết đơn hàng: ${orderId}`);
-      };
-      
-      // Load kitchen orders when kitchen page is shown
-      const originalShowPage = window.showPage;
-      window.showPage = (pageId) => {
-        originalShowPage(pageId);
-        if (pageId === 'kitchen') {
-          setTimeout(loadKitchenOrders, 100);
+          
+          alert(errorMessage);
         }
-      };
-    });
+      }
+    };
   </script>
 </body>
 </html>
