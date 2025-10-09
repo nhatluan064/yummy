@@ -1757,6 +1757,582 @@
   }
 }
 
+/* === DASHBOARD CHARTS & STATS === */
+.dashboard-controls {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.dashboard-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.dashboard-stats .stat-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-left: 4px solid transparent;
+}
+
+.dashboard-stats .stat-card.visits {
+  border-left-color: #3b82f6;
+}
+
+.dashboard-stats .stat-card.orders {
+  border-left-color: #10b981;
+}
+
+.dashboard-stats .stat-card.bookings {
+  border-left-color: #f59e0b;
+}
+
+.dashboard-stats .stat-card.deliveries {
+  border-left-color: #ef4444;
+}
+
+.stat-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: #fff;
+}
+
+.stat-card.visits .stat-icon {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+}
+
+.stat-card.orders .stat-icon {
+  background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.stat-card.bookings .stat-icon {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+
+.stat-card.deliveries .stat-icon {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+}
+
+.stat-info {
+  flex: 1;
+}
+
+.stat-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1f2937;
+  display: block;
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  color: #6b7280;
+  display: block;
+  margin: 0.25rem 0;
+}
+
+.stat-change {
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.25rem 0.5rem;
+  border-radius: 20px;
+}
+
+.stat-change.positive {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.stat-change.negative {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+/* Charts Grid */
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.chart-container {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.chart-header h3 {
+  margin: 0;
+  color: #1f2937;
+  font-size: 1.1rem;
+}
+
+.chart-legend {
+  display: flex;
+  gap: 1rem;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+.legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.legend-dot.current {
+  background: #f97316;
+}
+
+.legend-dot.previous {
+  background: #d1d5db;
+}
+
+/* Recent Activity */
+.recent-activity {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.recent-activity h3 {
+  margin-bottom: 1rem;
+  color: #1f2937;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 0.5rem;
+}
+
+.activity-list {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.activity-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.activity-item:last-child {
+  border-bottom: none;
+}
+
+.activity-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 0.9rem;
+}
+
+.activity-icon.order {
+  background: #10b981;
+}
+
+.activity-icon.booking {
+  background: #f59e0b;
+}
+
+.activity-icon.delivery {
+  background: #ef4444;
+}
+
+.activity-content {
+  flex: 1;
+}
+
+.activity-title {
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 0.25rem;
+}
+
+.activity-time {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+/* === ORDER MANAGEMENT STYLES === */
+.order-tabs {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.tab-btn {
+  padding: 0.75rem 1.5rem;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: 500;
+}
+
+.tab-btn.active {
+  background: var(--primary-color);
+  color: #fff;
+  border-color: var(--primary-color);
+}
+
+.tab-btn:hover:not(.active) {
+  background: #f9fafb;
+}
+
+.order-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.order-filters {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.order-filters .form-control {
+  flex: 1;
+  min-width: 150px;
+}
+
+.order-content {
+  position: relative;
+}
+
+.order-tab-content {
+  display: none;
+}
+
+.order-tab-content.active {
+  display: block;
+}
+
+.order-item {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-left: 4px solid transparent;
+}
+
+.order-item.pending {
+  border-left-color: #f59e0b;
+}
+
+.order-item.cooking {
+  border-left-color: #ef4444;
+}
+
+.order-item.ready {
+  border-left-color: #10b981;
+}
+
+.order-item.completed {
+  border-left-color: #6b7280;
+}
+
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.order-id {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #1f2937;
+}
+
+.order-time {
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
+.order-items {
+  margin-bottom: 1rem;
+}
+
+.order-item-detail {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.order-item-detail:last-child {
+  border-bottom: none;
+}
+
+.order-total {
+  font-weight: 700;
+  text-align: right;
+  padding-top: 0.5rem;
+  border-top: 1px solid #e5e7eb;
+  color: var(--primary-color);
+}
+
+.order-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+/* === KITCHEN MANAGEMENT STYLES === */
+.kitchen-controls {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.auto-refresh {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.auto-refresh input[type="checkbox"] {
+  margin: 0;
+}
+
+.kitchen-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.kitchen-stats .stat-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-left: 4px solid transparent;
+}
+
+.kitchen-stats .stat-card.urgent {
+  border-left-color: #ef4444;
+  background: linear-gradient(135deg, #fef2f2, #fff);
+}
+
+.kitchen-stats .stat-card.cooking {
+  border-left-color: #f59e0b;
+  background: linear-gradient(135deg, #fffbeb, #fff);
+}
+
+.kitchen-stats .stat-card.ready {
+  border-left-color: #10b981;
+  background: linear-gradient(135deg, #f0fdf4, #fff);
+}
+
+.kitchen-stats .stat-card.completed {
+  border-left-color: #6b7280;
+  background: linear-gradient(135deg, #f9fafb, #fff);
+}
+
+.stat-subtitle {
+  font-size: 0.8rem;
+  color: #9ca3af;
+  display: block;
+}
+
+/* Kitchen Board */
+.kitchen-board {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  height: 600px;
+}
+
+.kitchen-column {
+  background: #f8fafc;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.column-header {
+  padding: 1rem;
+  color: #fff;
+  font-weight: 600;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.column-header.pending {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+}
+
+.column-header.cooking {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+
+.column-header.ready {
+  background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.column-header.completed {
+  background: linear-gradient(135deg, #6b7280, #4b5563);
+}
+
+.count {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+}
+
+.kitchen-orders {
+  flex: 1;
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+.kitchen-order-card {
+  background: #fff;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-left: 3px solid var(--primary-color);
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.kitchen-order-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.kitchen-order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.kitchen-order-id {
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.kitchen-order-type {
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.kitchen-order-type.dine-in {
+  background: #e0f2fe;
+  color: #0277bd;
+}
+
+.kitchen-order-type.delivery {
+  background: #fff3e0;
+  color: #ef6c00;
+}
+
+.kitchen-order-time {
+  font-size: 0.8rem;
+  color: #6b7280;
+  margin-bottom: 0.5rem;
+}
+
+.kitchen-order-items {
+  font-size: 0.9rem;
+  color: #374151;
+}
+
+.kitchen-order-actions {
+  margin-top: 0.75rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.kitchen-order-actions .btn {
+  padding: 0.25rem 0.75rem;
+  font-size: 0.8rem;
+  flex: 1;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .charts-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .kitchen-board {
+    grid-template-columns: repeat(2, 1fr);
+    height: auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .charts-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .kitchen-board {
+    grid-template-columns: 1fr;
+  }
+  
+  .dashboard-controls,
+  .kitchen-controls,
+  .order-filters {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .order-tabs {
+    justify-content: center;
+  }
+}
+
 /* === BOOKING MANAGEMENT STYLES === */
 .booking-stats {
   display: grid;

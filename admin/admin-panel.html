@@ -12,6 +12,7 @@
       href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700&display=swap"
       rel="stylesheet"
     />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="../css/styles.css" />
     <link rel="stylesheet" href="../css/admin.css" />
   </head>
@@ -102,6 +103,12 @@
               </a>
             </li>
             <li>
+              <a data-page="kitchen" class="nav-link">
+                <i class="fa-solid fa-fire"></i>
+                <span>Bếp</span>
+              </a>
+            </li>
+            <li>
               <a data-page="advanced" class="nav-link">
                 <i class="fa-solid fa-cog"></i>
                 <span>Cài đặt nâng cao</span>
@@ -143,15 +150,237 @@
         <div class="content-body">
           <div class="subpage active" id="page-dashboard">
             <div class="admin-container">
-              <h1>Chào mừng trở lại!</h1>
-              <p>Đây là trang quản trị chính của bạn.</p>
+              <div class="page-header">
+                <h1><i class="fa-solid fa-chart-line"></i> Dashboard</h1>
+                <div class="dashboard-controls">
+                  <select id="dashboard-period" class="form-control" title="Chọn khoảng thời gian">
+                    <option value="day">Hôm nay</option>
+                    <option value="week">Tuần này</option>
+                    <option value="month">Tháng này</option>
+                  </select>
+                  <button class="btn btn-primary" id="refresh-dashboard">
+                    <i class="fa-solid fa-refresh"></i> Cập nhật
+                  </button>
+                </div>
+              </div>
+
+              <!-- Overview Stats -->
+              <div class="dashboard-stats">
+                <div class="stat-card visits">
+                  <div class="stat-icon">
+                    <i class="fa-solid fa-users"></i>
+                  </div>
+                  <div class="stat-info">
+                    <span class="stat-value" id="total-visits">0</span>
+                    <span class="stat-label">Lượt ghé ăn</span>
+                    <span class="stat-change positive" id="visits-change">+0%</span>
+                  </div>
+                </div>
+                <div class="stat-card orders">
+                  <div class="stat-icon">
+                    <i class="fa-solid fa-utensils"></i>
+                  </div>
+                  <div class="stat-info">
+                    <span class="stat-value" id="total-dine-orders">0</span>
+                    <span class="stat-label">Order tại bàn</span>
+                    <span class="stat-change positive" id="dine-orders-change">+0%</span>
+                  </div>
+                </div>
+                <div class="stat-card bookings">
+                  <div class="stat-icon">
+                    <i class="fa-solid fa-calendar-check"></i>
+                  </div>
+                  <div class="stat-info">
+                    <span class="stat-value" id="total-bookings-dash">0</span>
+                    <span class="stat-label">Đặt bàn</span>
+                    <span class="stat-change positive" id="bookings-change">+0%</span>
+                  </div>
+                </div>
+                <div class="stat-card deliveries">
+                  <div class="stat-icon">
+                    <i class="fa-solid fa-truck"></i>
+                  </div>
+                  <div class="stat-info">
+                    <span class="stat-value" id="total-deliveries">0</span>
+                    <span class="stat-label">Ship</span>
+                    <span class="stat-change positive" id="deliveries-change">+0%</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Charts Grid -->
+              <div class="charts-grid">
+                <div class="chart-container">
+                  <div class="chart-header">
+                    <h3><i class="fa-solid fa-users"></i> Lượt ghé ăn</h3>
+                    <div class="chart-legend">
+                      <span class="legend-item current">
+                        <span class="legend-dot current"></span>
+                        Hiện tại
+                      </span>
+                      <span class="legend-item previous">
+                        <span class="legend-dot previous"></span>
+                        Kỳ trước
+                      </span>
+                    </div>
+                  </div>
+                  <canvas id="visitsChart"></canvas>
+                </div>
+
+                <div class="chart-container">
+                  <div class="chart-header">
+                    <h3><i class="fa-solid fa-utensils"></i> Order tại bàn</h3>
+                    <div class="chart-legend">
+                      <span class="legend-item current">
+                        <span class="legend-dot current"></span>
+                        Hiện tại
+                      </span>
+                      <span class="legend-item previous">
+                        <span class="legend-dot previous"></span>
+                        Kỳ trước
+                      </span>
+                    </div>
+                  </div>
+                  <canvas id="dineOrdersChart"></canvas>
+                </div>
+
+                <div class="chart-container">
+                  <div class="chart-header">
+                    <h3><i class="fa-solid fa-calendar-check"></i> Đặt bàn</h3>
+                    <div class="chart-legend">
+                      <span class="legend-item current">
+                        <span class="legend-dot current"></span>
+                        Hiện tại
+                      </span>
+                      <span class="legend-item previous">
+                        <span class="legend-dot previous"></span>
+                        Kỳ trước
+                      </span>
+                    </div>
+                  </div>
+                  <canvas id="bookingsChart"></canvas>
+                </div>
+
+                <div class="chart-container">
+                  <div class="chart-header">
+                    <h3><i class="fa-solid fa-truck"></i> Ship</h3>
+                    <div class="chart-legend">
+                      <span class="legend-item current">
+                        <span class="legend-dot current"></span>
+                        Hiện tại
+                      </span>
+                      <span class="legend-item previous">
+                        <span class="legend-dot previous"></span>
+                        Kỳ trước
+                      </span>
+                    </div>
+                  </div>
+                  <canvas id="deliveriesChart"></canvas>
+                </div>
+              </div>
+
+              <!-- Recent Activity -->
+              <div class="recent-activity">
+                <h3><i class="fa-solid fa-clock"></i> Hoạt động gần đây</h3>
+                <div class="activity-list" id="recent-activity-list">
+                  <div class="loading-spinner">
+                    <i class="fa-solid fa-spinner fa-spin"></i>
+                    <p>Đang tải hoạt động...</p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
           <div class="subpage" id="page-orders">
             <div class="admin-container">
-              <h1><i class="fa-solid fa-clipboard-list"></i> Quản lý Đơn hàng</h1>
-              <p>Chức năng đang phát triển...</p>
+              <div class="page-header">
+                <h1><i class="fa-solid fa-clipboard-list"></i> Quản lý Đơn hàng</h1>
+                <div class="order-tabs">
+                  <button class="tab-btn active" data-tab="dine-in">
+                    <i class="fa-solid fa-utensils"></i> Tại bàn
+                  </button>
+                  <button class="tab-btn" data-tab="delivery">
+                    <i class="fa-solid fa-truck"></i> Giao hàng
+                  </button>
+                </div>
+              </div>
+
+              <!-- Order Stats -->
+              <div class="order-stats">
+                <div class="stat-card">
+                  <i class="fa-solid fa-clock"></i>
+                  <div class="stat-info">
+                    <span class="stat-value" id="pending-orders">0</span>
+                    <span class="stat-label">Chờ xử lý</span>
+                  </div>
+                </div>
+                <div class="stat-card">
+                  <i class="fa-solid fa-fire"></i>
+                  <div class="stat-info">
+                    <span class="stat-value" id="cooking-orders">0</span>
+                    <span class="stat-label">Đang nấu</span>
+                  </div>
+                </div>
+                <div class="stat-card">
+                  <i class="fa-solid fa-check"></i>
+                  <div class="stat-info">
+                    <span class="stat-value" id="ready-orders">0</span>
+                    <span class="stat-label">Sẵn sàng</span>
+                  </div>
+                </div>
+                <div class="stat-card">
+                  <i class="fa-solid fa-check-double"></i>
+                  <div class="stat-info">
+                    <span class="stat-value" id="completed-orders">0</span>
+                    <span class="stat-label">Hoàn thành</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Order Filters -->
+              <div class="order-filters">
+                <select id="order-status-filter" class="form-control" title="Lọc theo trạng thái">
+                  <option value="">Tất cả trạng thái</option>
+                  <option value="pending">Chờ xử lý</option>
+                  <option value="cooking">Đang nấu</option>
+                  <option value="ready">Sẵn sàng</option>
+                  <option value="completed">Hoàn thành</option>
+                  <option value="cancelled">Đã hủy</option>
+                </select>
+                <input type="date" id="order-date-filter" class="form-control" title="Lọc theo ngày">
+                <select id="order-period-filter" class="form-control" title="Lọc theo khoảng thời gian">
+                  <option value="today">Hôm nay</option>
+                  <option value="week">Tuần này</option>
+                  <option value="month">Tháng này</option>
+                </select>
+                <button class="btn btn-success" id="refresh-orders-btn">
+                  <i class="fa-solid fa-refresh"></i> Tải lại
+                </button>
+              </div>
+
+              <!-- Order Lists -->
+              <div class="order-content">
+                <!-- Dine-in Orders -->
+                <div class="order-tab-content active" id="dine-in-orders">
+                  <div class="order-list" id="dine-in-order-list">
+                    <div class="loading-spinner">
+                      <i class="fa-solid fa-spinner fa-spin"></i>
+                      <p>Đang tải đơn hàng tại bàn...</p>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Delivery Orders -->
+                <div class="order-tab-content" id="delivery-orders">
+                  <div class="order-list" id="delivery-order-list">
+                    <div class="loading-spinner">
+                      <i class="fa-solid fa-spinner fa-spin"></i>
+                      <p>Đang tải đơn hàng giao hàng...</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -268,6 +497,110 @@
                 <div class="loading-spinner">
                   <i class="fa-solid fa-spinner fa-spin"></i>
                   <p>Đang tải danh sách món ăn...</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="subpage" id="page-kitchen">
+            <div class="admin-container">
+              <div class="page-header">
+                <h1><i class="fa-solid fa-fire"></i> Bếp - Quản lý Đơn hàng</h1>
+                <div class="kitchen-controls">
+                  <button class="btn btn-primary" id="refresh-kitchen">
+                    <i class="fa-solid fa-refresh"></i> Cập nhật
+                  </button>
+                  <div class="auto-refresh">
+                    <input type="checkbox" id="auto-refresh-kitchen" checked>
+                    <label for="auto-refresh-kitchen">Tự động cập nhật (30s)</label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Kitchen Stats -->
+              <div class="kitchen-stats">
+                <div class="stat-card urgent">
+                  <div class="stat-icon">
+                    <i class="fa-solid fa-clock"></i>
+                  </div>
+                  <div class="stat-info">
+                    <span class="stat-value" id="kitchen-pending">0</span>
+                    <span class="stat-label">Chờ làm</span>
+                    <span class="stat-subtitle">Cần ưu tiên</span>
+                  </div>
+                </div>
+                <div class="stat-card cooking">
+                  <div class="stat-icon">
+                    <i class="fa-solid fa-fire"></i>
+                  </div>
+                  <div class="stat-info">
+                    <span class="stat-value" id="kitchen-cooking">0</span>
+                    <span class="stat-label">Đang làm</span>
+                    <span class="stat-subtitle">Đang nấu</span>
+                  </div>
+                </div>
+                <div class="stat-card ready">
+                  <div class="stat-icon">
+                    <i class="fa-solid fa-check"></i>
+                  </div>
+                  <div class="stat-info">
+                    <span class="stat-value" id="kitchen-ready">0</span>
+                    <span class="stat-label">Sẵn sàng</span>
+                    <span class="stat-subtitle">Chờ phục vụ</span>
+                  </div>
+                </div>
+                <div class="stat-card completed">
+                  <div class="stat-icon">
+                    <i class="fa-solid fa-check-double"></i>
+                  </div>
+                  <div class="stat-info">
+                    <span class="stat-value" id="kitchen-completed">0</span>
+                    <span class="stat-label">Hoàn thành</span>
+                    <span class="stat-subtitle">Hôm nay</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Kitchen Order Board -->
+              <div class="kitchen-board">
+                <div class="kitchen-column">
+                  <div class="column-header pending">
+                    <h3><i class="fa-solid fa-clock"></i> Chờ làm</h3>
+                    <span class="count" id="pending-count">0</span>
+                  </div>
+                  <div class="kitchen-orders" id="pending-kitchen-orders">
+                    <!-- Pending orders will be populated here -->
+                  </div>
+                </div>
+
+                <div class="kitchen-column">
+                  <div class="column-header cooking">
+                    <h3><i class="fa-solid fa-fire"></i> Đang làm</h3>
+                    <span class="count" id="cooking-count">0</span>
+                  </div>
+                  <div class="kitchen-orders" id="cooking-kitchen-orders">
+                    <!-- Cooking orders will be populated here -->
+                  </div>
+                </div>
+
+                <div class="kitchen-column">
+                  <div class="column-header ready">
+                    <h3><i class="fa-solid fa-check"></i> Sẵn sàng</h3>
+                    <span class="count" id="ready-count">0</span>
+                  </div>
+                  <div class="kitchen-orders" id="ready-kitchen-orders">
+                    <!-- Ready orders will be populated here -->
+                  </div>
+                </div>
+
+                <div class="kitchen-column">
+                  <div class="column-header completed">
+                    <h3><i class="fa-solid fa-check-double"></i> Hoàn thành</h3>
+                    <span class="count" id="completed-count">0</span>
+                  </div>
+                  <div class="kitchen-orders" id="completed-kitchen-orders">
+                    <!-- Completed orders will be populated here -->
+                  </div>
                 </div>
               </div>
             </div>
@@ -561,6 +894,7 @@
                 'orders': 'Quản lý đơn hàng', 
                 'booking': 'Quản lý đơn đặt bàn',
                 'menu': 'Quản lý Menu',
+                'kitchen': 'Bếp - Quản lý Đơn hàng',
                 'advanced': 'Cài đặt nâng cao'
               };
               if (pageTitle) {
@@ -572,6 +906,12 @@
                 loadMenuItems();
               } else if (targetPage === 'booking') {
                 loadBookings();
+              } else if (targetPage === 'dashboard') {
+                loadDashboard();
+              } else if (targetPage === 'orders') {
+                loadOrders();
+              } else if (targetPage === 'kitchen') {
+                loadKitchen();
               }
             }
           });
@@ -632,12 +972,32 @@
       const refreshBookingsBtn = document.getElementById('refresh-bookings-btn');
       const bookingStatusFilter = document.getElementById('booking-status-filter');
       const bookingDateFilter = document.getElementById('booking-date-filter');
+      const dashboardPeriod = document.getElementById('dashboard-period');
+      const refreshDashboard = document.getElementById('refresh-dashboard');
+      const refreshOrders = document.getElementById('refresh-orders-btn');
+      const refreshKitchen = document.getElementById('refresh-kitchen');
 
       categoryFilter?.addEventListener('change', loadMenuItems);
       statusFilter?.addEventListener('change', loadMenuItems);
       refreshBookingsBtn?.addEventListener('click', loadBookings);
       bookingStatusFilter?.addEventListener('change', loadBookings);
       bookingDateFilter?.addEventListener('change', loadBookings);
+      dashboardPeriod?.addEventListener('change', loadDashboard);
+      refreshDashboard?.addEventListener('click', loadDashboard);
+      refreshOrders?.addEventListener('click', loadOrders);
+      refreshKitchen?.addEventListener('click', loadKitchen);
+
+      // Order tabs
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+          document.querySelectorAll('.order-tab-content').forEach(content => content.classList.remove('active'));
+          
+          btn.classList.add('active');
+          const tabId = btn.getAttribute('data-tab') + '-orders';
+          document.getElementById(tabId)?.classList.add('active');
+        });
+      });
 
       // Load and display menu items
       async function loadMenuItems() {
@@ -1066,6 +1426,480 @@
             showNotification('Có lỗi xảy ra khi hủy đặt bàn', 'error');
           }
         }
+      };
+
+      // --- DASHBOARD MANAGEMENT SYSTEM ---
+      let dashboardCharts = {};
+
+      async function loadDashboard() {
+        const period = document.getElementById('dashboard-period')?.value || 'day';
+        
+        try {
+          // Generate sample data for now (in production, fetch from Firebase)
+          const data = generateSampleDashboardData(period);
+          
+          // Update stats
+          updateDashboardStats(data);
+          
+          // Update charts
+          updateDashboardCharts(data, period);
+          
+          // Update recent activity
+          updateRecentActivity();
+          
+        } catch (error) {
+          console.error("Error loading dashboard:", error);
+          showNotification('Có lỗi xảy ra khi tải dashboard', 'error');
+        }
+      }
+
+      function generateSampleDashboardData(period) {
+        const now = new Date();
+        const labels = [];
+        const visits = [];
+        const dineOrders = [];
+        const bookings = [];
+        const deliveries = [];
+        
+        if (period === 'day') {
+          for (let i = 23; i >= 0; i--) {
+            labels.push(`${String(23-i).padStart(2, '0')}:00`);
+            visits.push(Math.floor(Math.random() * 20) + 5);
+            dineOrders.push(Math.floor(Math.random() * 15) + 2);
+            bookings.push(Math.floor(Math.random() * 8) + 1);
+            deliveries.push(Math.floor(Math.random() * 12) + 3);
+          }
+        } else if (period === 'week') {
+          const days = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
+          days.forEach(day => {
+            labels.push(day);
+            visits.push(Math.floor(Math.random() * 150) + 50);
+            dineOrders.push(Math.floor(Math.random() * 80) + 20);
+            bookings.push(Math.floor(Math.random() * 40) + 10);
+            deliveries.push(Math.floor(Math.random() * 60) + 15);
+          });
+        } else {
+          for (let i = 29; i >= 0; i--) {
+            const date = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
+            labels.push(`${date.getDate()}/${date.getMonth() + 1}`);
+            visits.push(Math.floor(Math.random() * 200) + 80);
+            dineOrders.push(Math.floor(Math.random() * 120) + 40);
+            bookings.push(Math.floor(Math.random() * 60) + 20);
+            deliveries.push(Math.floor(Math.random() * 100) + 30);
+          }
+        }
+        
+        return {
+          labels,
+          datasets: {
+            visits: { current: visits, previous: visits.map(v => Math.floor(v * 0.8)) },
+            dineOrders: { current: dineOrders, previous: dineOrders.map(v => Math.floor(v * 0.9)) },
+            bookings: { current: bookings, previous: bookings.map(v => Math.floor(v * 0.7)) },
+            deliveries: { current: deliveries, previous: deliveries.map(v => Math.floor(v * 1.1)) }
+          }
+        };
+      }
+
+      function updateDashboardStats(data) {
+        const totalVisits = data.datasets.visits.current.reduce((a, b) => a + b, 0);
+        const totalDineOrders = data.datasets.dineOrders.current.reduce((a, b) => a + b, 0);
+        const totalBookings = data.datasets.bookings.current.reduce((a, b) => a + b, 0);
+        const totalDeliveries = data.datasets.deliveries.current.reduce((a, b) => a + b, 0);
+        
+        document.getElementById('total-visits').textContent = totalVisits;
+        document.getElementById('total-dine-orders').textContent = totalDineOrders;
+        document.getElementById('total-bookings-dash').textContent = totalBookings;
+        document.getElementById('total-deliveries').textContent = totalDeliveries;
+        
+        // Calculate percentage changes
+        const prevVisits = data.datasets.visits.previous.reduce((a, b) => a + b, 0);
+        const visitsChange = prevVisits > 0 ? Math.round(((totalVisits - prevVisits) / prevVisits) * 100) : 0;
+        document.getElementById('visits-change').textContent = `${visitsChange > 0 ? '+' : ''}${visitsChange}%`;
+      }
+
+      function updateDashboardCharts(data, period) {
+        const chartConfig = {
+          type: 'line',
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false }
+            },
+            scales: {
+              y: { beginAtZero: true }
+            }
+          }
+        };
+
+        // Visits Chart
+        if (dashboardCharts.visits) dashboardCharts.visits.destroy();
+        dashboardCharts.visits = new Chart(document.getElementById('visitsChart'), {
+          ...chartConfig,
+          data: {
+            labels: data.labels,
+            datasets: [
+              {
+                label: 'Hiện tại',
+                data: data.datasets.visits.current,
+                borderColor: '#f97316',
+                backgroundColor: 'rgba(249, 115, 22, 0.1)',
+                tension: 0.4
+              },
+              {
+                label: 'Kỳ trước',
+                data: data.datasets.visits.previous,
+                borderColor: '#d1d5db',
+                backgroundColor: 'rgba(209, 213, 219, 0.1)',
+                tension: 0.4
+              }
+            ]
+          }
+        });
+
+        // Similar configs for other charts...
+        if (dashboardCharts.dineOrders) dashboardCharts.dineOrders.destroy();
+        dashboardCharts.dineOrders = new Chart(document.getElementById('dineOrdersChart'), {
+          ...chartConfig,
+          data: {
+            labels: data.labels,
+            datasets: [
+              {
+                label: 'Hiện tại',
+                data: data.datasets.dineOrders.current,
+                borderColor: '#10b981',
+                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                tension: 0.4
+              },
+              {
+                label: 'Kỳ trước',
+                data: data.datasets.dineOrders.previous,
+                borderColor: '#d1d5db',
+                backgroundColor: 'rgba(209, 213, 219, 0.1)',
+                tension: 0.4
+              }
+            ]
+          }
+        });
+
+        if (dashboardCharts.bookings) dashboardCharts.bookings.destroy();
+        dashboardCharts.bookings = new Chart(document.getElementById('bookingsChart'), {
+          ...chartConfig,
+          data: {
+            labels: data.labels,
+            datasets: [
+              {
+                label: 'Hiện tại',
+                data: data.datasets.bookings.current,
+                borderColor: '#f59e0b',
+                backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                tension: 0.4
+              },
+              {
+                label: 'Kỳ trước',
+                data: data.datasets.bookings.previous,
+                borderColor: '#d1d5db',
+                backgroundColor: 'rgba(209, 213, 219, 0.1)',
+                tension: 0.4
+              }
+            ]
+          }
+        });
+
+        if (dashboardCharts.deliveries) dashboardCharts.deliveries.destroy();
+        dashboardCharts.deliveries = new Chart(document.getElementById('deliveriesChart'), {
+          ...chartConfig,
+          data: {
+            labels: data.labels,
+            datasets: [
+              {
+                label: 'Hiện tại',
+                data: data.datasets.deliveries.current,
+                borderColor: '#ef4444',
+                backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                tension: 0.4
+              },
+              {
+                label: 'Kỳ trước',
+                data: data.datasets.deliveries.previous,
+                borderColor: '#d1d5db',
+                backgroundColor: 'rgba(209, 213, 219, 0.1)',
+                tension: 0.4
+              }
+            ]
+          }
+        });
+      }
+
+      function updateRecentActivity() {
+        const activities = [
+          { type: 'order', title: 'Đơn hàng mới #1234', time: '2 phút trước', icon: 'utensils' },
+          { type: 'booking', title: 'Đặt bàn từ Nguyễn Văn A', time: '5 phút trước', icon: 'calendar-check' },
+          { type: 'delivery', title: 'Giao hàng #5678', time: '10 phút trước', icon: 'truck' },
+          { type: 'order', title: 'Đơn hàng hoàn thành #1230', time: '15 phút trước', icon: 'check' }
+        ];
+
+        const activityList = document.getElementById('recent-activity-list');
+        activityList.innerHTML = activities.map(activity => `
+          <div class="activity-item">
+            <div class="activity-icon ${activity.type}">
+              <i class="fa-solid fa-${activity.icon}"></i>
+            </div>
+            <div class="activity-content">
+              <div class="activity-title">${activity.title}</div>
+              <div class="activity-time">${activity.time}</div>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      // --- ORDERS MANAGEMENT SYSTEM ---
+      async function loadOrders() {
+        try {
+          // Generate sample orders (in production, fetch from Firebase)
+          const orders = generateSampleOrders();
+          
+          // Update stats
+          updateOrderStats(orders);
+          
+          // Render orders by type
+          renderOrdersByType(orders);
+          
+        } catch (error) {
+          console.error("Error loading orders:", error);
+          showNotification('Có lỗi xảy ra khi tải đơn hàng', 'error');
+        }
+      }
+
+      function generateSampleOrders() {
+        const orders = [];
+        const statuses = ['pending', 'cooking', 'ready', 'completed'];
+        
+        for (let i = 1; i <= 20; i++) {
+          orders.push({
+            id: `ORD${String(i).padStart(4, '0')}`,
+            type: Math.random() > 0.5 ? 'dine-in' : 'delivery',
+            status: statuses[Math.floor(Math.random() * statuses.length)],
+            table: Math.random() > 0.5 ? `Bàn ${Math.ceil(Math.random() * 20)}` : null,
+            customer: `Khách hàng ${i}`,
+            items: [
+              { name: 'Phở Bò', quantity: 1, price: 45000 },
+              { name: 'Trà Đá', quantity: 2, price: 8000 }
+            ],
+            total: 61000,
+            createdAt: new Date(Date.now() - Math.random() * 86400000),
+            notes: Math.random() > 0.7 ? 'Ghi chú đặc biệt' : ''
+          });
+        }
+        
+        return orders;
+      }
+
+      function updateOrderStats(orders) {
+        const pending = orders.filter(o => o.status === 'pending').length;
+        const cooking = orders.filter(o => o.status === 'cooking').length;
+        const ready = orders.filter(o => o.status === 'ready').length;
+        const completed = orders.filter(o => o.status === 'completed').length;
+        
+        document.getElementById('pending-orders').textContent = pending;
+        document.getElementById('cooking-orders').textContent = cooking;
+        document.getElementById('ready-orders').textContent = ready;
+        document.getElementById('completed-orders').textContent = completed;
+      }
+
+      function renderOrdersByType(orders) {
+        const dineInOrders = orders.filter(o => o.type === 'dine-in');
+        const deliveryOrders = orders.filter(o => o.type === 'delivery');
+        
+        document.getElementById('dine-in-order-list').innerHTML = 
+          dineInOrders.length === 0 ? '<div class="empty-state"><p>Chưa có đơn hàng tại bàn</p></div>' :
+          dineInOrders.map(order => createOrderCard(order)).join('');
+          
+        document.getElementById('delivery-order-list').innerHTML = 
+          deliveryOrders.length === 0 ? '<div class="empty-state"><p>Chưa có đơn hàng giao hàng</p></div>' :
+          deliveryOrders.map(order => createOrderCard(order)).join('');
+      }
+
+      function createOrderCard(order) {
+        const formatCurrency = (amount) => new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(amount);
+        const formatTime = (date) => new Date(date).toLocaleString('vi-VN');
+        
+        return `
+          <div class="order-item ${order.status}">
+            <div class="order-header">
+              <div>
+                <div class="order-id">${order.id}</div>
+                <div class="order-time">${formatTime(order.createdAt)}</div>
+              </div>
+              <div class="status-badge status-${order.status}">
+                ${order.status === 'pending' ? 'Chờ xử lý' :
+                  order.status === 'cooking' ? 'Đang nấu' :
+                  order.status === 'ready' ? 'Sẵn sàng' : 'Hoàn thành'}
+              </div>
+            </div>
+            
+            <div class="order-info">
+              <strong>${order.type === 'dine-in' ? order.table : 'Giao hàng'}</strong> - ${order.customer}
+            </div>
+            
+            <div class="order-items">
+              ${order.items.map(item => `
+                <div class="order-item-detail">
+                  <span>${item.quantity}x ${item.name}</span>
+                  <span>${formatCurrency(item.price * item.quantity)}</span>
+                </div>
+              `).join('')}
+              <div class="order-total">Tổng: ${formatCurrency(order.total)}</div>
+            </div>
+            
+            ${order.notes ? `<div class="order-notes"><strong>Ghi chú:</strong> ${order.notes}</div>` : ''}
+            
+            <div class="order-actions">
+              ${order.status === 'pending' ? `
+                <button class="btn btn-sm btn-warning" onclick="updateOrderStatus('${order.id}', 'cooking')">
+                  <i class="fa-solid fa-fire"></i> Bắt đầu nấu
+                </button>
+              ` : ''}
+              ${order.status === 'cooking' ? `
+                <button class="btn btn-sm btn-success" onclick="updateOrderStatus('${order.id}', 'ready')">
+                  <i class="fa-solid fa-check"></i> Sẵn sàng
+                </button>
+              ` : ''}
+              ${order.status === 'ready' ? `
+                <button class="btn btn-sm btn-primary" onclick="updateOrderStatus('${order.id}', 'completed')">
+                  <i class="fa-solid fa-check-double"></i> Hoàn thành
+                </button>
+              ` : ''}
+              <button class="btn btn-sm btn-danger" onclick="updateOrderStatus('${order.id}', 'cancelled')">
+                <i class="fa-solid fa-times"></i> Hủy
+              </button>
+            </div>
+          </div>
+        `;
+      }
+
+      // --- KITCHEN MANAGEMENT SYSTEM ---
+      let kitchenAutoRefresh = null;
+
+      async function loadKitchen() {
+        try {
+          // Generate sample kitchen orders (in production, fetch from Firebase)
+          const orders = generateSampleOrders().filter(o => o.status !== 'completed');
+          
+          // Update kitchen stats
+          updateKitchenStats(orders);
+          
+          // Render kitchen board
+          renderKitchenBoard(orders);
+          
+          // Setup auto-refresh
+          setupKitchenAutoRefresh();
+          
+        } catch (error) {
+          console.error("Error loading kitchen:", error);
+          showNotification('Có lỗi xảy ra khi tải dữ liệu bếp', 'error');
+        }
+      }
+
+      function updateKitchenStats(orders) {
+        const pending = orders.filter(o => o.status === 'pending').length;
+        const cooking = orders.filter(o => o.status === 'cooking').length;
+        const ready = orders.filter(o => o.status === 'ready').length;
+        const completedToday = 25; // Sample data
+        
+        document.getElementById('kitchen-pending').textContent = pending;
+        document.getElementById('kitchen-cooking').textContent = cooking;
+        document.getElementById('kitchen-ready').textContent = ready;
+        document.getElementById('kitchen-completed').textContent = completedToday;
+      }
+
+      function renderKitchenBoard(orders) {
+        const ordersByStatus = {
+          pending: orders.filter(o => o.status === 'pending'),
+          cooking: orders.filter(o => o.status === 'cooking'),
+          ready: orders.filter(o => o.status === 'ready'),
+          completed: orders.filter(o => o.status === 'completed')
+        };
+
+        Object.keys(ordersByStatus).forEach(status => {
+          const container = document.getElementById(`${status}-kitchen-orders`);
+          const count = document.getElementById(`${status}-count`);
+          
+          count.textContent = ordersByStatus[status].length;
+          container.innerHTML = ordersByStatus[status].map(order => createKitchenOrderCard(order)).join('');
+        });
+      }
+
+      function createKitchenOrderCard(order) {
+        const formatTime = (date) => {
+          const now = new Date();
+          const orderTime = new Date(date);
+          const diffMinutes = Math.floor((now - orderTime) / (1000 * 60));
+          return `${diffMinutes} phút trước`;
+        };
+
+        return `
+          <div class="kitchen-order-card" onclick="viewOrderDetail('${order.id}')">
+            <div class="kitchen-order-header">
+              <div class="kitchen-order-id">${order.id}</div>
+              <div class="kitchen-order-type ${order.type}">
+                ${order.type === 'dine-in' ? 'Tại bàn' : 'Ship'}
+              </div>
+            </div>
+            <div class="kitchen-order-time">${formatTime(order.createdAt)}</div>
+            <div class="kitchen-order-items">
+              ${order.items.map(item => `${item.quantity}x ${item.name}`).join(', ')}
+            </div>
+            <div class="kitchen-order-actions">
+              ${order.status === 'pending' ? `
+                <button class="btn btn-sm btn-warning" onclick="event.stopPropagation(); updateOrderStatus('${order.id}', 'cooking')">
+                  Bắt đầu
+                </button>
+              ` : ''}
+              ${order.status === 'cooking' ? `
+                <button class="btn btn-sm btn-success" onclick="event.stopPropagation(); updateOrderStatus('${order.id}', 'ready')">
+                  Xong
+                </button>
+              ` : ''}
+              ${order.status === 'ready' ? `
+                <button class="btn btn-sm btn-primary" onclick="event.stopPropagation(); updateOrderStatus('${order.id}', 'completed')">
+                  Phục vụ
+                </button>
+              ` : ''}
+            </div>
+          </div>
+        `;
+      }
+
+      function setupKitchenAutoRefresh() {
+        const autoRefreshCheckbox = document.getElementById('auto-refresh-kitchen');
+        
+        if (kitchenAutoRefresh) {
+          clearInterval(kitchenAutoRefresh);
+        }
+        
+        if (autoRefreshCheckbox?.checked) {
+          kitchenAutoRefresh = setInterval(() => {
+            loadKitchen();
+          }, 30000); // 30 seconds
+        }
+        
+        autoRefreshCheckbox?.addEventListener('change', setupKitchenAutoRefresh);
+      }
+
+      // Global functions
+      window.updateOrderStatus = function(orderId, newStatus) {
+        showNotification(`Đã cập nhật trạng thái đơn ${orderId}`, 'success');
+        // In production, update Firebase here
+        setTimeout(() => {
+          loadOrders();
+          loadKitchen();
+        }, 500);
+      };
+
+      window.viewOrderDetail = function(orderId) {
+        showNotification(`Xem chi tiết đơn ${orderId}`, 'info');
+        // In production, show order detail modal
       };
     </script>
   </body>
