@@ -87,7 +87,7 @@
             <li>
               <a data-page="orders" class="nav-link">
                 <i class="fa-solid fa-clipboard-list"></i>
-                <span>Quản lý đơn hàng</span>
+                <span>Quản lý doanh thu</span>
               </a>
             </li>
             <li>
@@ -295,7 +295,10 @@
           <div class="subpage" id="page-orders">
             <div class="admin-container">
               <div class="page-header">
-                <h1><i class="fa-solid fa-clipboard-list"></i> Quản lý Đơn hàng</h1>
+                <h1><i class="fa-solid fa-receipt"></i> Quản lý Doanh thu - Bill & Thanh toán</h1>
+                <div class="page-description">
+                  <p>Quản lý tất cả đơn hàng tạo ra doanh thu: Bill tại bàn và Bill giao hàng</p>
+                </div>
                 <div class="order-tabs">
                   <button class="tab-btn active" data-tab="dine-in">
                     <i class="fa-solid fa-utensils"></i> Tại bàn
@@ -338,6 +341,52 @@
                 </div>
               </div>
 
+              <!-- Revenue Stats -->
+              <div class="revenue-stats">
+                <div class="stat-card revenue">
+                  <i class="fa-solid fa-dollar-sign"></i>
+                  <div class="stat-info">
+                    <span class="stat-value" id="total-revenue">0 VNĐ</span>
+                    <span class="stat-label">Tổng doanh thu hôm nay</span>
+                  </div>
+                </div>
+                <div class="stat-card bills">
+                  <i class="fa-solid fa-receipt"></i>
+                  <div class="stat-info">
+                    <span class="stat-value" id="total-bills">0</span>
+                    <span class="stat-label">Tổng số bill</span>
+                  </div>
+                </div>
+                <div class="stat-card dine-revenue">
+                  <i class="fa-solid fa-utensils"></i>
+                  <div class="stat-info">
+                    <span class="stat-value" id="dine-revenue">0 VNĐ</span>
+                    <span class="stat-label">Doanh thu tại bàn</span>
+                  </div>
+                </div>
+                <div class="stat-card delivery-revenue">
+                  <i class="fa-solid fa-truck"></i>
+                  <div class="stat-info">
+                    <span class="stat-value" id="delivery-revenue">0 VNĐ</span>
+                    <span class="stat-label">Doanh thu giao hàng</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Order Type Tabs -->
+              <div class="order-tabs">
+                <button class="order-tab-btn active" data-tab="dine-in">
+                  <i class="fa-solid fa-utensils"></i>
+                  Bill tại bàn
+                  <span class="tab-count" id="dine-in-count">0</span>
+                </button>
+                <button class="order-tab-btn" data-tab="delivery">
+                  <i class="fa-solid fa-truck"></i>
+                  Bill giao hàng
+                  <span class="tab-count" id="delivery-count">0</span>
+                </button>
+              </div>
+
               <!-- Order Filters -->
               <div class="order-filters">
                 <select id="order-status-filter" class="form-control" title="Lọc theo trạng thái">
@@ -361,22 +410,30 @@
 
               <!-- Order Lists -->
               <div class="order-content">
-                <!-- Dine-in Orders -->
+                <!-- Dine-in Bills -->
                 <div class="order-tab-content active" id="dine-in-orders">
+                  <div class="order-section-header">
+                    <h3><i class="fa-solid fa-utensils"></i> Bill tại bàn - Doanh thu từ khách ăn tại quán</h3>
+                    <p>Quản lý tất cả bill và thanh toán khi khách order món tại bàn</p>
+                  </div>
                   <div class="order-list" id="dine-in-order-list">
                     <div class="loading-spinner">
                       <i class="fa-solid fa-spinner fa-spin"></i>
-                      <p>Đang tải đơn hàng tại bàn...</p>
+                      <p>Đang tải bill tại bàn...</p>
                     </div>
                   </div>
                 </div>
 
-                <!-- Delivery Orders -->
+                <!-- Delivery Bills -->
                 <div class="order-tab-content" id="delivery-orders">
+                  <div class="order-section-header">
+                    <h3><i class="fa-solid fa-truck"></i> Bill giao hàng - Doanh thu từ ship</h3>
+                    <p>Quản lý tất cả bill và thanh toán khi khách đặt món giao hàng</p>
+                  </div>
                   <div class="order-list" id="delivery-order-list">
                     <div class="loading-spinner">
                       <i class="fa-solid fa-spinner fa-spin"></i>
-                      <p>Đang tải đơn hàng giao hàng...</p>
+                      <p>Đang tải bill giao hàng...</p>
                     </div>
                   </div>
                 </div>
@@ -525,7 +582,10 @@
           <div class="subpage" id="page-kitchen">
             <div class="admin-container">
               <div class="page-header">
-                <h1><i class="fa-solid fa-fire"></i> Bếp - Quản lý Đơn hàng</h1>
+                <h1><i class="fa-solid fa-fire"></i> Bếp - Quản lý Sản xuất</h1>
+                <div class="page-description">
+                  <p>Theo dõi quy trình nấu nướng và trạng thái sản xuất món ăn</p>
+                </div>
                 <div class="kitchen-controls">
                   <button class="btn btn-primary" id="refresh-kitchen">
                     <i class="fa-solid fa-refresh"></i> Cập nhật
@@ -870,6 +930,9 @@
             
             // Load categories for dropdowns
             loadCategoriesForDropdowns();
+            
+            // Load revenue data
+            loadRevenueData('dine-in');
           } else {
             // Không phải admin -> Đăng xuất và báo lỗi
             alert("Tài khoản của bạn không có quyền truy cập trang quản trị.");
@@ -943,10 +1006,10 @@
               // Update page title
               const pageTitles = {
                 'dashboard': 'Dashboard',
-                'orders': 'Quản lý đơn hàng', 
+                'orders': 'Quản lý doanh thu', 
                 'booking': 'Quản lý đơn đặt bàn',
                 'menu': 'Quản lý Menu',
-                'kitchen': 'Bếp - Quản lý Đơn hàng',
+                'kitchen': 'Bếp - Quản lý sản xuất',
                 'advanced': 'Cài đặt nâng cao'
               };
               if (pageTitle) {
@@ -1039,7 +1102,22 @@
       refreshOrders?.addEventListener('click', loadOrders);
       refreshKitchen?.addEventListener('click', loadKitchen);
 
-      // Order tabs
+      // Order revenue tabs
+      document.querySelectorAll('.order-tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.order-tab-btn').forEach(b => b.classList.remove('active'));
+          document.querySelectorAll('.order-tab-content').forEach(content => content.classList.remove('active'));
+          
+          btn.classList.add('active');
+          const tabId = btn.getAttribute('data-tab') + '-orders';
+          document.getElementById(tabId)?.classList.add('active');
+          
+          // Load data for specific tab
+          loadRevenueData(btn.getAttribute('data-tab'));
+        });
+      });
+
+      // Kitchen order tabs (different from revenue tabs)
       document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.addEventListener('click', () => {
           document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -1740,6 +1818,142 @@
             showNotification('Có lỗi xảy ra khi hủy đặt bàn', 'error');
           }
         }
+      };
+
+      // --- REVENUE MANAGEMENT SYSTEM ---
+      async function loadRevenueData(type = 'dine-in') {
+        try {
+          // In production, fetch real orders from Firebase
+          // For now, show empty state since we removed sample data
+          const orders = [];
+          
+          // Update revenue stats
+          updateRevenueStats(orders);
+          
+          // Update tab counts
+          updateTabCounts(orders);
+          
+          // Render orders for specific tab
+          if (type === 'dine-in') {
+            renderBillList('dine-in-order-list', orders.filter(o => o.type === 'dine-in'), 'Bill tại bàn');
+          } else {
+            renderBillList('delivery-order-list', orders.filter(o => o.type === 'delivery'), 'Bill giao hàng');
+          }
+          
+        } catch (error) {
+          console.error("Error loading revenue data:", error);
+          showNotification('Có lỗi xảy ra khi tải dữ liệu doanh thu', 'error');
+        }
+      }
+
+      function updateRevenueStats(orders) {
+        // Calculate revenue stats from orders (all 0 for now)
+        const dineOrders = orders.filter(o => o.type === 'dine-in');
+        const deliveryOrders = orders.filter(o => o.type === 'delivery');
+        
+        const dineRevenue = dineOrders.reduce((sum, order) => sum + (order.total || 0), 0);
+        const deliveryRevenue = deliveryOrders.reduce((sum, order) => sum + (order.total || 0), 0);
+        const totalRevenue = dineRevenue + deliveryRevenue;
+        const totalBills = orders.length;
+        
+        // Update display
+        document.getElementById('total-revenue').textContent = `${totalRevenue.toLocaleString('vi-VN')} VNĐ`;
+        document.getElementById('total-bills').textContent = totalBills;
+        document.getElementById('dine-revenue').textContent = `${dineRevenue.toLocaleString('vi-VN')} VNĐ`;
+        document.getElementById('delivery-revenue').textContent = `${deliveryRevenue.toLocaleString('vi-VN')} VNĐ`;
+      }
+
+      function updateTabCounts(orders) {
+        const dineCount = orders.filter(o => o.type === 'dine-in').length;
+        const deliveryCount = orders.filter(o => o.type === 'delivery').length;
+        
+        document.getElementById('dine-in-count').textContent = dineCount;
+        document.getElementById('delivery-count').textContent = deliveryCount;
+      }
+
+      function renderBillList(containerId, bills, type) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        
+        if (bills.length === 0) {
+          container.innerHTML = `
+            <div class="empty-state">
+              <div class="empty-icon">
+                <i class="fa-solid fa-receipt"></i>
+              </div>
+              <p>Chưa có ${type.toLowerCase()}</p>
+              <small>Các bill sẽ hiển thị khi có khách hàng đặt món</small>
+            </div>
+          `;
+        } else {
+          container.innerHTML = bills.map(bill => createBillCard(bill)).join('');
+        }
+      }
+
+      function createBillCard(bill) {
+        const statusColors = {
+          pending: '#fbbf24',
+          cooking: '#f97316', 
+          ready: '#10b981',
+          completed: '#059669',
+          cancelled: '#ef4444'
+        };
+        
+        const statusLabels = {
+          pending: 'Chờ xử lý',
+          cooking: 'Đang nấu',
+          ready: 'Sẵn sàng',
+          completed: 'Hoàn thành',
+          cancelled: 'Đã hủy'
+        };
+        
+        return `
+          <div class="bill-card">
+            <div class="bill-header">
+              <h4 class="bill-id">#${bill.id}</h4>
+              <span class="bill-status" style="background: ${statusColors[bill.status] || '#6b7280'}">
+                ${statusLabels[bill.status] || bill.status}
+              </span>
+            </div>
+            <div class="bill-info">
+              <div class="bill-customer">
+                <i class="fa-solid fa-user"></i>
+                ${bill.customer || 'Khách hàng'}
+              </div>
+              ${bill.table ? `<div class="bill-table"><i class="fa-solid fa-chair"></i> ${bill.table}</div>` : ''}
+              <div class="bill-time">
+                <i class="fa-solid fa-clock"></i>
+                ${bill.createdAt ? new Date(bill.createdAt).toLocaleString('vi-VN') : 'N/A'}
+              </div>
+            </div>
+            <div class="bill-items">
+              ${bill.items ? bill.items.map(item => 
+                `<div class="bill-item">${item.quantity}x ${item.name}</div>`
+              ).join('') : ''}
+            </div>
+            <div class="bill-footer">
+              <div class="bill-total">
+                <strong>${(bill.total || 0).toLocaleString('vi-VN')} VNĐ</strong>
+              </div>
+              <div class="bill-actions">
+                <button class="btn btn-sm btn-secondary" onclick="viewBillDetails('${bill.id}')" title="Xem chi tiết">
+                  <i class="fa-solid fa-eye"></i>
+                </button>
+                <button class="btn btn-sm btn-primary" onclick="printBill('${bill.id}')" title="In bill">
+                  <i class="fa-solid fa-print"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      window.viewBillDetails = function(billId) {
+        showNotification('Tính năng xem chi tiết bill đang được phát triển', 'info');
+      };
+
+      window.printBill = function(billId) {
+        showNotification('Tính năng in bill đang được phát triển', 'info');
       };
 
       // --- DASHBOARD MANAGEMENT SYSTEM ---
