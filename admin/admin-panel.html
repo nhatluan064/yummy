@@ -398,8 +398,8 @@
                 <div class="header-content">
                   <h1><i class="fa-solid fa-utensils"></i> Quản lý Menu</h1>
                   <div class="menu-tabs">
-                    <button class="tab-btn active" onclick="switchMenuTab('items')">Món ăn</button>
-                    <button class="tab-btn" onclick="switchMenuTab('categories')">Danh mục</button>
+                    <button class="tab-btn active" onclick="switchMenuTab('items', event)">Món ăn</button>
+                    <button class="tab-btn" onclick="switchMenuTab('categories', event)">Danh mục</button>
                   </div>
                 </div>
                 <div class="header-actions">
@@ -1116,18 +1116,32 @@
       let currentEditingCategory = null;
 
       // Switch menu tabs
-      window.switchMenuTab = function(tab) {
+      window.switchMenuTab = function(tab, event) {
+        console.log('🔄 Switching to tab:', tab);
+        
         // Hide all tab contents
         document.getElementById('menu-items-tab').classList.toggle('active', tab === 'items');
         document.getElementById('menu-categories-tab').classList.toggle('active', tab === 'categories');
         
         // Update tab buttons
         document.querySelectorAll('.menu-tabs .tab-btn').forEach(btn => btn.classList.remove('active'));
-        event.target.classList.add('active');
+        if (event && event.target) {
+          event.target.classList.add('active');
+        }
         
         // Show/hide action buttons
-        document.getElementById('add-menu-item-btn').style.display = tab === 'items' ? 'inline-flex' : 'none';
-        document.getElementById('add-category-btn').style.display = tab === 'categories' ? 'inline-flex' : 'none';
+        const addMenuBtn = document.getElementById('add-menu-item-btn');
+        const addCategoryBtn = document.getElementById('add-category-btn');
+        
+        if (tab === 'items') {
+          addMenuBtn.style.display = 'inline-flex';
+          addCategoryBtn.style.display = 'none';
+          console.log('✅ Showing "Thêm món mới" button');
+        } else if (tab === 'categories') {
+          addMenuBtn.style.display = 'none';
+          addCategoryBtn.style.display = 'inline-flex';
+          console.log('✅ Showing "Thêm danh mục" button');
+        }
         
         // Load appropriate data
         if (tab === 'categories') {
