@@ -62,177 +62,229 @@
     </div>
 
     <div class="page" id="page-shell">
-      <nav class="navbar">
-        <div class="navbar-logo">
-          <i class="fa-solid fa-utensils"></i>YUMMY Admin
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <div class="sidebar-header">
+          <div class="logo">
+            <i class="fa-solid fa-utensils"></i>
+            <span>YUMMY</span>
+          </div>
+          <div class="time-date">
+            <div class="time" id="current-time">Time: hh:mm:ss</div>
+            <div class="date" id="current-date">Date: (dd/mm/yyyy)</div>
+          </div>
         </div>
-        <ul class="navbar-links">
-          <li>
-            <a data-page="dashboard" class="nav-link active"
-              ><i class="fa-solid fa-chart-line"></i>Dashboard</a
-            >
-          </li>
-          <li>
-            <a data-page="menu" class="nav-link"
-              ><i class="fa-solid fa-utensils"></i>Quản lý Menu</a
-            >
-          </li>
-          <li>
-            <a data-page="orders" class="nav-link"
-              ><i class="fa-solid fa-clipboard-list"></i>Đơn hàng</a
-            >
-          </li>
-          <li>
-            <a data-page="kitchen" class="nav-link"
-              ><i class="fa-solid fa-fire-burner"></i>Bếp</a
-            >
-          </li>
-          <li>
-            <a href="#" id="logout-btn" class="nav-link"
-              ><i class="fa-solid fa-sign-out-alt"></i>Đăng xuất (<span
-                id="user-email-display"
-              ></span
-              >)</a
-            >
-          </li>
-        </ul>
-      </nav>
 
-      <div class="subpage active" id="page-dashboard">
-        <div class="admin-container">
-          <h1>Chào mừng trở lại!</h1>
-          <p>Đây là trang quản trị chính của bạn.</p>
+        <div class="sidebar-menu">
+          <ul class="nav-menu">
+            <li>
+              <a data-page="dashboard" class="nav-link active">
+                <i class="fa-solid fa-chart-line"></i>
+                <span>Dashboard</span>
+              </a>
+            </li>
+            <li>
+              <a data-page="orders" class="nav-link">
+                <i class="fa-solid fa-clipboard-list"></i>
+                <span>Quản lý đơn hàng</span>
+              </a>
+            </li>
+            <li>
+              <a data-page="booking" class="nav-link">
+                <i class="fa-solid fa-calendar-days"></i>
+                <span>Quản lý đơn đặt bàn</span>
+              </a>
+            </li>
+            <li>
+              <a data-page="menu" class="nav-link">
+                <i class="fa-solid fa-utensils"></i>
+                <span>Quản lý Menu</span>
+              </a>
+            </li>
+            <li>
+              <a data-page="advanced" class="nav-link">
+                <i class="fa-solid fa-cog"></i>
+                <span>Cài đặt nâng cao</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="sidebar-footer">
+          <div class="user-info">
+            <div class="user-avatar">
+              <i class="fa-solid fa-user"></i>
+            </div>
+            <div class="user-details">
+              <div class="user-name">Thông tin nhóm</div>
+              <div class="user-email" id="user-email-display"></div>
+            </div>
+          </div>
+          <button id="logout-btn" class="logout-btn">
+            <i class="fa-solid fa-sign-out-alt"></i>
+            <span>Đăng xuất</span>
+          </button>
         </div>
       </div>
 
-      <div class="subpage" id="page-menu">
-        <div class="admin-container">
-          <div class="page-header">
-            <h1><i class="fa-solid fa-utensils"></i> Quản lý Menu</h1>
-            <button class="btn btn-primary" id="add-menu-item-btn">
-              <i class="fa-solid fa-plus"></i> Thêm món mới
-            </button>
+      <!-- Main Content -->
+      <div class="main-content">
+        <div class="content-header">
+          <div class="breadcrumb">
+            <span id="current-page-title">Dashboard</span>
           </div>
+          <div class="header-actions">
+            <!-- Actions will be added dynamically -->
+          </div>
+        </div>
 
-          <div class="menu-stats">
-            <div class="stat-card">
-              <i class="fa-solid fa-list"></i>
-              <div class="stat-info">
-                <span class="stat-value" id="total-menu-items">0</span>
-                <span class="stat-label">Tổng món</span>
-              </div>
-            </div>
-            <div class="stat-card">
-              <i class="fa-solid fa-check-circle"></i>
-              <div class="stat-info">
-                <span class="stat-value" id="available-menu-items">0</span>
-                <span class="stat-label">Còn món</span>
-              </div>
-            </div>
-            <div class="stat-card">
-              <i class="fa-solid fa-times-circle"></i>
-              <div class="stat-info">
-                <span class="stat-value" id="unavailable-menu-items">0</span>
-                <span class="stat-label">Hết món</span>
-              </div>
+        <div class="content-body">
+
+        <div class="content-body">
+          <div class="subpage active" id="page-dashboard">
+            <div class="admin-container">
+              <h1>Chào mừng trở lại!</h1>
+              <p>Đây là trang quản trị chính của bạn.</p>
             </div>
           </div>
 
-          <div class="menu-filters">
-            <select id="category-filter" class="form-control">
-              <option value="">Tất cả danh mục</option>
+          <div class="subpage" id="page-orders">
+            <div class="admin-container">
+              <h1><i class="fa-solid fa-clipboard-list"></i> Quản lý Đơn hàng</h1>
+              <p>Chức năng đang phát triển...</p>
+            </div>
+          </div>
+
+          <div class="subpage" id="page-booking">
+            <div class="admin-container">
+              <h1><i class="fa-solid fa-calendar-days"></i> Quản lý Đơn đặt bàn</h1>
+              <p>Chức năng đang phát triển...</p>
+            </div>
+          </div>
+
+          <div class="subpage" id="page-menu">
+            <div class="admin-container">
+              <div class="page-header">
+                <h1><i class="fa-solid fa-utensils"></i> Quản lý Menu</h1>
+                <button class="btn btn-primary" id="add-menu-item-btn">
+                  <i class="fa-solid fa-plus"></i> Thêm món mới
+                </button>
+              </div>
+
+              <div class="menu-stats">
+                <div class="stat-card">
+                  <i class="fa-solid fa-list"></i>
+                  <div class="stat-info">
+                    <span class="stat-value" id="total-menu-items">0</span>
+                    <span class="stat-label">Tổng món</span>
+                  </div>
+                </div>
+                <div class="stat-card">
+                  <i class="fa-solid fa-check-circle"></i>
+                  <div class="stat-info">
+                    <span class="stat-value" id="available-menu-items">0</span>
+                    <span class="stat-label">Còn món</span>
+                  </div>
+                </div>
+                <div class="stat-card">
+                  <i class="fa-solid fa-times-circle"></i>
+                  <div class="stat-info">
+                    <span class="stat-value" id="unavailable-menu-items">0</span>
+                    <span class="stat-label">Hết món</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="menu-filters">
+                <select id="category-filter" class="form-control" title="Lọc theo danh mục">
+                  <option value="">Tất cả danh mục</option>
+                  <option value="Món chính">Món chính</option>
+                  <option value="Món khai vị">Món khai vị</option>
+                  <option value="Tráng miệng">Tráng miệng</option>
+                  <option value="Đồ uống">Đồ uống</option>
+                  <option value="Khác">Khác</option>
+                </select>
+                <select id="status-filter" class="form-control" title="Lọc theo trạng thái">
+                  <option value="">Tất cả trạng thái</option>
+                  <option value="true">Còn món</option>
+                  <option value="false">Hết món</option>
+                </select>
+              </div>
+
+              <div class="menu-list" id="menu-items-list">
+                <div class="loading-spinner">
+                  <i class="fa-solid fa-spinner fa-spin"></i>
+                  <p>Đang tải danh sách món ăn...</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="subpage" id="page-advanced">
+            <div class="admin-container">
+              <h1><i class="fa-solid fa-cog"></i> Cài đặt nâng cao</h1>
+              <p>Chức năng đang phát triển...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal thêm/sửa món ăn -->
+    <div class="modal" id="menu-item-modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 id="modal-title">Thêm món mới</h3>
+          <button class="modal-close" id="close-modal-btn" title="Đóng">
+            <i class="fa-solid fa-times"></i>
+          </button>
+        </div>
+        <form id="menu-item-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="item-name">Tên món</label>
+              <input type="text" id="item-name" required />
+            </div>
+            <div class="form-group">
+              <label for="item-price">Giá (VNĐ)</label>
+              <input type="number" id="item-price" min="0" required />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="item-category">Danh mục</label>
+            <select id="item-category" required>
+              <option value="">Chọn danh mục</option>
               <option value="Món chính">Món chính</option>
               <option value="Món khai vị">Món khai vị</option>
               <option value="Tráng miệng">Tráng miệng</option>
               <option value="Đồ uống">Đồ uống</option>
               <option value="Khác">Khác</option>
             </select>
-            <select id="status-filter" class="form-control">
-              <option value="">Tất cả trạng thái</option>
-              <option value="true">Còn món</option>
-              <option value="false">Hết món</option>
-            </select>
           </div>
-
-          <div class="menu-list" id="menu-items-list">
-            <div class="loading-spinner">
-              <i class="fa-solid fa-spinner fa-spin"></i>
-              <p>Đang tải danh sách món ăn...</p>
-            </div>
+          <div class="form-group">
+            <label for="item-description">Mô tả</label>
+            <textarea id="item-description" rows="3"></textarea>
           </div>
-        </div>
-      </div>
-
-      <!-- Modal thêm/sửa món ăn -->
-      <div class="modal" id="menu-item-modal">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h3 id="modal-title">Thêm món mới</h3>
-            <button class="modal-close" id="close-modal-btn">
-              <i class="fa-solid fa-times"></i>
+          <div class="form-group">
+            <label for="item-image">URL hình ảnh</label>
+            <input type="url" id="item-image" placeholder="https://example.com/image.jpg" />
+          </div>
+          <div class="form-group">
+            <label class="checkbox-label">
+              <input type="checkbox" id="item-available" checked />
+              <span class="checkmark"></span>
+              Món hiện có sẵn
+            </label>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" id="cancel-btn">
+              Hủy
+            </button>
+            <button type="submit" class="btn btn-primary" id="save-btn">
+              <i class="fa-solid fa-save"></i> Lưu
             </button>
           </div>
-          <form id="menu-item-form">
-            <div class="form-row">
-              <div class="form-group">
-                <label for="item-name">Tên món</label>
-                <input type="text" id="item-name" required />
-              </div>
-              <div class="form-group">
-                <label for="item-price">Giá (VNĐ)</label>
-                <input type="number" id="item-price" min="0" required />
-              </div>
-            </div>
-            <div class="form-group">
-              <label for="item-category">Danh mục</label>
-              <select id="item-category" required>
-                <option value="">Chọn danh mục</option>
-                <option value="Món chính">Món chính</option>
-                <option value="Món khai vị">Món khai vị</option>
-                <option value="Tráng miệng">Tráng miệng</option>
-                <option value="Đồ uống">Đồ uống</option>
-                <option value="Khác">Khác</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label for="item-description">Mô tả</label>
-              <textarea id="item-description" rows="3"></textarea>
-            </div>
-            <div class="form-group">
-              <label for="item-image">URL hình ảnh</label>
-              <input type="url" id="item-image" placeholder="https://example.com/image.jpg" />
-            </div>
-            <div class="form-group">
-              <label class="checkbox-label">
-                <input type="checkbox" id="item-available" checked />
-                <span class="checkmark"></span>
-                Món hiện có sẵn
-              </label>
-            </div>
-            <div class="form-actions">
-              <button type="button" class="btn btn-secondary" id="cancel-btn">
-                Hủy
-              </button>
-              <button type="submit" class="btn btn-primary" id="save-btn">
-                <i class="fa-solid fa-save"></i> Lưu
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-
-      <div class="subpage" id="page-orders">
-        <div class="admin-container">
-          <h1><i class="fa-solid fa-clipboard-list"></i> Quản lý Đơn hàng</h1>
-          <p>Chức năng đang phát triển...</p>
-        </div>
-      </div>
-
-      <div class="subpage" id="page-kitchen">
-        <div class="admin-container">
-          <h1><i class="fa-solid fa-fire-burner"></i> Bếp</h1>
-          <p>Chức năng đang phát triển...</p>
-        </div>
+        </form>
       </div>
     </div>
 
@@ -376,8 +428,9 @@
             pageShell.classList.add("active");
             userEmailDisplay.textContent = user.email;
             
-            // Khởi tạo navigation và load menu data
+            // Khởi tạo navigation, clock và load menu data
             initializeNavigation();
+            initializeClock();
             loadMenuItems();
           } else {
             // Không phải admin -> Đăng xuất và báo lỗi
@@ -393,10 +446,46 @@
         }
       });
 
-      // --- 6. NAVIGATION SYSTEM ---
+      // --- 6. CLOCK AND DATE SYSTEM ---
+      function initializeClock() {
+        function updateTime() {
+          const now = new Date();
+          
+          // Format time
+          const timeOptions = { 
+            hour: '2-digit', 
+            minute: '2-digit', 
+            second: '2-digit',
+            hour12: false 
+          };
+          const timeString = now.toLocaleTimeString('vi-VN', timeOptions);
+          
+          // Format date
+          const dateOptions = { 
+            day: '2-digit', 
+            month: '2-digit', 
+            year: 'numeric' 
+          };
+          const dateString = now.toLocaleDateString('vi-VN', dateOptions);
+          
+          // Update display
+          const timeElement = document.getElementById('current-time');
+          const dateElement = document.getElementById('current-date');
+          
+          if (timeElement) timeElement.textContent = `Time: ${timeString}`;
+          if (dateElement) dateElement.textContent = `Date: ${dateString}`;
+        }
+        
+        // Update immediately and then every second
+        updateTime();
+        setInterval(updateTime, 1000);
+      }
+
+      // --- 7. NAVIGATION SYSTEM ---
       function initializeNavigation() {
         const navLinks = document.querySelectorAll('.nav-link[data-page]');
         const subpages = document.querySelectorAll('.subpage');
+        const pageTitle = document.getElementById('current-page-title');
 
         navLinks.forEach(link => {
           link.addEventListener('click', (e) => {
@@ -413,6 +502,18 @@
             if (targetSubpage) {
               targetSubpage.classList.add('active');
               
+              // Update page title
+              const pageTitles = {
+                'dashboard': 'Dashboard',
+                'orders': 'Quản lý đơn hàng', 
+                'booking': 'Quản lý đơn đặt bàn',
+                'menu': 'Quản lý Menu',
+                'advanced': 'Cài đặt nâng cao'
+              };
+              if (pageTitle) {
+                pageTitle.textContent = pageTitles[targetPage] || 'Dashboard';
+              }
+              
               // Load specific page data
               if (targetPage === 'menu') {
                 loadMenuItems();
@@ -422,7 +523,7 @@
         });
       }
 
-      // --- 7. MENU MANAGEMENT SYSTEM ---
+      // --- 8. MENU MANAGEMENT SYSTEM ---
       let currentEditingItem = null;
 
       // Utility functions
