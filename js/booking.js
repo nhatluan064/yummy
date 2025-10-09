@@ -1,5 +1,23 @@
 // === BOOKING.JS - QUẢN LÝ ĐẶT BÀN ===
 
+// Import Firebase modules if running in module context
+let db = null;
+let addDoc = null;
+let collection = null;
+let getDocs = null;
+let deleteDoc = null;
+let doc = null;
+let setDoc = null;
+let orderBy = null;
+let query = null;
+
+// Initialize Firebase connection if available
+if (typeof window !== 'undefined' && window.firebase) {
+  // Firebase already initialized elsewhere
+} else {
+  // Will be initialized by the page that includes this script
+}
+
 class BookingManager {
   constructor() {
     this.init();
@@ -9,8 +27,31 @@ class BookingManager {
     document.addEventListener('DOMContentLoaded', () => {
       this.setupBookingForm();
       this.setupDateTimeValidation();
-      this.loadBookings();
+      this.initializeFirebase();
     });
+  }
+
+  async initializeFirebase() {
+    try {
+      // Firebase should be initialized by the including page
+      if (typeof window !== 'undefined' && window.firebaseApp) {
+        const { getFirestore, collection: fbCollection, addDoc: fbAddDoc, getDocs: fbGetDocs, 
+                deleteDoc: fbDeleteDoc, doc: fbDoc, setDoc: fbSetDoc, orderBy: fbOrderBy, 
+                query: fbQuery } = await import("https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js");
+        
+        db = getFirestore(window.firebaseApp);
+        collection = fbCollection;
+        addDoc = fbAddDoc;
+        getDocs = fbGetDocs;
+        deleteDoc = fbDeleteDoc;
+        doc = fbDoc;
+        setDoc = fbSetDoc;
+        orderBy = fbOrderBy;
+        query = fbQuery;
+      }
+    } catch (error) {
+      console.warn('Firebase not available, using localStorage fallback:', error);
+    }
   }
 
   setupBookingForm() {
@@ -79,7 +120,7 @@ class BookingManager {
     return true;
   }
 
-  handleBookingSubmit(form) {
+  async handleBookingSubmit(form) {
     if (!Utils.validateForm(form)) {
       Utils.showNotification("Vui lòng điền đầy đủ thông tin!", 'error');
       return;
@@ -104,17 +145,18 @@ class BookingManager {
     };
 
     // Check if table is available
-    if (this.isTableAvailable(bookingData.date, bookingData.time, bookingData.people)) {
-      this.saveBooking(bookingData);
+    const isAvailable = await this.isTableAvailable(bookingData.date, bookingData.time, bookingData.people);
+    if (isAvailable) {
+      await this.saveBooking(bookingData);
       this.showBookingSuccess(bookingData);
       form.reset();
     } else {
-      this.showAlternativeSlots(bookingData.date, bookingData.people);
+      await this.showAlternativeSlots(bookingData.date, bookingData.people);
     }
   }
 
-  isTableAvailable(date, time, people) {
-    const bookings = Utils.loadFromStorage('bookings', []);
+  async isTableAvailable(date, time, people) {
+    const bookings = await this.loadBookings();
     const requestedDateTime = new Date(`${date}T${time}`);
     
     // Check for conflicts (1 hour buffer)
@@ -130,8 +172,8 @@ class BookingManager {
     return conflicts.length === 0;
   }
 
-  showAlternativeSlots(date, people) {
-    const alternatives = this.findAlternativeSlots(date, people);
+  async showAlternativeSlots(date, people) {
+    const alternatives = await this.findAlternativeSlots(date, people);
     
     if (alternatives.length > 0) {
       let message = "Thời gian này đã có người đặt. Các khung giờ khác:\n";
@@ -148,15 +190,15 @@ class BookingManager {
     }
   }
 
-  findAlternativeSlots(date, people) {
+  async findAlternativeSlots(date, people) {
     const alternatives = [];
-    const bookings = Utils.loadFromStorage('bookings', []);
     
     // Generate available time slots (10:00 - 21:00, every hour)
     for (let hour = 10; hour <= 21; hour++) {
       const time = `${hour.toString().padStart(2, '0')}:00`;
       
-      if (this.isTableAvailable(date, time, people)) {
+      const isAvailable = await this.isTableAvailable(date, time, people);
+      if (isAvailable) {
         alternatives.push({ time, available: true });
       }
     }
@@ -164,21 +206,29 @@ class BookingManager {
     return alternatives.slice(0, 3); // Return first 3 alternatives
   }
 
-  saveBooking(bookingData) {
-    const bookings = Utils.loadFromStorage('bookings', []);
-    bookings.push(bookingData);
-    Utils.saveToStorage('bookings', bookings);
-    
-    // Also save to admin orders for tracking
-    const orders = Utils.loadFromStorage('orders', []);
-    const orderData = {
-      ...bookingData,
-      type: 'reservation',
-      items: [],
-      total: 0
-    };
-    orders.push(orderData);
-    Utils.saveToStorage('orders', orders);
+  async saveBooking(bookingData) {
+    try {
+      if (db && addDoc && collection) {
+        // Save to Firebase
+        const bookingsCollectionRef = collection(db, "bookings");
+        const docRef = await addDoc(bookingsCollectionRef, {
+          ...bookingData,
+          createdAt: new Date()
+        });
+        console.log("Booking saved to Firebase with ID:", docRef.id);
+      } else {
+        // Fallback to localStorage
+        const bookings = Utils.loadFromStorage('bookings', []);
+        bookings.push(bookingData);
+        Utils.saveToStorage('bookings', bookings);
+      }
+    } catch (error) {
+      console.error("Error saving booking:", error);
+      // Fallback to localStorage
+      const bookings = Utils.loadFromStorage('bookings', []);
+      bookings.push(bookingData);
+      Utils.saveToStorage('bookings', bookings);
+    }
   }
 
   showBookingSuccess(bookingData) {
@@ -212,10 +262,27 @@ Chúng tôi sẽ sớm liên hệ với bạn để xác nhận!`;
     }, 2000);
   }
 
-  loadBookings() {
-    // This method can be used to load and display existing bookings
-    const bookings = Utils.loadFromStorage('bookings', []);
-    return bookings;
+  async loadBookings() {
+    try {
+      if (db && getDocs && collection) {
+        // Load from Firebase
+        const bookingsCollectionRef = collection(db, "bookings");
+        const querySnapshot = await getDocs(bookingsCollectionRef);
+        
+        const bookings = [];
+        querySnapshot.forEach((doc) => {
+          bookings.push({ id: doc.id, ...doc.data() });
+        });
+        
+        return bookings;
+      } else {
+        // Fallback to localStorage
+        return Utils.loadFromStorage('bookings', []);
+      }
+    } catch (error) {
+      console.error("Error loading bookings:", error);
+      return Utils.loadFromStorage('bookings', []);
+    }
   }
 
   // Admin methods for managing bookings

@@ -157,8 +157,61 @@
 
           <div class="subpage" id="page-booking">
             <div class="admin-container">
-              <h1><i class="fa-solid fa-calendar-days"></i> Quản lý Đơn đặt bàn</h1>
-              <p>Chức năng đang phát triển...</p>
+              <div class="page-header">
+                <h1><i class="fa-solid fa-calendar-days"></i> Quản lý Đơn đặt bàn</h1>
+                <button class="btn btn-success" id="refresh-bookings-btn">
+                  <i class="fa-solid fa-refresh"></i> Tải lại
+                </button>
+              </div>
+
+              <div class="booking-stats">
+                <div class="stat-card">
+                  <i class="fa-solid fa-calendar-check"></i>
+                  <div class="stat-info">
+                    <span class="stat-value" id="total-bookings">0</span>
+                    <span class="stat-label">Tổng đặt bàn</span>
+                  </div>
+                </div>
+                <div class="stat-card">
+                  <i class="fa-solid fa-clock"></i>
+                  <div class="stat-info">
+                    <span class="stat-value" id="pending-bookings">0</span>
+                    <span class="stat-label">Chờ xác nhận</span>
+                  </div>
+                </div>
+                <div class="stat-card">
+                  <i class="fa-solid fa-check-circle"></i>
+                  <div class="stat-info">
+                    <span class="stat-value" id="confirmed-bookings">0</span>
+                    <span class="stat-label">Đã xác nhận</span>
+                  </div>
+                </div>
+                <div class="stat-card">
+                  <i class="fa-solid fa-times-circle"></i>
+                  <div class="stat-info">
+                    <span class="stat-value" id="cancelled-bookings">0</span>
+                    <span class="stat-label">Đã hủy</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="booking-filters">
+                <select id="booking-status-filter" class="form-control" title="Lọc theo trạng thái">
+                  <option value="">Tất cả trạng thái</option>
+                  <option value="pending">Chờ xác nhận</option>
+                  <option value="confirmed">Đã xác nhận</option>
+                  <option value="cancelled">Đã hủy</option>
+                  <option value="completed">Hoàn thành</option>
+                </select>
+                <input type="date" id="booking-date-filter" class="form-control" title="Lọc theo ngày">
+              </div>
+
+              <div class="booking-list" id="booking-list">
+                <div class="loading-spinner">
+                  <i class="fa-solid fa-spinner fa-spin"></i>
+                  <p>Đang tải danh sách đặt bàn...</p>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -517,6 +570,8 @@
               // Load specific page data
               if (targetPage === 'menu') {
                 loadMenuItems();
+              } else if (targetPage === 'booking') {
+                loadBookings();
               }
             }
           });
@@ -574,9 +629,15 @@
       // Filter controls
       const categoryFilter = document.getElementById('category-filter');
       const statusFilter = document.getElementById('status-filter');
+      const refreshBookingsBtn = document.getElementById('refresh-bookings-btn');
+      const bookingStatusFilter = document.getElementById('booking-status-filter');
+      const bookingDateFilter = document.getElementById('booking-date-filter');
 
       categoryFilter?.addEventListener('change', loadMenuItems);
       statusFilter?.addEventListener('change', loadMenuItems);
+      refreshBookingsBtn?.addEventListener('click', loadBookings);
+      bookingStatusFilter?.addEventListener('change', loadBookings);
+      bookingDateFilter?.addEventListener('change', loadBookings);
 
       // Load and display menu items
       async function loadMenuItems() {
@@ -801,6 +862,211 @@
           notification.remove();
         }, 5000);
       }
+
+      // --- BOOKING MANAGEMENT SYSTEM ---
+      async function loadBookings() {
+        const bookingList = document.getElementById('booking-list');
+        if (!bookingList) return;
+
+        bookingList.innerHTML = `
+          <div class="loading-spinner">
+            <i class="fa-solid fa-spinner fa-spin"></i>
+            <p>Đang tải danh sách đặt bàn...</p>
+          </div>
+        `;
+
+        try {
+          const bookingsCollectionRef = collection(db, "bookings");
+          const querySnapshot = await getDocs(bookingsCollectionRef);
+
+          const bookings = [];
+          querySnapshot.forEach((doc) => {
+            bookings.push({ id: doc.id, ...doc.data() });
+          });
+
+          // Apply filters
+          const statusFilter = document.getElementById('booking-status-filter')?.value;
+          const dateFilter = document.getElementById('booking-date-filter')?.value;
+
+          let filteredBookings = bookings;
+          if (statusFilter) {
+            filteredBookings = filteredBookings.filter(booking => booking.status === statusFilter);
+          }
+          if (dateFilter) {
+            filteredBookings = filteredBookings.filter(booking => booking.date === dateFilter);
+          }
+
+          // Sort by creation date (newest first)
+          filteredBookings.sort((a, b) => {
+            const dateA = a.createdAt?.seconds ? new Date(a.createdAt.seconds * 1000) : new Date(a.createdAt || 0);
+            const dateB = b.createdAt?.seconds ? new Date(b.createdAt.seconds * 1000) : new Date(b.createdAt || 0);
+            return dateB - dateA;
+          });
+
+          // Update stats
+          updateBookingStats(bookings);
+
+          // Render bookings
+          if (filteredBookings.length === 0) {
+            bookingList.innerHTML = `
+              <div class="empty-state">
+                <i class="fa-solid fa-calendar-days"></i>
+                <h3>Chưa có đặt bàn nào</h3>
+                <p>Các đặt bàn mới sẽ xuất hiện ở đây</p>
+              </div>
+            `;
+          } else {
+            bookingList.innerHTML = `
+              <div class="booking-header">
+                <div>Thông tin khách hàng</div>
+                <div>Ngày & Giờ</div>
+                <div>Số người</div>
+                <div>Trạng thái</div>
+                <div>Hành động</div>
+              </div>
+              ${filteredBookings.map(booking => createBookingCard(booking)).join('')}
+            `;
+          }
+        } catch (error) {
+          console.error("Error loading bookings:", error);
+          bookingList.innerHTML = `
+            <div class="error-message">
+              <i class="fa-solid fa-triangle-exclamation"></i>
+              <h3>Không thể tải danh sách đặt bàn</h3>
+              <p>Đã có lỗi xảy ra. Vui lòng thử lại.</p>
+            </div>
+          `;
+        }
+      }
+
+      function createBookingCard(booking) {
+        const formatDate = (dateStr) => {
+          const date = new Date(dateStr);
+          return date.toLocaleDateString('vi-VN');
+        };
+
+        const getStatusBadge = (status) => {
+          const statusMap = {
+            'pending': { class: 'status-pending', text: 'Chờ xác nhận' },
+            'confirmed': { class: 'status-confirmed', text: 'Đã xác nhận' },
+            'cancelled': { class: 'status-cancelled', text: 'Đã hủy' },
+            'completed': { class: 'status-completed', text: 'Hoàn thành' }
+          };
+          const statusInfo = statusMap[status] || { class: 'status-pending', text: status };
+          return `<span class="status-badge ${statusInfo.class}">${statusInfo.text}</span>`;
+        };
+
+        const hasNotes = booking.notes && booking.notes.trim() !== '';
+
+        return `
+          <div class="booking-item">
+            <div class="booking-info" data-label="Khách hàng:">
+              <div>
+                <h4>${booking.name}</h4>
+                <p><i class="fa-solid fa-phone"></i> ${booking.phone}</p>
+                ${booking.email ? `<p><i class="fa-solid fa-envelope"></i> ${booking.email}</p>` : ''}
+              </div>
+            </div>
+            <div class="booking-datetime" data-label="Thời gian:">
+              <div class="booking-date">${formatDate(booking.date)}</div>
+              <div class="booking-time">${booking.time}</div>
+            </div>
+            <div class="booking-people" data-label="Số người:">
+              ${booking.people} người
+            </div>
+            <div class="booking-status" data-label="Trạng thái:">
+              ${getStatusBadge(booking.status)}
+            </div>
+            <div class="booking-actions" data-label="Hành động:">
+              ${booking.status === 'pending' ? `
+                <button class="btn btn-sm btn-success" onclick="confirmBooking('${booking.id}')">
+                  <i class="fa-solid fa-check"></i> Xác nhận
+                </button>
+              ` : ''}
+              ${booking.status !== 'cancelled' && booking.status !== 'completed' ? `
+                <button class="btn btn-sm btn-warning" onclick="completeBooking('${booking.id}')">
+                  <i class="fa-solid fa-check-double"></i> Hoàn thành
+                </button>
+              ` : ''}
+              ${booking.status !== 'cancelled' ? `
+                <button class="btn btn-sm btn-danger" onclick="cancelBooking('${booking.id}')">
+                  <i class="fa-solid fa-times"></i> Hủy
+                </button>
+              ` : ''}
+            </div>
+            ${hasNotes ? `
+              <div class="booking-notes">
+                <strong>Ghi chú:</strong>
+                <p>${booking.notes}</p>
+              </div>
+            ` : ''}
+          </div>
+        `;
+      }
+
+      function updateBookingStats(bookings) {
+        const totalBookings = bookings.length;
+        const pendingBookings = bookings.filter(b => b.status === 'pending').length;
+        const confirmedBookings = bookings.filter(b => b.status === 'confirmed').length;
+        const cancelledBookings = bookings.filter(b => b.status === 'cancelled').length;
+
+        document.getElementById('total-bookings').textContent = totalBookings;
+        document.getElementById('pending-bookings').textContent = pendingBookings;
+        document.getElementById('confirmed-bookings').textContent = confirmedBookings;
+        document.getElementById('cancelled-bookings').textContent = cancelledBookings;
+      }
+
+      // Global functions for booking actions
+      window.confirmBooking = async function(bookingId) {
+        if (confirm('Xác nhận đặt bàn này?')) {
+          try {
+            await setDoc(doc(db, "bookings", bookingId), { 
+              status: 'confirmed',
+              confirmedAt: new Date()
+            }, { merge: true });
+            
+            showNotification('Đã xác nhận đặt bàn thành công', 'success');
+            loadBookings();
+          } catch (error) {
+            console.error("Error confirming booking:", error);
+            showNotification('Có lỗi xảy ra khi xác nhận đặt bàn', 'error');
+          }
+        }
+      };
+
+      window.completeBooking = async function(bookingId) {
+        if (confirm('Đánh dấu đặt bàn này đã hoàn thành?')) {
+          try {
+            await setDoc(doc(db, "bookings", bookingId), { 
+              status: 'completed',
+              completedAt: new Date()
+            }, { merge: true });
+            
+            showNotification('Đã đánh dấu hoàn thành đặt bàn', 'success');
+            loadBookings();
+          } catch (error) {
+            console.error("Error completing booking:", error);
+            showNotification('Có lỗi xảy ra khi cập nhật trạng thái', 'error');
+          }
+        }
+      };
+
+      window.cancelBooking = async function(bookingId) {
+        if (confirm('Hủy đặt bàn này? Hành động này không thể hoàn tác.')) {
+          try {
+            await setDoc(doc(db, "bookings", bookingId), { 
+              status: 'cancelled',
+              cancelledAt: new Date()
+            }, { merge: true });
+            
+            showNotification('Đã hủy đặt bàn', 'success');
+            loadBookings();
+          } catch (error) {
+            console.error("Error cancelling booking:", error);
+            showNotification('Có lỗi xảy ra khi hủy đặt bàn', 'error');
+          }
+        }
+      };
     </script>
   </body>
 </html>

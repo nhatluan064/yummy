@@ -34,30 +34,19 @@
         <h1>Order món ăn</h1>
         <p>Chọn loại order và thưởng thức món ngon</p>
       </header>
-      <div class="order-type-selector">
-        <div class="order-type-btn active" data-type="dine-in">
-          <i class="fa-solid fa-utensils"></i><h3>Tại chỗ</h3><p>Order tại bàn nhà hàng</p>
-        </div>
-        <div class="order-type-btn" data-type="delivery">
-          <i class="fa-solid fa-truck"></i><h3>Giao hàng</h3><p>Giao hàng tận nơi</p>
-        </div>
-      </div>
+      <!-- Order type selector removed since delivery is now a separate page -->
       <div id="table-selection" class="dashboard-section">
         <h2 class="section-title">Chọn bàn</h2>
         <div class="table-grid"></div>
       </div>
-      <div id="shipping-form" class="shipping-form" style="display:none">
-        <h3><i class="fa-solid fa-map-marker-alt"></i> Thông tin giao hàng</h3>
-        <div class="form-group"><label for="customer-name">Họ và tên *</label><input type="text" id="customer-name" required></div>
-        <div class="form-group"><label for="shipping-phone">Số điện thoại *</label><input type="tel" id="shipping-phone" required></div>
-        <div class="form-group"><label for="shipping-address">Địa chỉ giao hàng *</label><textarea id="shipping-address" required></textarea></div>
-        <div class="shipping-fee"><strong>Phí giao hàng: <span id="shipping-fee">0đ</span></strong></div>
-      </div>
+      <!-- Shipping form removed - now handled by separate delivery page -->
       <main class="main-content">
         <section class="menu-section">
-          <div class="menu-category">
-            <h2><i class="fa-solid fa-star"></i> Món phổ biến</h2>
-            <div class="menu-grid" id="order-menu-grid"><!-- populated dynamically --></div>
+          <div id="menu-categories-container">
+            <div class="loading-spinner">
+              <i class="fa-solid fa-spinner fa-spin"></i>
+              <p>Đang tải thực đơn...</p>
+            </div>
           </div>
         </section>
         <aside class="cart-section">
@@ -65,9 +54,15 @@
           <ul class="cart-items" id="cart-items"><li class="cart-empty">Giỏ hàng trống</li></ul>
           <div class="cart-summary" id="cart-summary" style="display:none">
             <div class="price-breakdown">
-              <div class="price-row"><span>Tạm tính:</span><span id="subtotal">0đ</span></div>
-              <div class="price-row" id="shipping-row" style="display:none"><span>Phí giao hàng:</span><span id="shipping-fee-display">0đ</span></div>
-              <div class="total-price"><strong>Tổng cộng:</strong><strong id="total-price">0đ</strong></div>
+              <div class="price-row">
+                <span>Tạm tính:</span>
+                <span id="subtotal">0đ</span>
+              </div>
+              <!-- Shipping fee row removed - handled by delivery page -->
+              <div class="total-price">
+                <strong>Tổng cộng:</strong>
+                <strong id="total-price">0đ</strong>
+              </div>
             </div>
             <button id="checkout-btn" class="btn btn-primary" style="width:100%"><i class="fa-solid fa-credit-card"></i>Đặt hàng ngay</button>
           </div>
@@ -100,10 +95,121 @@
   <script src="../js/cart.js"></script>
   <script src="../js/booking.js"></script>
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+    import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
     import { getAnalytics, isSupported as analyticsIsSupported } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-analytics.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+    
     const firebaseConfig={apiKey:"AIzaSyCbUNjBPEaZOtI_cNCcCJ1DBXUUdrP_6oE",authDomain:"order-yummy.firebaseapp.com",projectId:"order-yummy",storageBucket:"order-yummy.firebasestorage.app",messagingSenderId:"142798840175",appId:"1:142798840175:web:1091d97784312c1fe4089a",measurementId:"G-GQ7MEPZSSJ"};
-    const app=initializeApp(firebaseConfig);analyticsIsSupported().then(s=>{if(s){getAnalytics(app);}}).catch(e=>console.warn("Analytics unavailable",e));
+    const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    
+    // Make Firebase available globally for booking.js
+    window.firebaseApp = app;
+    window.firebaseDb = db;
+    
+    analyticsIsSupported().then(s=>{if(s){getAnalytics(app);}}).catch(e=>console.warn("Analytics unavailable",e));
+
+    // Menu loading functionality
+    async function loadMenuFromFirebase() {
+      const menuContainer = document.getElementById('menu-categories-container');
+      
+      try {
+        // Load menu items from Firebase
+        const menuCollectionRef = collection(db, "menuItems");
+        const querySnapshot = await getDocs(menuCollectionRef);
+
+        const allMenuItems = [];
+        querySnapshot.forEach((doc) => {
+          allMenuItems.push({ id: doc.id, ...doc.data() });
+        });
+
+        // Filter available items only
+        const availableMenuItems = allMenuItems
+          .filter(item => item.isAvailable === true)
+          .sort((a, b) => {
+            if (a.category !== b.category) {
+              return (a.category || '').localeCompare(b.category || '');
+            }
+            return (a.name || '').localeCompare(b.name || '');
+          });
+
+        if (availableMenuItems.length === 0) {
+          menuContainer.innerHTML = `
+            <div class="empty-state">
+              <i class="fa-solid fa-utensils" style="font-size: 4rem; color: #ccc; margin-bottom: 1rem;"></i>
+              <h3 style="color: #666; margin-bottom: 0.5rem;">Chưa có món ăn nào</h3>
+              <p style="color: #999;">Vui lòng quay lại sau khi nhà hàng cập nhật thực đơn.</p>
+            </div>
+          `;
+          return;
+        }
+
+        // Group items by category
+        const itemsByCategory = availableMenuItems.reduce((acc, item) => {
+          const category = item.category || "Món khác";
+          if (!acc[category]) {
+            acc[category] = [];
+          }
+          acc[category].push(item);
+          return acc;
+        }, {});
+
+        // Render categories
+        menuContainer.innerHTML = '';
+        for (const category in itemsByCategory) {
+          const items = itemsByCategory[category];
+          const categoryHtml = `
+            <div class="menu-category">
+              <h2>${category}</h2>
+              <div class="menu-grid">
+                ${items.map(item => createMenuItemCard(item)).join('')}
+              </div>
+            </div>
+          `;
+          menuContainer.innerHTML += categoryHtml;
+        }
+
+      } catch (error) {
+        console.error("Error loading menu:", error);
+        menuContainer.innerHTML = `
+          <div class="empty-state">
+            <i class="fa-solid fa-triangle-exclamation" style="font-size: 4rem; color: #ef4444; margin-bottom: 1rem;"></i>
+            <h3 style="color: #666; margin-bottom: 0.5rem;">Không thể tải thực đơn</h3>
+            <p style="color: #999;">Đã có lỗi kết nối. Vui lòng thử tải lại trang.</p>
+            <button onclick="window.location.reload()" class="btn btn-primary" style="margin-top: 1rem;">
+              <i class="fa-solid fa-refresh"></i> Tải lại
+            </button>
+          </div>
+        `;
+      }
+    }
+
+    function createMenuItemCard(item) {
+      const placeholderImg = `https://placehold.co/400x300/f97316/FFFFFF?text=${encodeURIComponent(item.name)}`;
+      const formatCurrency = (amount) => new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(amount || 0);
+      
+      return `
+        <div class="menu-card">
+          <img src="${item.image || placeholderImg}" alt="${item.name}" class="menu-card-image" onerror="this.src='${placeholderImg}'">
+          <div class="menu-card-body">
+            <div class="menu-card-details">
+              <h4>${item.name}</h4>
+              <p>${item.description || 'Chưa có mô tả'}</p>
+            </div>
+            <div class="menu-card-price">${formatCurrency(item.price)}</div>
+          </div>
+          <button class="add-to-cart-btn" onclick="addToCart('${item.id}', '${item.name}', ${item.price})">
+            <i class="fa-solid fa-plus"></i> Thêm vào giỏ
+          </button>
+        </div>
+      `;
+    }
+
+    // Expose functions globally
+    window.loadMenuFromFirebase = loadMenuFromFirebase;
+    
+    // Load menu when page loads
+    document.addEventListener('DOMContentLoaded', loadMenuFromFirebase);
   </script>
   <script>
     document.addEventListener('DOMContentLoaded',()=>{

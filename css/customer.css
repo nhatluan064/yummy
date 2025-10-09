@@ -33,8 +33,21 @@
 /* --- THỰC ĐƠN & ORDER --- */
 .menu-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(3, 1fr); /* Cố định 3 cột */
   gap: 1.5rem;
+}
+
+/* Responsive cho màn hình nhỏ */
+@media (max-width: 1024px) {
+  .menu-grid {
+    grid-template-columns: repeat(2, 1fr); /* 2 cột cho tablet */
+  }
+}
+
+@media (max-width: 768px) {
+  .menu-grid {
+    grid-template-columns: 1fr; /* 1 cột cho mobile */
+  }
 }
 .menu-card {
   background: var(--card-background-color);
@@ -102,13 +115,31 @@
   background-color: var(--primary-color-dark);
 }
 .menu-category {
-  margin-bottom: 3rem;
+  margin-bottom: 4rem; /* Tăng khoảng cách giữa các danh mục */
 }
 .menu-category h2 {
   display: inline-block;
-  padding-bottom: 0.5rem;
-  margin-bottom: 1.5rem;
+  padding: 0.75rem 1.5rem;
+  margin-bottom: 2rem;
   border-bottom: 3px solid var(--primary-color);
+  background: linear-gradient(135deg, var(--primary-color), #ff8c42);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-size: 1.8rem;
+  font-weight: 700;
+  position: relative;
+}
+
+.menu-category h2::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -5px;
+  width: 50px;
+  height: 3px;
+  background: var(--primary-color);
+  border-radius: 2px;
 }
 
 /* --- LAYOUT CHÍNH CHO ORDER --- */
