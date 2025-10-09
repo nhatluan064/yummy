@@ -599,6 +599,8 @@
         );
 
         try {
+          console.log('🔥 Loading menu from Firebase...');
+          
           // Load menu items from Firebase
           const menuCollectionRef = collection(db, "menuItems");
           const querySnapshot = await getDocs(menuCollectionRef);
@@ -608,17 +610,34 @@
             allMenuItems.push({ id: doc.id, ...doc.data() });
           });
 
+          console.log('✅ Menu loaded:', allMenuItems.length, 'items');
+
+          if (allMenuItems.length === 0) {
+            menuContainer.innerHTML = `
+              <div class="empty-state" style="text-align: center; padding: 3rem; background: #fff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                <i class="fa-solid fa-utensils" style="font-size: 4rem; color: #f97316; margin-bottom: 1rem;"></i>
+                <h3 style="color: #666; margin-bottom: 0.5rem;">Thực đơn chưa có món nào</h3>
+                <p style="color: #999; margin-bottom: 1rem;">Admin chưa thêm món ăn vào hệ thống.</p>
+                <a href="../admin/admin-panel.html" style="display: inline-block; padding: 0.75rem 1.5rem; background: #f97316; color: white; text-decoration: none; border-radius: 6px; font-weight: 500;">
+                  <i class="fa-solid fa-plus"></i> Đăng nhập Admin để thêm món
+                </a>
+              </div>
+            `;
+            return;
+          }
+
           // Display all items initially and load categories for filter
           displayMenuItems(allMenuItems);
           loadCategoriesForFilter();
         } catch (error) {
-          console.error("Error loading menu:", error);
+          console.error("❌ Error loading menu:", error);
           menuContainer.innerHTML = `
-          <div class="error-state">
+          <div class="error-state" style="text-align: center; padding: 3rem; background: #fff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
             <i class="fa-solid fa-exclamation-triangle" style="font-size: 3rem; color: #ef4444; margin-bottom: 1rem;"></i>
             <h3 style="color: #666; margin-bottom: 0.5rem;">Không thể tải thực đơn</h3>
-            <p style="color: #999;">Vui lòng thử lại sau hoặc liên hệ nhà hàng.</p>
-            <button onclick="loadMenuFromFirebase()" style="margin-top: 1rem; padding: 0.5rem 1rem; background: var(--primary-color); color: white; border: none; border-radius: 6px; cursor: pointer;">
+            <p style="color: #999; margin-bottom: 0.5rem;">Lỗi: ${error.message}</p>
+            <p style="color: #999; font-size: 0.875rem; margin-bottom: 1rem;">Vui lòng kiểm tra kết nối hoặc liên hệ nhà hàng.</p>
+            <button onclick="loadMenuFromFirebase()" style="margin-top: 1rem; padding: 0.75rem 1.5rem; background: var(--primary-color); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 500;">
               <i class="fa-solid fa-refresh"></i> Thử lại
             </button>
           </div>

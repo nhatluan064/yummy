@@ -230,13 +230,13 @@
         import { getAnalytics, isSupported as analyticsIsSupported } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-analytics.js';
 
         const firebaseConfig = {
-          apiKey: "AIzaSyCHlUB0G5qIQOY3UqxnCzJMNhSrZbYAJV4",
+          apiKey: "AIzaSyCbUNjBPEaZOtI_cNCcCJ1DBXUUdrP_6oE",
           authDomain: "order-yummy.firebaseapp.com",
           projectId: "order-yummy",
-          storageBucket: "order-yummy.appspot.com",
-          messagingSenderId: "1084816248754",
-          appId: "1:1084816248754:web:c27b7b5bb9b46b99abdddd",
-          measurementId: "G-6J7GTKXWZP"
+          storageBucket: "order-yummy.firebasestorage.app",
+          messagingSenderId: "142798840175",
+          appId: "1:142798840175:web:1091d97784312c1fe4089a",
+          measurementId: "G-GQ7MEPZSSJ"
         };
 
         const app = initializeApp(firebaseConfig);
@@ -303,6 +303,8 @@
         // Load Menu from Firebase
         async function loadMenu() {
           try {
+            console.log('🔥 Loading menu from Firebase...');
+            
             const menuContainer = document.getElementById('menu-container');
             const menuCollectionRef = collection(db, "menuItems");
             const querySnapshot = await getDocs(menuCollectionRef);
@@ -312,8 +314,19 @@
               menuItems.push({ id: doc.id, ...doc.data() });
             });
 
+            console.log('✅ Menu loaded:', menuItems.length, 'items');
+
             if (menuItems.length === 0) {
-              menuContainer.innerHTML = '<p style="text-align: center; color: #666;">Hiện tại chưa có món ăn nào</p>';
+              menuContainer.innerHTML = `
+                <div style="text-align: center; padding: 2rem; background: #fff; border-radius: 8px;">
+                  <i class="fa-solid fa-utensils" style="font-size: 3rem; color: #f97316; margin-bottom: 1rem;"></i>
+                  <h3 style="color: #666; margin-bottom: 0.5rem;">Thực đơn chưa có món nào</h3>
+                  <p style="color: #999; margin-bottom: 1rem;">Admin chưa thêm món ăn vào hệ thống.</p>
+                  <a href="../admin/admin-panel.html" style="display: inline-block; padding: 0.5rem 1rem; background: #f97316; color: white; text-decoration: none; border-radius: 6px;">
+                    <i class="fa-solid fa-plus"></i> Đăng nhập Admin để thêm món
+                  </a>
+                </div>
+              `;
               return;
             }
 
@@ -335,8 +348,17 @@
             }).join('');
 
           } catch (error) {
-            console.error("Error loading menu:", error);
-            document.getElementById('menu-container').innerHTML = '<p style="text-align: center; color: #ef4444;">Lỗi tải thực đơn</p>';
+            console.error("❌ Error loading menu:", error);
+            document.getElementById('menu-container').innerHTML = `
+              <div style="text-align: center; padding: 2rem; color: #ef4444;">
+                <i class="fa-solid fa-exclamation-triangle" style="font-size: 2rem; margin-bottom: 1rem;"></i>
+                <p><strong>Lỗi tải thực đơn</strong></p>
+                <p style="font-size: 0.875rem; color: #999;">${error.message}</p>
+                <button onclick="loadMenu()" style="margin-top: 1rem; padding: 0.5rem 1rem; background: #f97316; color: white; border: none; border-radius: 6px; cursor: pointer;">
+                  <i class="fa-solid fa-refresh"></i> Thử lại
+                </button>
+              </div>
+            `;
           }
         }
 
