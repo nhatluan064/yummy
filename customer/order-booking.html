@@ -601,13 +601,30 @@
         try {
           console.log('🔥 Loading menu from Firebase...');
           
+          // Load categories first to map categoryId to category name
+          const categoriesCollectionRef = collection(db, "categories");
+          const categoriesSnapshot = await getDocs(categoriesCollectionRef);
+          
+          const categoriesMap = {};
+          categoriesSnapshot.forEach((doc) => {
+            categoriesMap[doc.id] = doc.data().name;
+          });
+          
+          console.log('✅ Categories loaded:', Object.keys(categoriesMap).length, 'categories');
+          
           // Load menu items from Firebase
           const menuCollectionRef = collection(db, "menuItems");
           const querySnapshot = await getDocs(menuCollectionRef);
 
           allMenuItems = [];
           querySnapshot.forEach((doc) => {
-            allMenuItems.push({ id: doc.id, ...doc.data() });
+            const data = doc.data();
+            // Map categoryId to category name
+            allMenuItems.push({ 
+              id: doc.id, 
+              ...data,
+              category: categoriesMap[data.categoryId] || 'Món khác'
+            });
           });
 
           console.log('✅ Menu loaded:', allMenuItems.length, 'items');

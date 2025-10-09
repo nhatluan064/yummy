@@ -306,12 +306,30 @@
             console.log('🔥 Loading menu from Firebase...');
             
             const menuContainer = document.getElementById('menu-container');
+            
+            // Load categories first
+            const categoriesCollectionRef = collection(db, "categories");
+            const categoriesSnapshot = await getDocs(categoriesCollectionRef);
+            
+            const categoriesMap = {};
+            categoriesSnapshot.forEach((doc) => {
+              categoriesMap[doc.id] = doc.data().name;
+            });
+            
+            console.log('✅ Categories loaded:', Object.keys(categoriesMap).length, 'categories');
+            
+            // Load menu items
             const menuCollectionRef = collection(db, "menuItems");
             const querySnapshot = await getDocs(menuCollectionRef);
 
             const menuItems = [];
             querySnapshot.forEach((doc) => {
-              menuItems.push({ id: doc.id, ...doc.data() });
+              const data = doc.data();
+              menuItems.push({ 
+                id: doc.id, 
+                ...data,
+                category: categoriesMap[data.categoryId] || 'Món khác'
+              });
             });
 
             console.log('✅ Menu loaded:', menuItems.length, 'items');
@@ -330,22 +348,24 @@
               return;
             }
 
-            menuContainer.innerHTML = menuItems.map(item => {
-              const placeholderImg = `https://placehold.co/80x80/f97316/FFFFFF?text=${encodeURIComponent(item.name)}`;
-              return `
-                <div class="menu-item">
-                  <img src="${item.image || placeholderImg}" alt="${item.name}" onerror="this.src='${placeholderImg}'">
-                  <div class="menu-item-info">
-                    <h4>${item.name}</h4>
-                    <p>${item.description || 'Món ăn ngon'}</p>
-                    <div class="menu-item-price">${formatCurrency(item.price)}</div>
+            menuContainer.innerHTML = menuItems
+              .filter(item => item.available !== false) // Only show available items
+              .map(item => {
+                const placeholderImg = `https://placehold.co/80x80/f97316/FFFFFF?text=${encodeURIComponent(item.name)}`;
+                return `
+                  <div class="menu-item" data-name="${item.name.toLowerCase()}" data-category="${item.category}">
+                    <img src="${item.imageUrl || placeholderImg}" alt="${item.name}" onerror="this.src='${placeholderImg}'">
+                    <div class="menu-item-info">
+                      <h4>${item.name}</h4>
+                      <p>${item.description || 'Món ăn ngon'}</p>
+                      <div class="menu-item-price">${formatCurrency(item.price)}</div>
+                    </div>
+                    <button class="add-to-cart" onclick="addToCart('${item.id}', '${item.name}', ${item.price})">
+                      <i class="fa-solid fa-plus"></i>
+                    </button>
                   </div>
-                  <button class="add-to-cart" onclick="addToCart('${item.id}', '${item.name}', ${item.price})">
-                    <i class="fa-solid fa-plus"></i>
-                  </button>
-                </div>
-              `;
-            }).join('');
+                `;
+              }).join('');
 
           } catch (error) {
             console.error("❌ Error loading menu:", error);
