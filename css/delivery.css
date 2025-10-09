@@ -4,7 +4,11 @@
 .delivery-header {
   text-align: center;
   padding: 3rem 0;
-  background: linear-gradient(135deg, var(--primary-color), var(--primary-color-dark));
+  background: linear-gradient(
+    135deg,
+    var(--primary-color),
+    var(--primary-color-dark)
+  );
   color: white;
   margin-bottom: 2rem;
   border-radius: var(--border-radius);
@@ -29,6 +33,274 @@
 }
 
 /* --- DELIVERY CONTENT LAYOUT --- */
+.delivery-layout {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* --- LEFT: MENU SECTION --- */
+.menu-section {
+  background: white;
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  height: fit-content;
+}
+
+.section-header {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--border-color);
+}
+
+.section-header h2 {
+  color: var(--text-primary);
+  font-size: 1.3rem;
+  margin: 0;
+}
+
+.menu-search {
+  position: relative;
+  margin-bottom: 1.5rem;
+}
+
+.menu-search input {
+  width: 100%;
+  padding: 0.75rem 1rem 0.75rem 2.5rem;
+  border: 2px solid var(--border-color);
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+}
+
+.menu-search i {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-secondary);
+}
+
+.menu-container {
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.menu-item {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  margin-bottom: 1rem;
+  transition: all 0.3s ease;
+}
+
+.menu-item:hover {
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-2px);
+}
+
+.menu-item img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: var(--border-radius);
+}
+
+.menu-item-info {
+  flex: 1;
+}
+
+.menu-item-info h4 {
+  margin: 0 0 0.5rem 0;
+  color: var(--text-primary);
+  font-size: 1.1rem;
+}
+
+.menu-item-info p {
+  margin: 0 0 0.5rem 0;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.menu-item-price {
+  font-weight: 600;
+  color: var(--primary-color);
+  font-size: 1.1rem;
+}
+
+.add-to-cart {
+  padding: 0.5rem 1rem;
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.add-to-cart:hover {
+  background: var(--primary-color-dark);
+}
+
+/* --- RIGHT: FORM SECTION --- */
+.form-section {
+  background: white;
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  height: fit-content;
+  position: sticky;
+  top: 2rem;
+}
+
+.cart-summary {
+  margin-bottom: 2rem;
+  padding: 1rem;
+  background: var(--bg-light);
+  border-radius: var(--border-radius);
+  border: 1px solid var(--border-color);
+}
+
+.cart-summary h3 {
+  margin: 0 0 1rem 0;
+  color: var(--text-primary);
+  font-size: 1.1rem;
+}
+
+.cart-items {
+  margin-bottom: 1rem;
+}
+
+.empty-cart {
+  text-align: center;
+  color: var(--text-secondary);
+  font-style: italic;
+  padding: 1rem;
+}
+
+.cart-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.cart-item:last-child {
+  border-bottom: none;
+}
+
+.cart-total {
+  padding-top: 1rem;
+  border-top: 2px solid var(--border-color);
+  text-align: right;
+  font-size: 1.2rem;
+  color: var(--primary-color);
+}
+
+.delivery-form .form-group {
+  margin-bottom: 1.5rem;
+}
+
+.delivery-form label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.delivery-form label i {
+  margin-right: 0.5rem;
+  color: var(--primary-color);
+}
+
+.delivery-form input,
+.delivery-form textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid var(--border-color);
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+.delivery-form input:focus,
+.delivery-form textarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 1rem;
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.submit-btn:hover {
+  background: var(--primary-color-dark);
+}
+
+.submit-btn:disabled {
+  background: var(--text-secondary);
+  cursor: not-allowed;
+}
+
+/* Contact Support Section in Form */
+.contact-support {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: #f8f9fa;
+  border-radius: var(--border-radius);
+  border-left: 4px solid var(--primary-color);
+}
+
+.contact-support h3 {
+  color: var(--text-color);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.1rem;
+}
+
+.contact-support h3 i {
+  color: var(--primary-color);
+}
+
+.contact-info p {
+  margin: 0.5rem 0;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.contact-info p strong {
+  color: var(--text-color);
+  font-weight: 600;
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 768px) {
+  .delivery-layout {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .form-section {
+    position: static;
+  }
+}
 .delivery-content {
   display: grid;
   grid-template-columns: 2fr 1fr;
@@ -246,7 +518,7 @@
     grid-template-columns: 1fr;
     gap: 2rem;
   }
-  
+
   .delivery-info-section {
     order: -1;
   }
@@ -256,27 +528,27 @@
   .delivery-header {
     padding: 2rem 1rem;
   }
-  
+
   .delivery-header h1 {
     font-size: 2rem;
   }
-  
+
   .form-card {
     padding: 1.5rem;
   }
-  
+
   .form-row {
     grid-template-columns: 1fr;
   }
-  
+
   .delivery-zones {
     grid-template-columns: 1fr;
   }
-  
+
   .form-actions {
     flex-direction: column;
   }
-  
+
   .info-card,
   .contact-card {
     padding: 1rem;
@@ -287,15 +559,15 @@
   .delivery-header h1 {
     font-size: 1.5rem;
   }
-  
+
   .delivery-header p {
     font-size: 1rem;
   }
-  
+
   .form-card {
     padding: 1rem;
   }
-  
+
   .container {
     padding: 0 1rem;
   }

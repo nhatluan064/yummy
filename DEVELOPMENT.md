@@ -10,7 +10,7 @@
 │   ├── ✅ order-booking.html        ← Trang order chính (active)
 │   └── 🗂️ customer-legacy.html     ← Cũ (không dùng)
 ├── 📂 menu/
-│   ├── ✅ public-menu.html          ← Menu page chính (active)  
+│   ├── ✅ public-menu.html          ← Menu page chính (active)
 │   └── 🗂️ menu-legacy.html         ← Cũ (không dùng)
 ├── 📂 kitchen/
 │   ├── ✅ kitchen-display.html      ← Kitchen page chính (active)
@@ -23,12 +23,14 @@
 ## 🎮 Chạy Development Server
 
 ### Option 1: Live Server (Khuyến nghị)
+
 1. Cài **Live Server extension** trong VS Code
 2. **Click chuột phải vào `index.html` (file ROOT)**
 3. Chọn **"Open with Live Server"**
 4. Tự động mở: `http://127.0.0.1:5500/`
 
 ### Option 2: Manual URLs (Live Server)
+
 - 🏠 Landing: `http://127.0.0.1:5500/landing-home.html`
 - 🛒 Order: `http://127.0.0.1:5500/customer/order-booking.html`
 - 📋 Menu: `http://127.0.0.1:5500/menu/public-menu.html`
@@ -50,13 +52,14 @@
 
 ## 🎯 Files chính đang dùng
 
-| Page | Production URL | Local URL |
-|------|---------------|-----------|
-| Home | `/` → `landing-home.html` | `http://127.0.0.1:5500/` |
-| Order | `/customer` → `order-booking.html` | `http://127.0.0.1:5500/customer/order-booking.html` |
-| Menu | `/menu` → `public-menu.html` | `http://127.0.0.1:5500/menu/public-menu.html` |
+| Page    | Production URL                      | Local URL                                            |
+| ------- | ----------------------------------- | ---------------------------------------------------- |
+| Home    | `/` → `landing-home.html`           | `http://127.0.0.1:5500/`                             |
+| Order   | `/customer` → `order-booking.html`  | `http://127.0.0.1:5500/customer/order-booking.html`  |
+| Menu    | `/menu` → `public-menu.html`        | `http://127.0.0.1:5500/menu/public-menu.html`        |
 | Kitchen | `/kitchen` → `kitchen-display.html` | `http://127.0.0.1:5500/kitchen/kitchen-display.html` |
-| Admin | `/admin` → `admin-panel.html` | `http://127.0.0.1:5500/admin/admin-panel.html` |
+| Admin   | `/admin` → `admin-panel.html`       | `http://127.0.0.1:5500/admin/admin-panel.html`       |
 
 ---
+
 💡 **Tip**: Bookmark `index.html` trong VS Code Explorer để dễ dàng click "Open with Live Server"!

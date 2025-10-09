@@ -137,13 +137,13 @@
 
           // Lọc chỉ những món đang có sẵn và sắp xếp
           const availableMenuItems = allMenuItems
-            .filter(item => item.isAvailable === true)
+            .filter((item) => item.isAvailable === true)
             .sort((a, b) => {
               // Sắp xếp theo category trước, sau đó theo name
               if (a.category !== b.category) {
-                return (a.category || '').localeCompare(b.category || '');
+                return (a.category || "").localeCompare(b.category || "");
               }
-              return (a.name || '').localeCompare(b.name || '');
+              return (a.name || "").localeCompare(b.name || "");
             });
 
           // Cập nhật stats với tất cả món ăn
@@ -211,7 +211,6 @@
                 `;
             menuContainer.innerHTML += categoryHtml;
           }
-
         } catch (error) {
           console.error("Lỗi khi tải menu:", error);
           menuContainer.innerHTML = `

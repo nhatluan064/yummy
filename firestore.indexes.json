@@ -15,7 +15,7 @@
       ]
     },
     {
-      "collectionGroup": "orders", 
+      "collectionGroup": "orders",
       "queryScope": "COLLECTION",
       "fields": [
         {
@@ -30,7 +30,7 @@
     },
     {
       "collectionGroup": "menuItems",
-      "queryScope": "COLLECTION", 
+      "queryScope": "COLLECTION",
       "fields": [
         {
           "fieldPath": "category",

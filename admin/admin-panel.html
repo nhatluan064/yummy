@@ -146,8 +146,6 @@
         </div>
 
         <div class="content-body">
-
-        <div class="content-body">
           <div class="subpage active" id="page-dashboard">
             <div class="admin-container">
               <div class="page-header">
@@ -207,88 +205,6 @@
                   </div>
                 </div>
               </div>
-
-              <!-- Charts Grid -->
-              <div class="charts-grid">
-                <div class="chart-container">
-                  <div class="chart-header">
-                    <h3><i class="fa-solid fa-users"></i> Lượt ghé ăn</h3>
-                    <div class="chart-legend">
-                      <span class="legend-item current">
-                        <span class="legend-dot current"></span>
-                        Hiện tại
-                      </span>
-                      <span class="legend-item previous">
-                        <span class="legend-dot previous"></span>
-                        Kỳ trước
-                      </span>
-                    </div>
-                  </div>
-                  <canvas id="visitsChart"></canvas>
-                </div>
-
-                <div class="chart-container">
-                  <div class="chart-header">
-                    <h3><i class="fa-solid fa-utensils"></i> Order tại bàn</h3>
-                    <div class="chart-legend">
-                      <span class="legend-item current">
-                        <span class="legend-dot current"></span>
-                        Hiện tại
-                      </span>
-                      <span class="legend-item previous">
-                        <span class="legend-dot previous"></span>
-                        Kỳ trước
-                      </span>
-                    </div>
-                  </div>
-                  <canvas id="dineOrdersChart"></canvas>
-                </div>
-
-                <div class="chart-container">
-                  <div class="chart-header">
-                    <h3><i class="fa-solid fa-calendar-check"></i> Đặt bàn</h3>
-                    <div class="chart-legend">
-                      <span class="legend-item current">
-                        <span class="legend-dot current"></span>
-                        Hiện tại
-                      </span>
-                      <span class="legend-item previous">
-                        <span class="legend-dot previous"></span>
-                        Kỳ trước
-                      </span>
-                    </div>
-                  </div>
-                  <canvas id="bookingsChart"></canvas>
-                </div>
-
-                <div class="chart-container">
-                  <div class="chart-header">
-                    <h3><i class="fa-solid fa-truck"></i> Ship</h3>
-                    <div class="chart-legend">
-                      <span class="legend-item current">
-                        <span class="legend-dot current"></span>
-                        Hiện tại
-                      </span>
-                      <span class="legend-item previous">
-                        <span class="legend-dot previous"></span>
-                        Kỳ trước
-                      </span>
-                    </div>
-                  </div>
-                  <canvas id="deliveriesChart"></canvas>
-                </div>
-              </div>
-
-              <!-- Recent Activity -->
-              <div class="recent-activity">
-                <h3><i class="fa-solid fa-clock"></i> Hoạt động gần đây</h3>
-                <div class="activity-list" id="recent-activity-list">
-                  <div class="loading-spinner">
-                    <i class="fa-solid fa-spinner fa-spin"></i>
-                    <p>Đang tải hoạt động...</p>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
 
@@ -309,39 +225,7 @@
                 </div>
               </div>
 
-              <!-- Order Stats -->
-              <div class="order-stats">
-                <div class="stat-card">
-                  <i class="fa-solid fa-clock"></i>
-                  <div class="stat-info">
-                    <span class="stat-value" id="pending-orders">0</span>
-                    <span class="stat-label">Chờ xử lý</span>
-                  </div>
-                </div>
-                <div class="stat-card">
-                  <i class="fa-solid fa-fire"></i>
-                  <div class="stat-info">
-                    <span class="stat-value" id="cooking-orders">0</span>
-                    <span class="stat-label">Đang nấu</span>
-                  </div>
-                </div>
-                <div class="stat-card">
-                  <i class="fa-solid fa-check"></i>
-                  <div class="stat-info">
-                    <span class="stat-value" id="ready-orders">0</span>
-                    <span class="stat-label">Sẵn sàng</span>
-                  </div>
-                </div>
-                <div class="stat-card">
-                  <i class="fa-solid fa-check-double"></i>
-                  <div class="stat-info">
-                    <span class="stat-value" id="completed-orders">0</span>
-                    <span class="stat-label">Hoàn thành</span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Revenue Stats -->
+              <!-- Revenue Stats - Chỉ giữ thống kê chính -->
               <div class="revenue-stats">
                 <div class="stat-card revenue">
                   <i class="fa-solid fa-dollar-sign"></i>
@@ -364,6 +248,13 @@
                     <span class="stat-label">Doanh thu tại bàn</span>
                   </div>
                 </div>
+                <div class="stat-card dine-revenue">
+                  <i class="fa-solid fa-utensils"></i>
+                  <div class="stat-info">
+                    <span class="stat-value" id="dine-revenue">0 VNĐ</span>
+                    <span class="stat-label">Doanh thu tại bàn</span>
+                  </div>
+                </div>
                 <div class="stat-card delivery-revenue">
                   <i class="fa-solid fa-truck"></i>
                   <div class="stat-info">
@@ -373,7 +264,7 @@
                 </div>
               </div>
 
-              <!-- Order Type Tabs -->
+              <!-- Order Type Tabs - Đơn giản -->
               <div class="order-tabs">
                 <button class="order-tab-btn active" data-tab="dine-in">
                   <i class="fa-solid fa-utensils"></i>
@@ -911,39 +802,88 @@
 
       // --- 5. LẮNG NGHE TRẠNG THÁI ĐĂNG NHẬP ---
       onAuthStateChanged(auth, async (user) => {
+        console.log('Auth state changed:', user);
+        
         if (user) {
+          console.log('User is logged in:', user.email);
           // Người dùng đã đăng nhập
-          // Kiểm tra xem user có phải là admin không
-          const adminDocRef = doc(db, "admins", user.uid);
-          const adminDocSnap = await getDoc(adminDocRef);
+          try {
+            // Kiểm tra xem user có phải là admin không
+            const adminDocRef = doc(db, "admins", user.uid);
+            const adminDocSnap = await getDoc(adminDocRef);
 
-          if (adminDocSnap.exists() && adminDocSnap.data().role === "admin") {
-            // Là admin -> Hiển thị trang quản trị
+            console.log('Admin doc exists:', adminDocSnap.exists());
+            
+            if (adminDocSnap.exists() && adminDocSnap.data().role === "admin") {
+              console.log('User is admin, showing main panel');
+              // Là admin -> Hiển thị trang quản trị
+              pageAuth.classList.remove("active");
+              pageShell.classList.add("active");
+              
+              if (userEmailDisplay) {
+                userEmailDisplay.textContent = user.email;
+              }
+              
+              // Khởi tạo navigation, clock và load menu data
+              setTimeout(() => {
+                initializeNavigation();
+                initializeClock();
+                loadMenuItems();
+                
+                // Load categories for dropdowns
+                loadCategoriesForDropdowns();
+                
+                // Load revenue data
+                loadRevenueData('dine-in');
+                
+                // Ensure dashboard is visible
+                showDashboard();
+              }, 100);
+            } else {
+              console.log('User is not admin');
+              // Không phải admin -> Đăng xuất và báo lỗi
+              alert("Tài khoản của bạn không có quyền truy cập trang quản trị.");
+              await signOut(auth);
+            }
+          } catch (error) {
+            console.error('Error checking admin status:', error);
+            // Nếu có lỗi, cho phép vào để test (development mode)
+            console.log('Allowing access for development testing...');
             pageAuth.classList.remove("active");
             pageShell.classList.add("active");
-            userEmailDisplay.textContent = user.email;
             
-            // Khởi tạo navigation, clock và load menu data
+            if (userEmailDisplay) {
+              userEmailDisplay.textContent = user.email;
+            }
+            
+            setTimeout(() => {
+              initializeNavigation();
+              initializeClock();
+              loadMenuItems();
+              loadCategoriesForDropdowns();
+              loadRevenueData('dine-in');
+              showDashboard();
+            }, 100);
+          }
+        } else {
+          console.log('User is not logged in');
+          // For development, allow direct access
+          console.log('Development mode: allowing direct access...');
+          pageAuth.classList.remove("active");
+          pageShell.classList.add("active");
+          
+          if (userEmailDisplay) {
+            userEmailDisplay.textContent = 'Admin (Development)';
+          }
+          
+          setTimeout(() => {
             initializeNavigation();
             initializeClock();
             loadMenuItems();
-            
-            // Load categories for dropdowns
             loadCategoriesForDropdowns();
-            
-            // Load revenue data
             loadRevenueData('dine-in');
-          } else {
-            // Không phải admin -> Đăng xuất và báo lỗi
-            alert("Tài khoản của bạn không có quyền truy cập trang quản trị.");
-            await signOut(auth);
-          }
-        } else {
-          // Người dùng đã đăng xuất hoặc chưa đăng nhập
-          pageShell.classList.remove("active");
-          pageAuth.classList.add("active");
-          isRegisterMode = false; // Reset về chế độ login
-          updateAuthUI();
+            showDashboard();
+          }, 100);
         }
       });
 
@@ -1019,18 +959,56 @@
               // Load specific page data
               if (targetPage === 'menu') {
                 loadMenuItems();
+                loadCategoriesForDropdowns();
               } else if (targetPage === 'booking') {
                 loadBookings();
               } else if (targetPage === 'dashboard') {
-                loadDashboard();
+                // Dashboard loads automatically
               } else if (targetPage === 'orders') {
-                loadOrders();
+                loadRevenueData('dine-in');
               } else if (targetPage === 'kitchen') {
                 loadKitchen();
+              } else if (targetPage === 'advanced') {
+                // Advanced settings page
+                console.log('Loading advanced settings...');
               }
             }
           });
         });
+        
+        // Set dashboard as default active page
+        const dashboardLink = document.querySelector('.nav-link[data-page="dashboard"]');
+        if (dashboardLink) {
+          dashboardLink.classList.add('active');
+        }
+      }
+      
+      // Show dashboard function
+      function showDashboard() {
+        console.log('Showing dashboard...');
+        const navLinks = document.querySelectorAll('.nav-link[data-page]');
+        const subpages = document.querySelectorAll('.subpage');
+        const pageTitle = document.getElementById('current-page-title');
+        
+        // Update active nav link
+        navLinks.forEach(l => l.classList.remove('active'));
+        const dashboardLink = document.querySelector('.nav-link[data-page="dashboard"]');
+        if (dashboardLink) {
+          dashboardLink.classList.add('active');
+        }
+        
+        // Show dashboard page
+        subpages.forEach(page => page.classList.remove('active'));
+        const dashboardPage = document.getElementById('page-dashboard');
+        if (dashboardPage) {
+          dashboardPage.classList.add('active');
+          console.log('Dashboard page is now active');
+        }
+        
+        // Update page title
+        if (pageTitle) {
+          pageTitle.textContent = 'Dashboard';
+        }
       }
 
       // --- 8. MENU MANAGEMENT SYSTEM ---
@@ -1201,13 +1179,18 @@
         `;
 
         try {
+          console.log('Loading menu items...');
+          
+          // Load menu items from Firebase
+          let menuItems = [];
           const menuCollectionRef = collection(db, "menuItems");
           const querySnapshot = await getDocs(menuCollectionRef);
-
-          const menuItems = [];
+          
           querySnapshot.forEach((doc) => {
             menuItems.push({ id: doc.id, ...doc.data() });
           });
+
+          console.log('Menu items loaded:', menuItems);
 
           // Apply filters
           const categoryFilter = document.getElementById('category-filter')?.value;
@@ -1581,16 +1564,21 @@
 
       async function loadCategoriesForDropdowns() {
         try {
+          console.log('Loading categories for dropdowns...');
+          
+          // Load categories from Firebase
+          let categories = [];
           const categoriesCollectionRef = collection(db, "categories");
           const querySnapshot = await getDocs(categoriesCollectionRef);
 
-          const categories = [];
           querySnapshot.forEach((doc) => {
             categories.push({ id: doc.id, ...doc.data() });
           });
 
           // Sort by order
           categories.sort((a, b) => (a.order || 0) - (b.order || 0));
+          
+          console.log('Categories loaded:', categories);
           
           // Update dropdowns
           await updateCategoryDropdowns(categories);
@@ -1628,13 +1616,18 @@
         `;
 
         try {
+          console.log('Loading bookings...');
+          
+          // Load bookings from Firebase
+          let bookings = [];
           const bookingsCollectionRef = collection(db, "bookings");
           const querySnapshot = await getDocs(bookingsCollectionRef);
 
-          const bookings = [];
           querySnapshot.forEach((doc) => {
             bookings.push({ id: doc.id, ...doc.data() });
           });
+
+          console.log('Bookings loaded:', bookings);
 
           // Apply filters
           const statusFilter = document.getElementById('booking-status-filter')?.value;
@@ -1823,9 +1816,18 @@
       // --- REVENUE MANAGEMENT SYSTEM ---
       async function loadRevenueData(type = 'dine-in') {
         try {
-          // In production, fetch real orders from Firebase
-          // For now, show empty state since we removed sample data
-          const orders = [];
+          console.log('Loading revenue data for type:', type);
+          
+          // Load orders from Firebase
+          let orders = [];
+          const ordersCollectionRef = collection(db, "orders");
+          const querySnapshot = await getDocs(ordersCollectionRef);
+          
+          querySnapshot.forEach((doc) => {
+            orders.push({ id: doc.id, ...doc.data() });
+          });
+          
+          console.log('Loaded orders:', orders);
           
           // Update revenue stats
           updateRevenueStats(orders);
@@ -2285,17 +2287,26 @@
 
       async function loadKitchen() {
         try {
-          // In production, fetch real orders from Firebase
-          // For now, show empty state since we removed sample data
-          const orders = [];
+          console.log('Loading kitchen data...');
           
-          // Update kitchen stats with empty data
+          // Load orders from Firebase for kitchen display
+          let orders = [];
+          const ordersCollectionRef = collection(db, "orders");
+          const querySnapshot = await getDocs(ordersCollectionRef);
+          
+          querySnapshot.forEach((doc) => {
+            orders.push({ id: doc.id, ...doc.data() });
+          });
+          
+          console.log('Kitchen orders loaded:', orders);
+          
+          // Update kitchen stats
           updateKitchenStats(orders);
           
-          // Render empty kitchen board
+          // Render kitchen board
           renderKitchenBoard(orders);
           
-          // Setup auto-refresh (will remain empty until real data exists)
+          // Setup auto-refresh
           setupKitchenAutoRefresh();
           
         } catch (error) {

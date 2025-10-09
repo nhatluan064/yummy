@@ -54,234 +54,360 @@
     <div class="container">
       <header class="delivery-header">
         <h1><i class="fa-solid fa-truck"></i> Giao hàng tận nơi</h1>
-        <p>Thưởng thức những món ăn ngon tại nhà với dịch vụ giao hàng nhanh chóng</p>
+        <p>Chọn món → Nhập thông tin → Đặt hàng</p>
       </header>
 
-      <div class="delivery-content">
-        <div class="delivery-form-section">
-          <div class="form-card">
-            <h2><i class="fa-solid fa-map-marker-alt"></i> Thông tin giao hàng</h2>
-            
-            <form id="delivery-form" class="delivery-form">
-              <div class="form-group">
-                <label for="customer-name">Họ và tên</label>
-                <input type="text" id="customer-name" required placeholder="Nhập họ và tên của bạn" />
-              </div>
-
-              <div class="form-group">
-                <label for="customer-phone">Số điện thoại</label>
-                <input type="tel" id="customer-phone" required placeholder="0xxx xxx xxx" />
-              </div>
-
-              <div class="form-group">
-                <label for="delivery-address">Địa chỉ giao hàng</label>
-                <textarea id="delivery-address" rows="3" required 
-                          placeholder="Số nhà, tên đường, phường/xã, quận/huyện, thành phố"></textarea>
-              </div>
-
-              <div class="form-row">
-                <div class="form-group">
-                  <label for="delivery-date">Ngày giao</label>
-                  <input type="date" id="delivery-date" required />
-                </div>
-                <div class="form-group">
-                  <label for="delivery-time">Giờ giao</label>
-                  <select id="delivery-time" required>
-                    <option value="">Chọn giờ giao</option>
-                    <option value="11:00-12:00">11:00 - 12:00</option>
-                    <option value="12:00-13:00">12:00 - 13:00</option>
-                    <option value="13:00-14:00">13:00 - 14:00</option>
-                    <option value="17:00-18:00">17:00 - 18:00</option>
-                    <option value="18:00-19:00">18:00 - 19:00</option>
-                    <option value="19:00-20:00">19:00 - 20:00</option>
-                    <option value="20:00-21:00">20:00 - 21:00</option>
-                  </select>
-                </div>
-              </div>
-
-              <div class="form-group">
-                <label for="delivery-notes">Ghi chú (tùy chọn)</label>
-                <textarea id="delivery-notes" rows="2" 
-                          placeholder="Ghi chú thêm cho người giao hàng (tòa nhà, lầu, hướng dẫn đường...)"></textarea>
-              </div>
-
-              <div class="delivery-area-section">
-                <h3><i class="fa-solid fa-location-dot"></i> Khu vực giao hàng</h3>
-                <div class="delivery-zones">
-                  <div class="zone-card" data-zone="zone1" data-fee="15000">
-                    <h4>Khu vực 1</h4>
-                    <p>Trung tâm thành phố</p>
-                    <span class="delivery-fee">15,000 VNĐ</span>
-                  </div>
-                  <div class="zone-card" data-zone="zone2" data-fee="25000">
-                    <h4>Khu vực 2</h4>
-                    <p>Ngoại thành gần</p>
-                    <span class="delivery-fee">25,000 VNĐ</span>
-                  </div>
-                  <div class="zone-card" data-zone="zone3" data-fee="35000">
-                    <h4>Khu vực 3</h4>
-                    <p>Ngoại thành xa</p>
-                    <span class="delivery-fee">35,000 VNĐ</span>
-                  </div>
-                </div>
-                <input type="hidden" id="selected-zone" />
-                <input type="hidden" id="delivery-fee" />
-              </div>
-
-              <div class="form-actions">
-                <button type="button" class="btn btn-secondary" onclick="window.history.back()">
-                  <i class="fa-solid fa-arrow-left"></i> Quay lại
-                </button>
-                <button type="button" class="btn btn-primary" id="select-dishes-btn">
-                  <i class="fa-solid fa-utensils"></i> Chọn món ăn
-                </button>
-              </div>
-            </form>
+      <!-- 2-Column Layout: Menu + Form -->
+      <div class="delivery-layout">
+        <!-- LEFT: Menu Selection -->
+        <div class="menu-section">
+          <div class="section-header">
+            <h2><i class="fa-solid fa-utensils"></i> Chọn món ăn</h2>
+          </div>
+          <div class="menu-search">
+            <input
+              type="text"
+              id="menu-search"
+              placeholder="Tìm kiếm món ăn..."
+            />
+            <i class="fa-solid fa-search"></i>
+          </div>
+          <div id="menu-container" class="menu-container">
+            <div class="loading-spinner">
+              <i class="fa-solid fa-spinner fa-spin"></i>
+              <p>Đang tải thực đơn...</p>
+            </div>
           </div>
         </div>
 
-        <div class="delivery-info-section">
-          <div class="info-card">
-            <h3><i class="fa-solid fa-clock"></i> Thời gian giao hàng</h3>
-            <ul>
-              <li><strong>Trung bình:</strong> 30-45 phút</li>
-              <li><strong>Giờ cao điểm:</strong> 45-60 phút</li>
-              <li><strong>Khu vực xa:</strong> 60-90 phút</li>
-            </ul>
+        <!-- RIGHT: Delivery Info Form -->
+        <div class="form-section">
+          <div class="section-header">
+            <h2>
+              <i class="fa-solid fa-clipboard-list"></i> Thông tin giao hàng
+            </h2>
           </div>
 
-          <div class="info-card">
-            <h3><i class="fa-solid fa-money-bill-wave"></i> Phí giao hàng</h3>
-            <ul>
-              <li><strong>Khu vực 1:</strong> 15,000 VNĐ</li>
-              <li><strong>Khu vực 2:</strong> 25,000 VNĐ</li>
-              <li><strong>Khu vực 3:</strong> 35,000 VNĐ</li>
-              <li><strong>Miễn phí:</strong> Đơn hàng trên 300,000 VNĐ</li>
-            </ul>
+          <!-- Cart Summary -->
+          <div class="cart-summary">
+            <h3><i class="fa-solid fa-shopping-cart"></i> Đơn hàng của bạn</h3>
+            <div id="cart-items" class="cart-items">
+              <p class="empty-cart">Chưa có món nào được chọn</p>
+            </div>
+            <div class="cart-total">
+              <strong>Tổng cộng: <span id="total-amount">0 VNĐ</span></strong>
+            </div>
           </div>
 
-          <div class="info-card">
-            <h3><i class="fa-solid fa-shield-alt"></i> Chính sách giao hàng</h3>
-            <ul>
-              <li>Đảm bảo chất lượng món ăn</li>
-              <li>Hoàn tiền nếu giao hàng trễ</li>
-              <li>Hỗ trợ 24/7</li>
-              <li>Thanh toán khi nhận hàng</li>
-            </ul>
-          </div>
+          <!-- Simple Form -->
+          <form id="delivery-form" class="delivery-form">
+            <div class="form-group">
+              <label for="customer-name"
+                ><i class="fa-solid fa-user"></i> Họ và tên</label
+              >
+              <input
+                type="text"
+                id="customer-name"
+                required
+                placeholder="Nhập họ và tên của bạn"
+              />
+            </div>
 
-          <div class="contact-card">
+            <div class="form-group">
+              <label for="customer-phone"
+                ><i class="fa-solid fa-phone"></i> Số điện thoại</label
+              >
+              <input
+                type="tel"
+                id="customer-phone"
+                required
+                placeholder="0xxx xxx xxx"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="delivery-address"
+                ><i class="fa-solid fa-map-marker-alt"></i> Địa chỉ giao
+                hàng</label
+              >
+              <textarea
+                id="delivery-address"
+                rows="3"
+                required
+                placeholder="Số nhà, tên đường, phường/xã, quận/huyện"
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="delivery-note"
+                ><i class="fa-solid fa-comment"></i> Ghi chú (không bắt
+                buộc)</label
+              >
+              <textarea
+                id="delivery-note"
+                rows="2"
+                placeholder="Ghi chú thêm cho đơn hàng..."
+              ></textarea>
+            </div>
+
+            <button type="submit" class="submit-btn">
+              <i class="fa-solid fa-paper-plane"></i>
+              Đặt hàng ngay
+            </button>
+          </form>
+
+          <!-- Contact Support Section -->
+          <div class="contact-support">
             <h3><i class="fa-solid fa-phone"></i> Liên hệ hỗ trợ</h3>
-            <p><strong>Hotline:</strong> 1900-YUMMY (1900-98669)</p>
-            <p><strong>Email:</strong> support@yummy.vn</p>
-            <p><strong>Thời gian:</strong> 8:00 - 22:00 hàng ngày</p>
+            <div class="contact-info">
+              <p><strong>Hotline:</strong> 1900-YUMMY (1900-98669)</p>
+              <p><strong>Email:</strong> support@yummy.vn</p>
+              <p><strong>Thời gian:</strong> 8:00 - 22:00 hàng ngày</p>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
     <script>
-      // Khởi tạo trang
-      document.addEventListener('DOMContentLoaded', function() {
-        initializeDelivery();
-      });
+        // Khởi tạo trang
+        document.addEventListener('DOMContentLoaded', function() {
+          initializeDelivery();
+        });
 
-      function initializeDelivery() {
-        // Set minimum date to today
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('delivery-date').min = today;
-        document.getElementById('delivery-date').value = today;
+        function initializeDelivery() {
+          // Set minimum date to today
+          const today = new Date().toISOString().split('T')[0];
+          document.getElementById('delivery-date').min = today;
+          document.getElementById('delivery-date').value = today;
 
-        // Handle zone selection
-        const zoneCards = document.querySelectorAll('.zone-card');
-        zoneCards.forEach(card => {
-          card.addEventListener('click', function() {
-            // Remove active class from all cards
-            zoneCards.forEach(c => c.classList.remove('active'));
-            
-            // Add active class to clicked card
-            this.classList.add('active');
-            
-            // Store selected zone data
-            const zone = this.dataset.zone;
-            const fee = this.dataset.fee;
-            
-            document.getElementById('selected-zone').value = zone;
-            document.getElementById('delivery-fee').value = fee;
+          // Handle zone selection
+          const zoneCards = document.querySelectorAll('.zone-card');
+          zoneCards.forEach(card => {
+            card.addEventListener('click', function() {
+              // Remove active class from all cards
+              zoneCards.forEach(c => c.classList.remove('active'));
+
+              // Add active class to clicked card
+              this.classList.add('active');
+
+              // Store selected zone data
+              const zone = this.dataset.zone;
+              const fee = this.dataset.fee;
+
+              document.getElementById('selected-zone').value = zone;
+              document.getElementById('delivery-fee').value = fee;
+            });
           });
-        });
 
-        // Handle form submission
-        document.getElementById('select-dishes-btn').addEventListener('click', function() {
-          if (validateDeliveryForm()) {
-            // Store delivery info in localStorage
-            const deliveryInfo = {
-              customerName: document.getElementById('customer-name').value,
-              customerPhone: document.getElementById('customer-phone').value,
-              deliveryAddress: document.getElementById('delivery-address').value,
-              deliveryDate: document.getElementById('delivery-date').value,
-              deliveryTime: document.getElementById('delivery-time').value,
-              deliveryNotes: document.getElementById('delivery-notes').value,
-              selectedZone: document.getElementById('selected-zone').value,
-              deliveryFee: document.getElementById('delivery-fee').value
-            };
-            
-            localStorage.setItem('deliveryInfo', JSON.stringify(deliveryInfo));
-            
-            // Redirect to menu selection
-            window.location.href = '../menu/public-menu.html?mode=delivery';
+          // Handle form submission
+          document.getElementById('select-dishes-btn').addEventListener('click', function() {
+            if (validateDeliveryForm()) {
+              // Store delivery info in localStorage
+              const deliveryInfo = {
+                customerName: document.getElementById('customer-name').value,
+                customerPhone: document.getElementById('customer-phone').value,
+                deliveryAddress: document.getElementById('delivery-address').value,
+                deliveryDate: document.getElementById('delivery-date').value,
+                deliveryTime: document.getElementById('delivery-time').value,
+                deliveryNotes: document.getElementById('delivery-notes').value,
+                selectedZone: document.getElementById('selected-zone').value,
+                deliveryFee: document.getElementById('delivery-fee').value
+              };
+
+              localStorage.setItem('deliveryInfo', JSON.stringify(deliveryInfo));
+
+              // Redirect to menu selection
+              window.location.href = '../menu/public-menu.html?mode=delivery';
+            }
+          });
+        }
+
+      <!-- Firebase SDK -->
+      <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js';
+        import { getFirestore, collection, getDocs } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js';
+        import { getAnalytics, isSupported as analyticsIsSupported } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-analytics.js';
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyCHlUB0G5qIQOY3UqxnCzJMNhSrZbYAJV4",
+          authDomain: "order-yummy.firebaseapp.com",
+          projectId: "order-yummy",
+          storageBucket: "order-yummy.appspot.com",
+          messagingSenderId: "1084816248754",
+          appId: "1:1084816248754:web:c27b7b5bb9b46b99abdddd",
+          measurementId: "G-6J7GTKXWZP"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        window.firebaseApp = app;
+        window.firebaseDb = db;
+
+        analyticsIsSupported().then(s => {
+          if (s) {
+            getAnalytics(app);
           }
-        });
-      }
+        }).catch(e => console.warn("Analytics unavailable", e));
 
-      function validateDeliveryForm() {
-        const requiredFields = [
-          'customer-name',
-          'customer-phone', 
-          'delivery-address',
-          'delivery-date',
-          'delivery-time'
-        ];
+        // Cart Management
+        let cart = [];
+        let total = 0;
 
-        let isValid = true;
-        
-        // Check required fields
-        requiredFields.forEach(fieldId => {
-          const field = document.getElementById(fieldId);
-          if (!field.value.trim()) {
-            field.classList.add('error');
-            isValid = false;
+        function formatCurrency(amount) {
+          return new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(amount || 0);
+        }
+
+        function addToCart(id, name, price) {
+          const existingItem = cart.find(item => item.id === id);
+          if (existingItem) {
+            existingItem.quantity += 1;
           } else {
-            field.classList.remove('error');
+            cart.push({ id, name, price, quantity: 1 });
           }
+          updateCartDisplay();
+        }
+
+        function removeFromCart(id) {
+          cart = cart.filter(item => item.id !== id);
+          updateCartDisplay();
+        }
+
+        function updateCartDisplay() {
+          const cartContainer = document.getElementById('cart-items');
+          const totalElement = document.getElementById('total-amount');
+
+          if (cart.length === 0) {
+            cartContainer.innerHTML = '<p class="empty-cart">Chưa có món nào được chọn</p>';
+            total = 0;
+          } else {
+            cartContainer.innerHTML = cart.map(item => `
+              <div class="cart-item">
+                <div>
+                  <strong>${item.name}</strong><br>
+                  <small>${formatCurrency(item.price)} x ${item.quantity}</small>
+                </div>
+                <button onclick="removeFromCart('${item.id}')" style="background: #ef4444; color: white; border: none; border-radius: 4px; padding: 0.25rem 0.5rem; cursor: pointer;">
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+              </div>
+            `).join('');
+
+            total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+          }
+
+          totalElement.textContent = formatCurrency(total);
+        }
+
+        // Load Menu from Firebase
+        async function loadMenu() {
+          try {
+            const menuContainer = document.getElementById('menu-container');
+            const menuCollectionRef = collection(db, "menuItems");
+            const querySnapshot = await getDocs(menuCollectionRef);
+
+            const menuItems = [];
+            querySnapshot.forEach((doc) => {
+              menuItems.push({ id: doc.id, ...doc.data() });
+            });
+
+            if (menuItems.length === 0) {
+              menuContainer.innerHTML = '<p style="text-align: center; color: #666;">Hiện tại chưa có món ăn nào</p>';
+              return;
+            }
+
+            menuContainer.innerHTML = menuItems.map(item => {
+              const placeholderImg = `https://placehold.co/80x80/f97316/FFFFFF?text=${encodeURIComponent(item.name)}`;
+              return `
+                <div class="menu-item">
+                  <img src="${item.image || placeholderImg}" alt="${item.name}" onerror="this.src='${placeholderImg}'">
+                  <div class="menu-item-info">
+                    <h4>${item.name}</h4>
+                    <p>${item.description || 'Món ăn ngon'}</p>
+                    <div class="menu-item-price">${formatCurrency(item.price)}</div>
+                  </div>
+                  <button class="add-to-cart" onclick="addToCart('${item.id}', '${item.name}', ${item.price})">
+                    <i class="fa-solid fa-plus"></i>
+                  </button>
+                </div>
+              `;
+            }).join('');
+
+          } catch (error) {
+            console.error("Error loading menu:", error);
+            document.getElementById('menu-container').innerHTML = '<p style="text-align: center; color: #ef4444;">Lỗi tải thực đơn</p>';
+          }
+        }
+
+        // Search functionality
+        function setupSearch() {
+          const searchInput = document.getElementById('menu-search');
+          if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+              const searchTerm = e.target.value.toLowerCase();
+              const menuItems = document.querySelectorAll('.menu-item');
+
+              menuItems.forEach(item => {
+                const name = item.querySelector('h4').textContent.toLowerCase();
+                const description = item.querySelector('p').textContent.toLowerCase();
+
+                if (name.includes(searchTerm) || description.includes(searchTerm)) {
+                  item.style.display = 'flex';
+                } else {
+                  item.style.display = 'none';
+                }
+              });
+            });
+          }
+        }
+
+        // Form submission
+        function setupForm() {
+          const form = document.getElementById('delivery-form');
+          if (form) {
+            form.addEventListener('submit', (e) => {
+              e.preventDefault();
+
+              if (cart.length === 0) {
+                alert('Vui lòng chọn ít nhất một món ăn!');
+                return;
+              }
+
+              const formData = {
+                customerName: document.getElementById('customer-name').value,
+                customerPhone: document.getElementById('customer-phone').value,
+                deliveryAddress: document.getElementById('delivery-address').value,
+                deliveryNote: document.getElementById('delivery-note').value,
+                items: cart,
+                total: total,
+                orderDate: new Date().toISOString(),
+                type: 'delivery'
+              };
+
+              // In production: save to Firebase
+              console.log('Delivery order:', formData);
+              alert(`Đơn hàng giao hàng đã được gửi thành công!\\nTổng tiền: ${formatCurrency(total)}\\nChúng tôi sẽ liên hệ với bạn trong ít phút!`);
+
+              // Reset form
+              form.reset();
+              cart = [];
+              updateCartDisplay();
+            });
+          }
+        }
+
+        // Global functions
+        window.addToCart = addToCart;
+        window.removeFromCart = removeFromCart;
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+          loadMenu();
+          setupSearch();
+          setupForm();
+          updateCartDisplay();
         });
-
-        // Check if zone is selected
-        if (!document.getElementById('selected-zone').value) {
-          alert('Vui lòng chọn khu vực giao hàng');
-          isValid = false;
-        }
-
-        if (!isValid) {
-          alert('Vui lòng điền đầy đủ thông tin bắt buộc');
-        }
-
-        return isValid;
-      }
-
-      // Auto-format phone number
-      document.getElementById('customer-phone').addEventListener('input', function(e) {
-        let value = e.target.value.replace(/\D/g, '');
-        if (value.length > 10) value = value.slice(0, 10);
-        
-        if (value.length >= 4) {
-          value = value.replace(/(\d{4})(\d{3})(\d{3})/, '$1 $2 $3');
-        } else if (value.length >= 3) {
-          value = value.replace(/(\d{3})(\d+)/, '$1 $2');
-        }
-        
-        e.target.value = value;
-      });
     </script>
   </body>
 </html>
