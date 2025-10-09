@@ -460,6 +460,12 @@
 
               <!-- Categories Tab -->
               <div id="menu-categories-tab" class="tab-content">
+                <div class="categories-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                  <h2 style="margin: 0; color: #333;">Danh sách danh mục</h2>
+                  <button class="btn btn-primary" id="add-category-btn-inline" style="display: inline-flex;">
+                    <i class="fa-solid fa-plus"></i> Thêm danh mục mới
+                  </button>
+                </div>
                 <div class="categories-list" id="categories-list">
                   <div class="loading-spinner">
                     <i class="fa-solid fa-spinner fa-spin"></i>
@@ -1151,14 +1157,18 @@
         }
       };
 
-      // Category modal controls
-      addCategoryBtn?.addEventListener('click', () => {
+      // Category modal controls - Function to open modal
+      function openCategoryModal() {
         currentEditingCategory = null;
         document.getElementById('category-modal-title').textContent = 'Thêm danh mục mới';
         categoryForm.reset();
         document.getElementById('category-order').value = '1';
         categoryModal.classList.add('active');
-      });
+      }
+      
+      // Both buttons open the same modal
+      addCategoryBtn?.addEventListener('click', openCategoryModal);
+      document.getElementById('add-category-btn-inline')?.addEventListener('click', openCategoryModal);
 
       [closeCategoryModalBtn, cancelCategoryBtn].forEach(btn => {
         btn?.addEventListener('click', () => {
