@@ -151,7 +151,11 @@
               <div class="page-header">
                 <h1><i class="fa-solid fa-chart-line"></i> Dashboard</h1>
                 <div class="dashboard-controls">
-                  <select id="dashboard-period" class="form-control" title="Chọn khoảng thời gian">
+                  <select
+                    id="dashboard-period"
+                    class="form-control"
+                    title="Chọn khoảng thời gian"
+                  >
                     <option value="day">Hôm nay</option>
                     <option value="week">Tuần này</option>
                     <option value="month">Tháng này</option>
@@ -171,7 +175,9 @@
                   <div class="stat-info">
                     <span class="stat-value" id="total-visits">0</span>
                     <span class="stat-label">Lượt ghé ăn</span>
-                    <span class="stat-change positive" id="visits-change">+0%</span>
+                    <span class="stat-change positive" id="visits-change"
+                      >+0%</span
+                    >
                   </div>
                 </div>
                 <div class="stat-card orders">
@@ -181,7 +187,9 @@
                   <div class="stat-info">
                     <span class="stat-value" id="total-dine-orders">0</span>
                     <span class="stat-label">Order tại bàn</span>
-                    <span class="stat-change positive" id="dine-orders-change">+0%</span>
+                    <span class="stat-change positive" id="dine-orders-change"
+                      >+0%</span
+                    >
                   </div>
                 </div>
                 <div class="stat-card bookings">
@@ -191,7 +199,9 @@
                   <div class="stat-info">
                     <span class="stat-value" id="total-bookings-dash">0</span>
                     <span class="stat-label">Đặt bàn</span>
-                    <span class="stat-change positive" id="bookings-change">+0%</span>
+                    <span class="stat-change positive" id="bookings-change"
+                      >+0%</span
+                    >
                   </div>
                 </div>
                 <div class="stat-card deliveries">
@@ -201,7 +211,9 @@
                   <div class="stat-info">
                     <span class="stat-value" id="total-deliveries">0</span>
                     <span class="stat-label">Ship</span>
-                    <span class="stat-change positive" id="deliveries-change">+0%</span>
+                    <span class="stat-change positive" id="deliveries-change"
+                      >+0%</span
+                    >
                   </div>
                 </div>
               </div>
@@ -211,9 +223,15 @@
           <div class="subpage" id="page-orders">
             <div class="admin-container">
               <div class="page-header">
-                <h1><i class="fa-solid fa-receipt"></i> Quản lý Doanh thu - Bill & Thanh toán</h1>
+                <h1>
+                  <i class="fa-solid fa-receipt"></i> Quản lý Doanh thu - Bill &
+                  Thanh toán
+                </h1>
                 <div class="page-description">
-                  <p>Quản lý tất cả đơn hàng tạo ra doanh thu: Bill tại bàn và Bill giao hàng</p>
+                  <p>
+                    Quản lý tất cả đơn hàng tạo ra doanh thu: Bill tại bàn và
+                    Bill giao hàng
+                  </p>
                 </div>
                 <div class="order-tabs">
                   <button class="tab-btn active" data-tab="dine-in">
@@ -248,13 +266,6 @@
                     <span class="stat-label">Doanh thu tại bàn</span>
                   </div>
                 </div>
-                <div class="stat-card dine-revenue">
-                  <i class="fa-solid fa-utensils"></i>
-                  <div class="stat-info">
-                    <span class="stat-value" id="dine-revenue">0 VNĐ</span>
-                    <span class="stat-label">Doanh thu tại bàn</span>
-                  </div>
-                </div>
                 <div class="stat-card delivery-revenue">
                   <i class="fa-solid fa-truck"></i>
                   <div class="stat-info">
@@ -264,32 +275,19 @@
                 </div>
               </div>
 
-              <!-- Order Type Tabs - Đơn giản -->
-              <div class="order-tabs">
-                <button class="order-tab-btn active" data-tab="dine-in">
-                  <i class="fa-solid fa-utensils"></i>
-                  Bill tại bàn
-                  <span class="tab-count" id="dine-in-count">0</span>
-                </button>
-                <button class="order-tab-btn" data-tab="delivery">
-                  <i class="fa-solid fa-truck"></i>
-                  Bill giao hàng
-                  <span class="tab-count" id="delivery-count">0</span>
-                </button>
-              </div>
-
               <!-- Order Filters -->
               <div class="order-filters">
-                <select id="order-status-filter" class="form-control" title="Lọc theo trạng thái">
-                  <option value="">Tất cả trạng thái</option>
-                  <option value="pending">Chờ xử lý</option>
-                  <option value="cooking">Đang nấu</option>
-                  <option value="ready">Sẵn sàng</option>
-                  <option value="completed">Hoàn thành</option>
-                  <option value="cancelled">Đã hủy</option>
-                </select>
-                <input type="date" id="order-date-filter" class="form-control" title="Lọc theo ngày">
-                <select id="order-period-filter" class="form-control" title="Lọc theo khoảng thời gian">
+                <input
+                  type="date"
+                  id="order-date-filter"
+                  class="form-control"
+                  title="Lọc theo ngày"
+                />
+                <select
+                  id="order-period-filter"
+                  class="form-control"
+                  title="Lọc theo khoảng thời gian"
+                >
                   <option value="today">Hôm nay</option>
                   <option value="week">Tuần này</option>
                   <option value="month">Tháng này</option>
@@ -304,13 +302,23 @@
                 <!-- Dine-in Bills -->
                 <div class="order-tab-content active" id="dine-in-orders">
                   <div class="order-section-header">
-                    <h3><i class="fa-solid fa-utensils"></i> Bill tại bàn - Doanh thu từ khách ăn tại quán</h3>
-                    <p>Quản lý tất cả bill và thanh toán khi khách order món tại bàn</p>
+                    <h3>
+                      <i class="fa-solid fa-utensils"></i> Bill tại bàn - Doanh
+                      thu từ khách ăn tại quán
+                    </h3>
+                    <p>
+                      Quản lý tất cả bill và thanh toán khi khách order món tại
+                      bàn
+                    </p>
                   </div>
                   <div class="order-list" id="dine-in-order-list">
-                    <div class="loading-spinner">
-                      <i class="fa-solid fa-spinner fa-spin"></i>
-                      <p>Đang tải bill tại bàn...</p>
+                    <div class="empty-state">
+                      <i class="fa-solid fa-receipt"></i>
+                      <p>Chưa có bill tại bàn nào</p>
+                      <span
+                        >Các bill sẽ hiển thị ở đây khi có khách đặt món tại
+                        bàn</span
+                      >
                     </div>
                   </div>
                 </div>
@@ -318,13 +326,23 @@
                 <!-- Delivery Bills -->
                 <div class="order-tab-content" id="delivery-orders">
                   <div class="order-section-header">
-                    <h3><i class="fa-solid fa-truck"></i> Bill giao hàng - Doanh thu từ ship</h3>
-                    <p>Quản lý tất cả bill và thanh toán khi khách đặt món giao hàng</p>
+                    <h3>
+                      <i class="fa-solid fa-truck"></i> Bill giao hàng - Doanh
+                      thu từ ship
+                    </h3>
+                    <p>
+                      Quản lý tất cả bill và thanh toán khi khách đặt món giao
+                      hàng
+                    </p>
                   </div>
                   <div class="order-list" id="delivery-order-list">
-                    <div class="loading-spinner">
-                      <i class="fa-solid fa-spinner fa-spin"></i>
-                      <p>Đang tải bill giao hàng...</p>
+                    <div class="empty-state">
+                      <i class="fa-solid fa-truck"></i>
+                      <p>Chưa có bill giao hàng nào</p>
+                      <span
+                        >Các bill sẽ hiển thị ở đây khi có khách đặt món giao
+                        hàng</span
+                      >
                     </div>
                   </div>
                 </div>
@@ -335,7 +353,9 @@
           <div class="subpage" id="page-booking">
             <div class="admin-container">
               <div class="page-header">
-                <h1><i class="fa-solid fa-calendar-days"></i> Quản lý Đơn đặt bàn</h1>
+                <h1>
+                  <i class="fa-solid fa-calendar-days"></i> Quản lý Đơn đặt bàn
+                </h1>
                 <button class="btn btn-success" id="refresh-bookings-btn">
                   <i class="fa-solid fa-refresh"></i> Tải lại
                 </button>
@@ -373,14 +393,23 @@
               </div>
 
               <div class="booking-filters">
-                <select id="booking-status-filter" class="form-control" title="Lọc theo trạng thái">
+                <select
+                  id="booking-status-filter"
+                  class="form-control"
+                  title="Lọc theo trạng thái"
+                >
                   <option value="">Tất cả trạng thái</option>
                   <option value="pending">Chờ xác nhận</option>
                   <option value="confirmed">Đã xác nhận</option>
                   <option value="cancelled">Đã hủy</option>
                   <option value="completed">Hoàn thành</option>
                 </select>
-                <input type="date" id="booking-date-filter" class="form-control" title="Lọc theo ngày">
+                <input
+                  type="date"
+                  id="booking-date-filter"
+                  class="form-control"
+                  title="Lọc theo ngày"
+                />
               </div>
 
               <div class="booking-list" id="booking-list">
@@ -398,15 +427,29 @@
                 <div class="header-content">
                   <h1><i class="fa-solid fa-utensils"></i> Quản lý Menu</h1>
                   <div class="menu-tabs">
-                    <button class="tab-btn active" onclick="switchMenuTab('items', event)">Món ăn</button>
-                    <button class="tab-btn" onclick="switchMenuTab('categories', event)">Danh mục</button>
+                    <button
+                      class="tab-btn active"
+                      onclick="switchMenuTab('items', event)"
+                    >
+                      Món ăn
+                    </button>
+                    <button
+                      class="tab-btn"
+                      onclick="switchMenuTab('categories', event)"
+                    >
+                      Danh mục
+                    </button>
                   </div>
                 </div>
                 <div class="header-actions">
                   <button class="btn btn-primary" id="add-menu-item-btn">
                     <i class="fa-solid fa-plus"></i> Thêm món mới
                   </button>
-                  <button class="btn btn-secondary" id="add-category-btn" style="display: none;">
+                  <button
+                    class="btn btn-secondary"
+                    id="add-category-btn"
+                    style="display: none"
+                  >
                     <i class="fa-solid fa-plus"></i> Thêm danh mục
                   </button>
                 </div>
@@ -414,55 +457,78 @@
 
               <!-- Menu Items Tab -->
               <div id="menu-items-tab" class="tab-content active">
-
-              <div class="menu-stats">
-                <div class="stat-card">
-                  <i class="fa-solid fa-list"></i>
-                  <div class="stat-info">
-                    <span class="stat-value" id="total-menu-items">0</span>
-                    <span class="stat-label">Tổng món</span>
+                <div class="menu-stats">
+                  <div class="stat-card">
+                    <i class="fa-solid fa-list"></i>
+                    <div class="stat-info">
+                      <span class="stat-value" id="total-menu-items">0</span>
+                      <span class="stat-label">Tổng món</span>
+                    </div>
+                  </div>
+                  <div class="stat-card">
+                    <i class="fa-solid fa-check-circle"></i>
+                    <div class="stat-info">
+                      <span class="stat-value" id="available-menu-items"
+                        >0</span
+                      >
+                      <span class="stat-label">Còn món</span>
+                    </div>
+                  </div>
+                  <div class="stat-card">
+                    <i class="fa-solid fa-times-circle"></i>
+                    <div class="stat-info">
+                      <span class="stat-value" id="unavailable-menu-items"
+                        >0</span
+                      >
+                      <span class="stat-label">Hết món</span>
+                    </div>
                   </div>
                 </div>
-                <div class="stat-card">
-                  <i class="fa-solid fa-check-circle"></i>
-                  <div class="stat-info">
-                    <span class="stat-value" id="available-menu-items">0</span>
-                    <span class="stat-label">Còn món</span>
+
+                <div class="menu-filters">
+                  <select
+                    id="category-filter"
+                    class="form-control"
+                    title="Lọc theo danh mục"
+                  >
+                    <option value="">Tất cả danh mục</option>
+                  </select>
+                  <select
+                    id="status-filter"
+                    class="form-control"
+                    title="Lọc theo trạng thái"
+                  >
+                    <option value="">Tất cả trạng thái</option>
+                    <option value="true">Còn món</option>
+                    <option value="false">Hết món</option>
+                  </select>
+                </div>
+
+                <div class="menu-list" id="menu-items-list">
+                  <div class="loading-spinner">
+                    <i class="fa-solid fa-spinner fa-spin"></i>
+                    <p>Đang tải danh sách món ăn...</p>
                   </div>
                 </div>
-                <div class="stat-card">
-                  <i class="fa-solid fa-times-circle"></i>
-                  <div class="stat-info">
-                    <span class="stat-value" id="unavailable-menu-items">0</span>
-                    <span class="stat-label">Hết món</span>
-                  </div>
-                </div>
-              </div>
-
-              <div class="menu-filters">
-                <select id="category-filter" class="form-control" title="Lọc theo danh mục">
-                  <option value="">Tất cả danh mục</option>
-                </select>
-                <select id="status-filter" class="form-control" title="Lọc theo trạng thái">
-                  <option value="">Tất cả trạng thái</option>
-                  <option value="true">Còn món</option>
-                  <option value="false">Hết món</option>
-                </select>
-              </div>
-
-              <div class="menu-list" id="menu-items-list">
-                <div class="loading-spinner">
-                  <i class="fa-solid fa-spinner fa-spin"></i>
-                  <p>Đang tải danh sách món ăn...</p>
-                </div>
-              </div>
               </div>
 
               <!-- Categories Tab -->
               <div id="menu-categories-tab" class="tab-content">
-                <div class="categories-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                  <h2 style="margin: 0; color: #333;">Danh sách danh mục</h2>
-                  <button class="btn btn-primary" id="add-category-btn-inline" style="display: inline-flex;">
+                <div
+                  class="categories-header"
+                  style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 20px;
+                  "
+                >
+                  <h2 style="margin: 0; color: #333">Danh sách danh mục</h2>
+                  <button
+                    class="btn btn-primary"
+                    id="add-category-btn-inline"
+                    style="display: inline-flex"
+                  >
                     <i class="fa-solid fa-plus"></i> Thêm danh mục mới
                   </button>
                 </div>
@@ -481,15 +547,19 @@
               <div class="page-header">
                 <h1><i class="fa-solid fa-fire"></i> Bếp - Quản lý Sản xuất</h1>
                 <div class="page-description">
-                  <p>Theo dõi quy trình nấu nướng và trạng thái sản xuất món ăn</p>
+                  <p>
+                    Theo dõi quy trình nấu nướng và trạng thái sản xuất món ăn
+                  </p>
                 </div>
                 <div class="kitchen-controls">
                   <button class="btn btn-primary" id="refresh-kitchen">
                     <i class="fa-solid fa-refresh"></i> Cập nhật
                   </button>
                   <div class="auto-refresh">
-                    <input type="checkbox" id="auto-refresh-kitchen" checked>
-                    <label for="auto-refresh-kitchen">Tự động cập nhật (30s)</label>
+                    <input type="checkbox" id="auto-refresh-kitchen" checked />
+                    <label for="auto-refresh-kitchen"
+                      >Tự động cập nhật (30s)</label
+                    >
                   </div>
                 </div>
               </div>
@@ -625,7 +695,11 @@
           </div>
           <div class="form-group">
             <label for="item-image">URL hình ảnh</label>
-            <input type="url" id="item-image" placeholder="https://example.com/image.jpg" />
+            <input
+              type="url"
+              id="item-image"
+              placeholder="https://example.com/image.jpg"
+            />
           </div>
           <div class="form-group">
             <label class="checkbox-label">
@@ -651,7 +725,12 @@
       <div class="modal-content">
         <div class="modal-header">
           <h3 id="category-modal-title">Thêm danh mục mới</h3>
-          <button type="button" class="close-btn" id="close-category-modal" title="Đóng modal">
+          <button
+            type="button"
+            class="close-btn"
+            id="close-category-modal"
+            title="Đóng modal"
+          >
             <i class="fa-solid fa-times"></i>
           </button>
         </div>
@@ -662,17 +741,29 @@
           </div>
           <div class="form-group">
             <label for="category-description">Mô tả</label>
-            <textarea id="category-description" rows="3" maxlength="200"></textarea>
+            <textarea
+              id="category-description"
+              rows="3"
+              maxlength="200"
+            ></textarea>
           </div>
           <div class="form-group">
             <label for="category-order">Thứ tự hiển thị</label>
             <input type="number" id="category-order" min="1" value="1" />
           </div>
           <div class="form-actions">
-            <button type="button" class="btn btn-secondary" id="cancel-category-btn">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              id="cancel-category-btn"
+            >
               Hủy
             </button>
-            <button type="submit" class="btn btn-primary" id="save-category-btn">
+            <button
+              type="submit"
+              class="btn btn-primary"
+              id="save-category-btn"
+            >
               <i class="fa-solid fa-save"></i> Lưu danh mục
             </button>
           </div>
@@ -810,86 +901,88 @@
 
       // --- 5. LẮNG NGHE TRẠNG THÁI ĐĂNG NHẬP ---
       onAuthStateChanged(auth, async (user) => {
-        console.log('Auth state changed:', user);
-        
+        console.log("Auth state changed:", user);
+
         if (user) {
-          console.log('User is logged in:', user.email);
+          console.log("User is logged in:", user.email);
           // Người dùng đã đăng nhập
           try {
             // Kiểm tra xem user có phải là admin không
             const adminDocRef = doc(db, "admins", user.uid);
             const adminDocSnap = await getDoc(adminDocRef);
 
-            console.log('Admin doc exists:', adminDocSnap.exists());
-            
+            console.log("Admin doc exists:", adminDocSnap.exists());
+
             if (adminDocSnap.exists() && adminDocSnap.data().role === "admin") {
-              console.log('User is admin, showing main panel');
+              console.log("User is admin, showing main panel");
               // Là admin -> Hiển thị trang quản trị
               pageAuth.classList.remove("active");
               pageShell.classList.add("active");
-              
+
               if (userEmailDisplay) {
                 userEmailDisplay.textContent = user.email;
               }
-              
+
               // Khởi tạo navigation, clock và load menu data
               setTimeout(() => {
                 initializeNavigation();
                 initializeClock();
                 loadMenuItems();
-                
+
                 // Load categories for dropdowns
                 loadCategoriesForDropdowns();
-                
+
                 // Load revenue data
-                loadRevenueData('dine-in');
-                
+                loadRevenueData("dine-in");
+
                 // Ensure dashboard is visible
                 showDashboard();
               }, 100);
             } else {
-              console.log('User is not admin');
+              console.log("User is not admin");
               // Không phải admin -> Đăng xuất và báo lỗi
-              alert("Tài khoản của bạn không có quyền truy cập trang quản trị.");
+              alert(
+                "Tài khoản của bạn không có quyền truy cập trang quản trị."
+              );
               await signOut(auth);
             }
           } catch (error) {
-            console.error('Error checking admin status:', error);
+            console.error("Error checking admin status:", error);
             // Nếu có lỗi, cho phép vào để test (development mode)
-            console.log('Allowing access for development testing...');
+            console.log("Allowing access for development testing...");
             pageAuth.classList.remove("active");
             pageShell.classList.add("active");
-            
+
             if (userEmailDisplay) {
               userEmailDisplay.textContent = user.email;
             }
-            
+
             setTimeout(() => {
               initializeNavigation();
               initializeClock();
               loadMenuItems();
               loadCategoriesForDropdowns();
-              loadRevenueData('dine-in');
+              loadRevenueData("dine-in");
               showDashboard();
             }, 100);
           }
         } else {
-          console.log('User is not logged in');
+          console.log("User is not logged in");
           // For development, allow direct access
-          console.log('Development mode: allowing direct access...');
+          console.log("Development mode: allowing direct access...");
           pageAuth.classList.remove("active");
           pageShell.classList.add("active");
-          
+
           if (userEmailDisplay) {
-            userEmailDisplay.textContent = 'Admin (Development)';
+            userEmailDisplay.textContent = "Admin (Development)";
           }
-          
+
           setTimeout(() => {
             initializeNavigation();
             initializeClock();
             loadMenuItems();
             loadCategoriesForDropdowns();
-            loadRevenueData('dine-in');
+            loadRevenueData("dine-in");
             showDashboard();
           }, 100);
         }
@@ -899,32 +992,32 @@
       function initializeClock() {
         function updateTime() {
           const now = new Date();
-          
+
           // Format time
-          const timeOptions = { 
-            hour: '2-digit', 
-            minute: '2-digit', 
-            second: '2-digit',
-            hour12: false 
+          const timeOptions = {
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+            hour12: false,
           };
-          const timeString = now.toLocaleTimeString('vi-VN', timeOptions);
-          
+          const timeString = now.toLocaleTimeString("vi-VN", timeOptions);
+
           // Format date
-          const dateOptions = { 
-            day: '2-digit', 
-            month: '2-digit', 
-            year: 'numeric' 
+          const dateOptions = {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
           };
-          const dateString = now.toLocaleDateString('vi-VN', dateOptions);
-          
+          const dateString = now.toLocaleDateString("vi-VN", dateOptions);
+
           // Update display
-          const timeElement = document.getElementById('current-time');
-          const dateElement = document.getElementById('current-date');
-          
+          const timeElement = document.getElementById("current-time");
+          const dateElement = document.getElementById("current-date");
+
           if (timeElement) timeElement.textContent = `Time: ${timeString}`;
           if (dateElement) dateElement.textContent = `Date: ${dateString}`;
         }
-        
+
         // Update immediately and then every second
         updateTime();
         setInterval(updateTime, 1000);
@@ -932,90 +1025,94 @@
 
       // --- 7. NAVIGATION SYSTEM ---
       function initializeNavigation() {
-        const navLinks = document.querySelectorAll('.nav-link[data-page]');
-        const subpages = document.querySelectorAll('.subpage');
-        const pageTitle = document.getElementById('current-page-title');
+        const navLinks = document.querySelectorAll(".nav-link[data-page]");
+        const subpages = document.querySelectorAll(".subpage");
+        const pageTitle = document.getElementById("current-page-title");
 
-        navLinks.forEach(link => {
-          link.addEventListener('click', (e) => {
+        navLinks.forEach((link) => {
+          link.addEventListener("click", (e) => {
             e.preventDefault();
-            const targetPage = link.getAttribute('data-page');
-            
+            const targetPage = link.getAttribute("data-page");
+
             // Update active nav link
-            navLinks.forEach(l => l.classList.remove('active'));
-            link.classList.add('active');
-            
+            navLinks.forEach((l) => l.classList.remove("active"));
+            link.classList.add("active");
+
             // Show target subpage
-            subpages.forEach(page => page.classList.remove('active'));
+            subpages.forEach((page) => page.classList.remove("active"));
             const targetSubpage = document.getElementById(`page-${targetPage}`);
             if (targetSubpage) {
-              targetSubpage.classList.add('active');
-              
+              targetSubpage.classList.add("active");
+
               // Update page title
               const pageTitles = {
-                'dashboard': 'Dashboard',
-                'orders': 'Quản lý doanh thu', 
-                'booking': 'Quản lý đơn đặt bàn',
-                'menu': 'Quản lý Menu',
-                'kitchen': 'Bếp - Quản lý sản xuất',
-                'advanced': 'Cài đặt nâng cao'
+                dashboard: "Dashboard",
+                orders: "Quản lý doanh thu",
+                booking: "Quản lý đơn đặt bàn",
+                menu: "Quản lý Menu",
+                kitchen: "Bếp - Quản lý sản xuất",
+                advanced: "Cài đặt nâng cao",
               };
               if (pageTitle) {
-                pageTitle.textContent = pageTitles[targetPage] || 'Dashboard';
+                pageTitle.textContent = pageTitles[targetPage] || "Dashboard";
               }
-              
+
               // Load specific page data
-              if (targetPage === 'menu') {
+              if (targetPage === "menu") {
                 loadMenuItems();
                 loadCategoriesForDropdowns();
-              } else if (targetPage === 'booking') {
+              } else if (targetPage === "booking") {
                 loadBookings();
-              } else if (targetPage === 'dashboard') {
+              } else if (targetPage === "dashboard") {
                 // Dashboard loads automatically
-              } else if (targetPage === 'orders') {
-                loadRevenueData('dine-in');
-              } else if (targetPage === 'kitchen') {
+              } else if (targetPage === "orders") {
+                loadRevenueData("dine-in");
+              } else if (targetPage === "kitchen") {
                 loadKitchen();
-              } else if (targetPage === 'advanced') {
+              } else if (targetPage === "advanced") {
                 // Advanced settings page
-                console.log('Loading advanced settings...');
+                console.log("Loading advanced settings...");
               }
             }
           });
         });
-        
+
         // Set dashboard as default active page
-        const dashboardLink = document.querySelector('.nav-link[data-page="dashboard"]');
+        const dashboardLink = document.querySelector(
+          '.nav-link[data-page="dashboard"]'
+        );
         if (dashboardLink) {
-          dashboardLink.classList.add('active');
+          dashboardLink.classList.add("active");
         }
       }
-      
+
       // Show dashboard function
       function showDashboard() {
-        console.log('Showing dashboard...');
-        const navLinks = document.querySelectorAll('.nav-link[data-page]');
-        const subpages = document.querySelectorAll('.subpage');
-        const pageTitle = document.getElementById('current-page-title');
-        
+        console.log("Showing dashboard...");
+        const navLinks = document.querySelectorAll(".nav-link[data-page]");
+        const subpages = document.querySelectorAll(".subpage");
+        const pageTitle = document.getElementById("current-page-title");
+
         // Update active nav link
-        navLinks.forEach(l => l.classList.remove('active'));
-        const dashboardLink = document.querySelector('.nav-link[data-page="dashboard"]');
+        navLinks.forEach((l) => l.classList.remove("active"));
+        const dashboardLink = document.querySelector(
+          '.nav-link[data-page="dashboard"]'
+        );
         if (dashboardLink) {
-          dashboardLink.classList.add('active');
+          dashboardLink.classList.add("active");
         }
-        
+
         // Show dashboard page
-        subpages.forEach(page => page.classList.remove('active'));
-        const dashboardPage = document.getElementById('page-dashboard');
+        subpages.forEach((page) => page.classList.remove("active"));
+        const dashboardPage = document.getElementById("page-dashboard");
         if (dashboardPage) {
-          dashboardPage.classList.add('active');
-          console.log('Dashboard page is now active');
+          dashboardPage.classList.add("active");
+          console.log("Dashboard page is now active");
         }
-        
+
         // Update page title
         if (pageTitle) {
-          pageTitle.textContent = 'Dashboard';
+          pageTitle.textContent = "Dashboard";
         }
       }
 
@@ -1030,129 +1127,149 @@
         }).format(amount || 0);
 
       // Modal controls
-      const menuItemModal = document.getElementById('menu-item-modal');
-      const addMenuItemBtn = document.getElementById('add-menu-item-btn');
-      const closeModalBtn = document.getElementById('close-modal-btn');
-      const cancelBtn = document.getElementById('cancel-btn');
-      const menuItemForm = document.getElementById('menu-item-form');
+      const menuItemModal = document.getElementById("menu-item-modal");
+      const addMenuItemBtn = document.getElementById("add-menu-item-btn");
+      const closeModalBtn = document.getElementById("close-modal-btn");
+      const cancelBtn = document.getElementById("cancel-btn");
+      const menuItemForm = document.getElementById("menu-item-form");
 
       // Open modal for adding new item
-      addMenuItemBtn?.addEventListener('click', () => {
+      addMenuItemBtn?.addEventListener("click", () => {
         currentEditingItem = null;
-        document.getElementById('modal-title').textContent = 'Thêm món mới';
+        document.getElementById("modal-title").textContent = "Thêm món mới";
         menuItemForm.reset();
-        document.getElementById('item-available').checked = true;
-        menuItemModal.classList.add('active');
+        document.getElementById("item-available").checked = true;
+        menuItemModal.classList.add("active");
       });
 
       // Close modal
-      [closeModalBtn, cancelBtn].forEach(btn => {
-        btn?.addEventListener('click', () => {
-          menuItemModal.classList.remove('active');
+      [closeModalBtn, cancelBtn].forEach((btn) => {
+        btn?.addEventListener("click", () => {
+          menuItemModal.classList.remove("active");
           currentEditingItem = null;
         });
       });
 
       // Close modal when clicking outside
-      menuItemModal?.addEventListener('click', (e) => {
+      menuItemModal?.addEventListener("click", (e) => {
         if (e.target === menuItemModal) {
-          menuItemModal.classList.remove('active');
+          menuItemModal.classList.remove("active");
           currentEditingItem = null;
         }
       });
 
       // Form submission
-      menuItemForm?.addEventListener('submit', async (e) => {
+      menuItemForm?.addEventListener("submit", async (e) => {
         e.preventDefault();
         await saveMenuItem();
       });
 
       // Filter controls
-      const categoryFilter = document.getElementById('category-filter');
-      const statusFilter = document.getElementById('status-filter');
-      const refreshBookingsBtn = document.getElementById('refresh-bookings-btn');
-      const bookingStatusFilter = document.getElementById('booking-status-filter');
-      const bookingDateFilter = document.getElementById('booking-date-filter');
-      const dashboardPeriod = document.getElementById('dashboard-period');
-      const refreshDashboard = document.getElementById('refresh-dashboard');
-      const refreshOrders = document.getElementById('refresh-orders-btn');
-      const refreshKitchen = document.getElementById('refresh-kitchen');
+      const categoryFilter = document.getElementById("category-filter");
+      const statusFilter = document.getElementById("status-filter");
+      const refreshBookingsBtn = document.getElementById(
+        "refresh-bookings-btn"
+      );
+      const bookingStatusFilter = document.getElementById(
+        "booking-status-filter"
+      );
+      const bookingDateFilter = document.getElementById("booking-date-filter");
+      const dashboardPeriod = document.getElementById("dashboard-period");
+      const refreshDashboard = document.getElementById("refresh-dashboard");
+      const refreshOrders = document.getElementById("refresh-orders-btn");
+      const refreshKitchen = document.getElementById("refresh-kitchen");
 
-      categoryFilter?.addEventListener('change', loadMenuItems);
-      statusFilter?.addEventListener('change', loadMenuItems);
-      refreshBookingsBtn?.addEventListener('click', loadBookings);
-      bookingStatusFilter?.addEventListener('change', loadBookings);
-      bookingDateFilter?.addEventListener('change', loadBookings);
-      dashboardPeriod?.addEventListener('change', loadDashboard);
-      refreshDashboard?.addEventListener('click', loadDashboard);
-      refreshOrders?.addEventListener('click', loadOrders);
-      refreshKitchen?.addEventListener('click', loadKitchen);
+      categoryFilter?.addEventListener("change", loadMenuItems);
+      statusFilter?.addEventListener("change", loadMenuItems);
+      refreshBookingsBtn?.addEventListener("click", loadBookings);
+      bookingStatusFilter?.addEventListener("change", loadBookings);
+      bookingDateFilter?.addEventListener("change", loadBookings);
+      dashboardPeriod?.addEventListener("change", loadDashboard);
+      refreshDashboard?.addEventListener("click", loadDashboard);
+      refreshOrders?.addEventListener("click", loadOrders);
+      refreshKitchen?.addEventListener("click", loadKitchen);
 
       // Order revenue tabs
-      document.querySelectorAll('.order-tab-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          document.querySelectorAll('.order-tab-btn').forEach(b => b.classList.remove('active'));
-          document.querySelectorAll('.order-tab-content').forEach(content => content.classList.remove('active'));
-          
-          btn.classList.add('active');
-          const tabId = btn.getAttribute('data-tab') + '-orders';
-          document.getElementById(tabId)?.classList.add('active');
-          
+      document.querySelectorAll(".order-tab-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          document
+            .querySelectorAll(".order-tab-btn")
+            .forEach((b) => b.classList.remove("active"));
+          document
+            .querySelectorAll(".order-tab-content")
+            .forEach((content) => content.classList.remove("active"));
+
+          btn.classList.add("active");
+          const tabId = btn.getAttribute("data-tab") + "-orders";
+          document.getElementById(tabId)?.classList.add("active");
+
           // Load data for specific tab
-          loadRevenueData(btn.getAttribute('data-tab'));
+          loadRevenueData(btn.getAttribute("data-tab"));
         });
       });
 
       // Kitchen order tabs (different from revenue tabs)
-      document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-          document.querySelectorAll('.order-tab-content').forEach(content => content.classList.remove('active'));
-          
-          btn.classList.add('active');
-          const tabId = btn.getAttribute('data-tab') + '-orders';
-          document.getElementById(tabId)?.classList.add('active');
+      document.querySelectorAll(".tab-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          document
+            .querySelectorAll(".tab-btn")
+            .forEach((b) => b.classList.remove("active"));
+          document
+            .querySelectorAll(".order-tab-content")
+            .forEach((content) => content.classList.remove("active"));
+
+          btn.classList.add("active");
+          const tabId = btn.getAttribute("data-tab") + "-orders";
+          document.getElementById(tabId)?.classList.add("active");
         });
       });
 
       // --- CATEGORIES MANAGEMENT ---
-      const categoryModal = document.getElementById('category-modal');
-      const addCategoryBtn = document.getElementById('add-category-btn');
-      const closeCategoryModalBtn = document.getElementById('close-category-modal');
-      const cancelCategoryBtn = document.getElementById('cancel-category-btn');
-      const categoryForm = document.getElementById('category-form');
+      const categoryModal = document.getElementById("category-modal");
+      const addCategoryBtn = document.getElementById("add-category-btn");
+      const closeCategoryModalBtn = document.getElementById(
+        "close-category-modal"
+      );
+      const cancelCategoryBtn = document.getElementById("cancel-category-btn");
+      const categoryForm = document.getElementById("category-form");
       let currentEditingCategory = null;
 
       // Switch menu tabs
-      window.switchMenuTab = function(tab, event) {
-        console.log('🔄 Switching to tab:', tab);
-        
+      window.switchMenuTab = function (tab, event) {
+        console.log("🔄 Switching to tab:", tab);
+
         // Hide all tab contents
-        document.getElementById('menu-items-tab').classList.toggle('active', tab === 'items');
-        document.getElementById('menu-categories-tab').classList.toggle('active', tab === 'categories');
-        
+        document
+          .getElementById("menu-items-tab")
+          .classList.toggle("active", tab === "items");
+        document
+          .getElementById("menu-categories-tab")
+          .classList.toggle("active", tab === "categories");
+
         // Update tab buttons
-        document.querySelectorAll('.menu-tabs .tab-btn').forEach(btn => btn.classList.remove('active'));
+        document
+          .querySelectorAll(".menu-tabs .tab-btn")
+          .forEach((btn) => btn.classList.remove("active"));
         if (event && event.target) {
-          event.target.classList.add('active');
+          event.target.classList.add("active");
         }
-        
+
         // Show/hide action buttons
-        const addMenuBtn = document.getElementById('add-menu-item-btn');
-        const addCategoryBtn = document.getElementById('add-category-btn');
-        
-        if (tab === 'items') {
-          addMenuBtn.style.display = 'inline-flex';
-          addCategoryBtn.style.display = 'none';
+        const addMenuBtn = document.getElementById("add-menu-item-btn");
+        const addCategoryBtn = document.getElementById("add-category-btn");
+
+        if (tab === "items") {
+          addMenuBtn.style.display = "inline-flex";
+          addCategoryBtn.style.display = "none";
           console.log('✅ Showing "Thêm món mới" button');
-        } else if (tab === 'categories') {
-          addMenuBtn.style.display = 'none';
-          addCategoryBtn.style.display = 'inline-flex';
+        } else if (tab === "categories") {
+          addMenuBtn.style.display = "none";
+          addCategoryBtn.style.display = "inline-flex";
           console.log('✅ Showing "Thêm danh mục" button');
         }
-        
+
         // Load appropriate data
-        if (tab === 'categories') {
+        if (tab === "categories") {
           loadCategories();
         } else {
           loadMenuItems();
@@ -1162,39 +1279,42 @@
       // Category modal controls - Function to open modal
       function openCategoryModal() {
         currentEditingCategory = null;
-        document.getElementById('category-modal-title').textContent = 'Thêm danh mục mới';
+        document.getElementById("category-modal-title").textContent =
+          "Thêm danh mục mới";
         categoryForm.reset();
-        document.getElementById('category-order').value = '1';
-        categoryModal.classList.add('active');
+        document.getElementById("category-order").value = "1";
+        categoryModal.classList.add("active");
       }
-      
-      // Both buttons open the same modal
-      addCategoryBtn?.addEventListener('click', openCategoryModal);
-      document.getElementById('add-category-btn-inline')?.addEventListener('click', openCategoryModal);
 
-      [closeCategoryModalBtn, cancelCategoryBtn].forEach(btn => {
-        btn?.addEventListener('click', () => {
-          categoryModal.classList.remove('active');
+      // Both buttons open the same modal
+      addCategoryBtn?.addEventListener("click", openCategoryModal);
+      document
+        .getElementById("add-category-btn-inline")
+        ?.addEventListener("click", openCategoryModal);
+
+      [closeCategoryModalBtn, cancelCategoryBtn].forEach((btn) => {
+        btn?.addEventListener("click", () => {
+          categoryModal.classList.remove("active");
           currentEditingCategory = null;
         });
       });
 
-      categoryModal?.addEventListener('click', (e) => {
+      categoryModal?.addEventListener("click", (e) => {
         if (e.target === categoryModal) {
-          categoryModal.classList.remove('active');
+          categoryModal.classList.remove("active");
           currentEditingCategory = null;
         }
       });
 
       // Category form submission
-      categoryForm?.addEventListener('submit', async (e) => {
+      categoryForm?.addEventListener("submit", async (e) => {
         e.preventDefault();
         await saveCategory();
       });
 
       // Load and display menu items
       async function loadMenuItems() {
-        const menuList = document.getElementById('menu-items-list');
+        const menuList = document.getElementById("menu-items-list");
         if (!menuList) return;
 
         menuList.innerHTML = `
@@ -1205,29 +1325,34 @@
         `;
 
         try {
-          console.log('Loading menu items...');
-          
+          console.log("Loading menu items...");
+
           // Load menu items from Firebase
           let menuItems = [];
           const menuCollectionRef = collection(db, "menuItems");
           const querySnapshot = await getDocs(menuCollectionRef);
-          
+
           querySnapshot.forEach((doc) => {
             menuItems.push({ id: doc.id, ...doc.data() });
           });
 
-          console.log('Menu items loaded:', menuItems);
+          console.log("Menu items loaded:", menuItems);
 
           // Apply filters
-          const categoryFilter = document.getElementById('category-filter')?.value;
-          const statusFilter = document.getElementById('status-filter')?.value;
+          const categoryFilter =
+            document.getElementById("category-filter")?.value;
+          const statusFilter = document.getElementById("status-filter")?.value;
 
           let filteredItems = menuItems;
           if (categoryFilter) {
-            filteredItems = filteredItems.filter(item => item.category === categoryFilter);
+            filteredItems = filteredItems.filter(
+              (item) => item.category === categoryFilter
+            );
           }
-          if (statusFilter !== '') {
-            filteredItems = filteredItems.filter(item => item.isAvailable === (statusFilter === 'true'));
+          if (statusFilter !== "") {
+            filteredItems = filteredItems.filter(
+              (item) => item.isAvailable === (statusFilter === "true")
+            );
           }
 
           // Update stats
@@ -1243,7 +1368,9 @@
               </div>
             `;
           } else {
-            menuList.innerHTML = filteredItems.map(item => createMenuItemCard(item)).join('');
+            menuList.innerHTML = filteredItems
+              .map((item) => createMenuItemCard(item))
+              .join("");
           }
         } catch (error) {
           console.error("Error loading menu items:", error);
@@ -1259,8 +1386,10 @@
 
       // Create menu item card HTML
       function createMenuItemCard(item) {
-        const placeholderImg = `https://placehold.co/400x300/f97316/FFFFFF?text=${encodeURIComponent(item.name)}`;
-        
+        const placeholderImg = `https://placehold.co/400x300/f97316/FFFFFF?text=${encodeURIComponent(
+          item.name
+        )}`;
+
         return `
           <div class="menu-item-card">
             <div class="menu-item-header">
@@ -1270,25 +1399,41 @@
                 class="menu-item-image"
                 onerror="this.src='${placeholderImg}'"
               />
-              <div class="menu-item-status ${item.isAvailable ? 'available' : 'unavailable'}">
-                ${item.isAvailable ? 'Còn món' : 'Hết món'}
+              <div class="menu-item-status ${
+                item.isAvailable ? "available" : "unavailable"
+              }">
+                ${item.isAvailable ? "Còn món" : "Hết món"}
               </div>
             </div>
             <div class="menu-item-content">
               <h4 class="menu-item-title">${item.name}</h4>
-              <div class="menu-item-category">${item.category || 'Chưa phân loại'}</div>
-              <p class="menu-item-description">${item.description || 'Chưa có mô tả'}</p>
+              <div class="menu-item-category">${
+                item.category || "Chưa phân loại"
+              }</div>
+              <p class="menu-item-description">${
+                item.description || "Chưa có mô tả"
+              }</p>
               <div class="menu-item-price">${formatCurrency(item.price)}</div>
               <div class="menu-item-actions">
-                <button class="btn btn-sm btn-primary" onclick="editMenuItem('${item.id}')">
+                <button class="btn btn-sm btn-primary" onclick="editMenuItem('${
+                  item.id
+                }')">
                   <i class="fa-solid fa-edit"></i> Sửa
                 </button>
-                <button class="btn btn-sm ${item.isAvailable ? 'btn-warning' : 'btn-success'}" 
-                        onclick="toggleMenuItemStatus('${item.id}', ${!item.isAvailable})">
-                  <i class="fa-solid fa-${item.isAvailable ? 'eye-slash' : 'eye'}"></i> 
-                  ${item.isAvailable ? 'Ẩn món' : 'Hiện món'}
+                <button class="btn btn-sm ${
+                  item.isAvailable ? "btn-warning" : "btn-success"
+                }" 
+                        onclick="toggleMenuItemStatus('${
+                          item.id
+                        }', ${!item.isAvailable})">
+                  <i class="fa-solid fa-${
+                    item.isAvailable ? "eye-slash" : "eye"
+                  }"></i> 
+                  ${item.isAvailable ? "Ẩn món" : "Hiện món"}
                 </button>
-                <button class="btn btn-sm btn-danger" onclick="deleteMenuItem('${item.id}', '${item.name}')">
+                <button class="btn btn-sm btn-danger" onclick="deleteMenuItem('${
+                  item.id
+                }', '${item.name}')">
                   <i class="fa-solid fa-trash"></i> Xóa
                 </button>
               </div>
@@ -1300,50 +1445,60 @@
       // Update menu statistics
       function updateMenuStats(items) {
         const totalItems = items.length;
-        const availableItems = items.filter(item => item.isAvailable).length;
+        const availableItems = items.filter((item) => item.isAvailable).length;
         const unavailableItems = totalItems - availableItems;
 
-        document.getElementById('total-menu-items').textContent = totalItems;
-        document.getElementById('available-menu-items').textContent = availableItems;
-        document.getElementById('unavailable-menu-items').textContent = unavailableItems;
+        document.getElementById("total-menu-items").textContent = totalItems;
+        document.getElementById("available-menu-items").textContent =
+          availableItems;
+        document.getElementById("unavailable-menu-items").textContent =
+          unavailableItems;
       }
 
       // Save menu item (create or update)
       async function saveMenuItem() {
-        const submitBtn = document.getElementById('save-btn');
+        const submitBtn = document.getElementById("save-btn");
         const originalText = submitBtn.innerHTML;
-        
+
         submitBtn.disabled = true;
-        submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang lưu...';
+        submitBtn.innerHTML =
+          '<i class="fa-solid fa-spinner fa-spin"></i> Đang lưu...';
 
         try {
           const formData = {
-            name: document.getElementById('item-name').value.trim(),
-            price: parseInt(document.getElementById('item-price').value) || 0,
-            category: document.getElementById('item-category').value,
-            description: document.getElementById('item-description').value.trim(),
-            image: document.getElementById('item-image').value.trim(),
-            isAvailable: document.getElementById('item-available').checked,
-            updatedAt: new Date()
+            name: document.getElementById("item-name").value.trim(),
+            price: parseInt(document.getElementById("item-price").value) || 0,
+            category: document.getElementById("item-category").value,
+            description: document
+              .getElementById("item-description")
+              .value.trim(),
+            image: document.getElementById("item-image").value.trim(),
+            isAvailable: document.getElementById("item-available").checked,
+            updatedAt: new Date(),
           };
 
           if (currentEditingItem) {
             // Update existing item
-            await setDoc(doc(db, "menuItems", currentEditingItem), formData, { merge: true });
-            showNotification('Cập nhật món ăn thành công!', 'success');
+            await setDoc(doc(db, "menuItems", currentEditingItem), formData, {
+              merge: true,
+            });
+            showNotification("Cập nhật món ăn thành công!", "success");
           } else {
             // Create new item
             formData.createdAt = new Date();
             await setDoc(doc(db, "menuItems", Date.now().toString()), formData);
-            showNotification('Thêm món ăn mới thành công!', 'success');
+            showNotification("Thêm món ăn mới thành công!", "success");
           }
 
-          menuItemModal.classList.remove('active');
+          menuItemModal.classList.remove("active");
           currentEditingItem = null;
           loadMenuItems();
         } catch (error) {
           console.error("Error saving menu item:", error);
-          showNotification('Có lỗi xảy ra khi lưu món ăn: ' + error.message, 'error');
+          showNotification(
+            "Có lỗi xảy ra khi lưu món ăn: " + error.message,
+            "error"
+          );
         } finally {
           submitBtn.disabled = false;
           submitBtn.innerHTML = originalText;
@@ -1351,63 +1506,79 @@
       }
 
       // Global functions for menu item actions
-      window.editMenuItem = async function(itemId) {
+      window.editMenuItem = async function (itemId) {
         try {
           const itemDoc = await getDoc(doc(db, "menuItems", itemId));
           if (itemDoc.exists()) {
             const item = itemDoc.data();
             currentEditingItem = itemId;
 
-            document.getElementById('modal-title').textContent = 'Sửa món ăn';
-            document.getElementById('item-name').value = item.name || '';
-            document.getElementById('item-price').value = item.price || '';
-            document.getElementById('item-category').value = item.category || '';
-            document.getElementById('item-description').value = item.description || '';
-            document.getElementById('item-image').value = item.image || '';
-            document.getElementById('item-available').checked = item.isAvailable !== false;
+            document.getElementById("modal-title").textContent = "Sửa món ăn";
+            document.getElementById("item-name").value = item.name || "";
+            document.getElementById("item-price").value = item.price || "";
+            document.getElementById("item-category").value =
+              item.category || "";
+            document.getElementById("item-description").value =
+              item.description || "";
+            document.getElementById("item-image").value = item.image || "";
+            document.getElementById("item-available").checked =
+              item.isAvailable !== false;
 
-            menuItemModal.classList.add('active');
+            menuItemModal.classList.add("active");
           }
         } catch (error) {
           console.error("Error loading menu item for edit:", error);
-          showNotification('Không thể tải thông tin món ăn', 'error');
+          showNotification("Không thể tải thông tin món ăn", "error");
         }
       };
 
-      window.toggleMenuItemStatus = async function(itemId, newStatus) {
+      window.toggleMenuItemStatus = async function (itemId, newStatus) {
         try {
-          await setDoc(doc(db, "menuItems", itemId), { 
-            isAvailable: newStatus,
-            updatedAt: new Date()
-          }, { merge: true });
-          
+          await setDoc(
+            doc(db, "menuItems", itemId),
+            {
+              isAvailable: newStatus,
+              updatedAt: new Date(),
+            },
+            { merge: true }
+          );
+
           showNotification(
-            newStatus ? 'Đã hiện món trong thực đơn' : 'Đã ẩn món khỏi thực đơn', 
-            'success'
+            newStatus
+              ? "Đã hiện món trong thực đơn"
+              : "Đã ẩn món khỏi thực đơn",
+            "success"
           );
           loadMenuItems();
         } catch (error) {
           console.error("Error toggling menu item status:", error);
-          showNotification('Có lỗi xảy ra khi thay đổi trạng thái món ăn', 'error');
+          showNotification(
+            "Có lỗi xảy ra khi thay đổi trạng thái món ăn",
+            "error"
+          );
         }
       };
 
-      window.deleteMenuItem = async function(itemId, itemName) {
-        if (confirm(`Bạn có chắc chắn muốn xóa món "${itemName}"? Hành động này không thể hoàn tác.`)) {
+      window.deleteMenuItem = async function (itemId, itemName) {
+        if (
+          confirm(
+            `Bạn có chắc chắn muốn xóa món "${itemName}"? Hành động này không thể hoàn tác.`
+          )
+        ) {
           try {
             await deleteDoc(doc(db, "menuItems", itemId));
-            showNotification('Đã xóa món ăn thành công', 'success');
+            showNotification("Đã xóa món ăn thành công", "success");
             loadMenuItems();
           } catch (error) {
             console.error("Error deleting menu item:", error);
-            showNotification('Có lỗi xảy ra khi xóa món ăn', 'error');
+            showNotification("Có lỗi xảy ra khi xóa món ăn", "error");
           }
         }
       };
 
       // --- CATEGORIES MANAGEMENT FUNCTIONS ---
       async function loadCategories() {
-        const categoriesList = document.getElementById('categories-list');
+        const categoriesList = document.getElementById("categories-list");
         if (!categoriesList) return;
 
         categoriesList.innerHTML = `
@@ -1440,8 +1611,10 @@
               </div>
             `;
           } else {
-            categoriesList.innerHTML = categories.map(createCategoryCard).join('');
-            
+            categoriesList.innerHTML = categories
+              .map(createCategoryCard)
+              .join("");
+
             // Update category dropdowns
             await updateCategoryDropdowns(categories);
           }
@@ -1462,21 +1635,37 @@
             <div class="category-info">
               <div class="category-header">
                 <h3 class="category-name">${category.name}</h3>
-                <span class="category-order">Thứ tự: ${category.order || 1}</span>
+                <span class="category-order">Thứ tự: ${
+                  category.order || 1
+                }</span>
               </div>
-              ${category.description ? `<p class="category-description">${category.description}</p>` : ''}
+              ${
+                category.description
+                  ? `<p class="category-description">${category.description}</p>`
+                  : ""
+              }
               <div class="category-meta">
                 <span class="creation-date">
                   <i class="fa-solid fa-calendar"></i>
-                  ${category.createdAt ? new Date(category.createdAt.seconds * 1000).toLocaleDateString('vi-VN') : 'N/A'}
+                  ${
+                    category.createdAt
+                      ? new Date(
+                          category.createdAt.seconds * 1000
+                        ).toLocaleDateString("vi-VN")
+                      : "N/A"
+                  }
                 </span>
               </div>
             </div>
             <div class="category-actions">
-              <button class="btn btn-secondary btn-sm" onclick="editCategory('${category.id}')" title="Sửa danh mục">
+              <button class="btn btn-secondary btn-sm" onclick="editCategory('${
+                category.id
+              }')" title="Sửa danh mục">
                 <i class="fa-solid fa-edit"></i>
               </button>
-              <button class="btn btn-danger btn-sm" onclick="deleteCategory('${category.id}', '${category.name}')" title="Xóa danh mục">
+              <button class="btn btn-danger btn-sm" onclick="deleteCategory('${
+                category.id
+              }', '${category.name}')" title="Xóa danh mục">
                 <i class="fa-solid fa-trash"></i>
               </button>
             </div>
@@ -1487,101 +1676,120 @@
       async function saveCategory() {
         try {
           const categoryData = {
-            name: document.getElementById('category-name').value,
-            description: document.getElementById('category-description').value,
-            order: parseInt(document.getElementById('category-order').value) || 1,
-            updatedAt: new Date()
+            name: document.getElementById("category-name").value,
+            description: document.getElementById("category-description").value,
+            order:
+              parseInt(document.getElementById("category-order").value) || 1,
+            updatedAt: new Date(),
           };
 
           if (currentEditingCategory) {
-            await setDoc(doc(db, "categories", currentEditingCategory), categoryData, { merge: true });
-            showNotification('Cập nhật danh mục thành công', 'success');
+            await setDoc(
+              doc(db, "categories", currentEditingCategory),
+              categoryData,
+              { merge: true }
+            );
+            showNotification("Cập nhật danh mục thành công", "success");
           } else {
             categoryData.createdAt = new Date();
             await addDoc(collection(db, "categories"), categoryData);
-            showNotification('Thêm danh mục thành công', 'success');
+            showNotification("Thêm danh mục thành công", "success");
           }
 
-          categoryModal.classList.remove('active');
+          categoryModal.classList.remove("active");
           currentEditingCategory = null;
           loadCategories();
         } catch (error) {
           console.error("Error saving category:", error);
-          showNotification('Có lỗi xảy ra khi lưu danh mục', 'error');
+          showNotification("Có lỗi xảy ra khi lưu danh mục", "error");
         }
       }
 
-      window.editCategory = async function(categoryId) {
+      window.editCategory = async function (categoryId) {
         try {
           const categoryDoc = await getDoc(doc(db, "categories", categoryId));
           if (categoryDoc.exists()) {
             const category = categoryDoc.data();
             currentEditingCategory = categoryId;
 
-            document.getElementById('category-modal-title').textContent = 'Sửa danh mục';
-            document.getElementById('category-name').value = category.name || '';
-            document.getElementById('category-description').value = category.description || '';
-            document.getElementById('category-order').value = category.order || 1;
+            document.getElementById("category-modal-title").textContent =
+              "Sửa danh mục";
+            document.getElementById("category-name").value =
+              category.name || "";
+            document.getElementById("category-description").value =
+              category.description || "";
+            document.getElementById("category-order").value =
+              category.order || 1;
 
-            categoryModal.classList.add('active');
+            categoryModal.classList.add("active");
           }
         } catch (error) {
           console.error("Error loading category for edit:", error);
-          showNotification('Không thể tải thông tin danh mục', 'error');
+          showNotification("Không thể tải thông tin danh mục", "error");
         }
       };
 
-      window.deleteCategory = async function(categoryId, categoryName) {
+      window.deleteCategory = async function (categoryId, categoryName) {
         // Check if category is being used by any menu items
         try {
           const menuItemsRef = collection(db, "menuItems");
           const q = query(menuItemsRef, where("category", "==", categoryName));
           const querySnapshot = await getDocs(q);
-          
+
           if (!querySnapshot.empty) {
-            showNotification('Không thể xóa danh mục này vì còn món ăn đang sử dụng', 'error');
+            showNotification(
+              "Không thể xóa danh mục này vì còn món ăn đang sử dụng",
+              "error"
+            );
             return;
           }
 
-          if (confirm(`Bạn có chắc chắn muốn xóa danh mục "${categoryName}"? Hành động này không thể hoàn tác.`)) {
+          if (
+            confirm(
+              `Bạn có chắc chắn muốn xóa danh mục "${categoryName}"? Hành động này không thể hoàn tác.`
+            )
+          ) {
             await deleteDoc(doc(db, "categories", categoryId));
-            showNotification('Đã xóa danh mục thành công', 'success');
+            showNotification("Đã xóa danh mục thành công", "success");
             loadCategories();
           }
         } catch (error) {
           console.error("Error deleting category:", error);
-          showNotification('Có lỗi xảy ra khi xóa danh mục', 'error');
+          showNotification("Có lỗi xảy ra khi xóa danh mục", "error");
         }
       };
 
       async function updateCategoryDropdowns(categories) {
         const categorySelects = [
-          document.getElementById('category-filter'),
-          document.getElementById('item-category')
+          document.getElementById("category-filter"),
+          document.getElementById("item-category"),
         ];
 
-        categorySelects.forEach(select => {
+        categorySelects.forEach((select) => {
           if (select) {
             // Save current value
             const currentValue = select.value;
-            
+
             // Clear existing options except the first one
-            const firstOption = select.querySelector('option:first-child');
-            select.innerHTML = '';
+            const firstOption = select.querySelector("option:first-child");
+            select.innerHTML = "";
             if (firstOption) {
               select.appendChild(firstOption);
             }
-            
+
             // Add category options
-            categories.forEach(category => {
-              const option = document.createElement('option');
+            categories.forEach((category) => {
+              const option = document.createElement("option");
               option.value = category.name;
               option.textContent = category.name;
               select.appendChild(option);
             });
-            
+
             // Restore value if it still exists
-            if (currentValue && categories.some(c => c.name === currentValue)) {
+            if (
+              currentValue &&
+              categories.some((c) => c.name === currentValue)
+            ) {
               select.value = currentValue;
             }
           }
@@ -1590,8 +1798,8 @@
 
       async function loadCategoriesForDropdowns() {
         try {
-          console.log('Loading categories for dropdowns...');
-          
+          console.log("Loading categories for dropdowns...");
+
           // Load categories from Firebase
           let categories = [];
           const categoriesCollectionRef = collection(db, "categories");
@@ -1603,9 +1811,9 @@
 
           // Sort by order
           categories.sort((a, b) => (a.order || 0) - (b.order || 0));
-          
-          console.log('Categories loaded:', categories);
-          
+
+          console.log("Categories loaded:", categories);
+
           // Update dropdowns
           await updateCategoryDropdowns(categories);
         } catch (error) {
@@ -1614,16 +1822,22 @@
       }
 
       // Notification system
-      function showNotification(message, type = 'info') {
-        const notification = document.createElement('div');
+      function showNotification(message, type = "info") {
+        const notification = document.createElement("div");
         notification.className = `notification ${type}`;
         notification.innerHTML = `
-          <i class="fa-solid fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-triangle' : 'info-circle'}"></i>
+          <i class="fa-solid fa-${
+            type === "success"
+              ? "check-circle"
+              : type === "error"
+              ? "exclamation-triangle"
+              : "info-circle"
+          }"></i>
           ${message}
         `;
-        
+
         document.body.appendChild(notification);
-        
+
         setTimeout(() => {
           notification.remove();
         }, 5000);
@@ -1631,7 +1845,7 @@
 
       // --- BOOKING MANAGEMENT SYSTEM ---
       async function loadBookings() {
-        const bookingList = document.getElementById('booking-list');
+        const bookingList = document.getElementById("booking-list");
         if (!bookingList) return;
 
         bookingList.innerHTML = `
@@ -1642,8 +1856,8 @@
         `;
 
         try {
-          console.log('Loading bookings...');
-          
+          console.log("Loading bookings...");
+
           // Load bookings from Firebase
           let bookings = [];
           const bookingsCollectionRef = collection(db, "bookings");
@@ -1653,24 +1867,36 @@
             bookings.push({ id: doc.id, ...doc.data() });
           });
 
-          console.log('Bookings loaded:', bookings);
+          console.log("Bookings loaded:", bookings);
 
           // Apply filters
-          const statusFilter = document.getElementById('booking-status-filter')?.value;
-          const dateFilter = document.getElementById('booking-date-filter')?.value;
+          const statusFilter = document.getElementById(
+            "booking-status-filter"
+          )?.value;
+          const dateFilter = document.getElementById(
+            "booking-date-filter"
+          )?.value;
 
           let filteredBookings = bookings;
           if (statusFilter) {
-            filteredBookings = filteredBookings.filter(booking => booking.status === statusFilter);
+            filteredBookings = filteredBookings.filter(
+              (booking) => booking.status === statusFilter
+            );
           }
           if (dateFilter) {
-            filteredBookings = filteredBookings.filter(booking => booking.date === dateFilter);
+            filteredBookings = filteredBookings.filter(
+              (booking) => booking.date === dateFilter
+            );
           }
 
           // Sort by creation date (newest first)
           filteredBookings.sort((a, b) => {
-            const dateA = a.createdAt?.seconds ? new Date(a.createdAt.seconds * 1000) : new Date(a.createdAt || 0);
-            const dateB = b.createdAt?.seconds ? new Date(b.createdAt.seconds * 1000) : new Date(b.createdAt || 0);
+            const dateA = a.createdAt?.seconds
+              ? new Date(a.createdAt.seconds * 1000)
+              : new Date(a.createdAt || 0);
+            const dateB = b.createdAt?.seconds
+              ? new Date(b.createdAt.seconds * 1000)
+              : new Date(b.createdAt || 0);
             return dateB - dateA;
           });
 
@@ -1695,7 +1921,9 @@
                 <div>Trạng thái</div>
                 <div>Hành động</div>
               </div>
-              ${filteredBookings.map(booking => createBookingCard(booking)).join('')}
+              ${filteredBookings
+                .map((booking) => createBookingCard(booking))
+                .join("")}
             `;
           }
         } catch (error) {
@@ -1713,21 +1941,24 @@
       function createBookingCard(booking) {
         const formatDate = (dateStr) => {
           const date = new Date(dateStr);
-          return date.toLocaleDateString('vi-VN');
+          return date.toLocaleDateString("vi-VN");
         };
 
         const getStatusBadge = (status) => {
           const statusMap = {
-            'pending': { class: 'status-pending', text: 'Chờ xác nhận' },
-            'confirmed': { class: 'status-confirmed', text: 'Đã xác nhận' },
-            'cancelled': { class: 'status-cancelled', text: 'Đã hủy' },
-            'completed': { class: 'status-completed', text: 'Hoàn thành' }
+            pending: { class: "status-pending", text: "Chờ xác nhận" },
+            confirmed: { class: "status-confirmed", text: "Đã xác nhận" },
+            cancelled: { class: "status-cancelled", text: "Đã hủy" },
+            completed: { class: "status-completed", text: "Hoàn thành" },
           };
-          const statusInfo = statusMap[status] || { class: 'status-pending', text: status };
+          const statusInfo = statusMap[status] || {
+            class: "status-pending",
+            text: status,
+          };
           return `<span class="status-badge ${statusInfo.class}">${statusInfo.text}</span>`;
         };
 
-        const hasNotes = booking.notes && booking.notes.trim() !== '';
+        const hasNotes = booking.notes && booking.notes.trim() !== "";
 
         return `
           <div class="booking-item">
@@ -1735,7 +1966,11 @@
               <div>
                 <h4>${booking.name}</h4>
                 <p><i class="fa-solid fa-phone"></i> ${booking.phone}</p>
-                ${booking.email ? `<p><i class="fa-solid fa-envelope"></i> ${booking.email}</p>` : ''}
+                ${
+                  booking.email
+                    ? `<p><i class="fa-solid fa-envelope"></i> ${booking.email}</p>`
+                    : ""
+                }
               </div>
             </div>
             <div class="booking-datetime" data-label="Thời gian:">
@@ -1749,160 +1984,218 @@
               ${getStatusBadge(booking.status)}
             </div>
             <div class="booking-actions" data-label="Hành động:">
-              ${booking.status === 'pending' ? `
+              ${
+                booking.status === "pending"
+                  ? `
                 <button class="btn btn-sm btn-success" onclick="confirmBooking('${booking.id}')">
                   <i class="fa-solid fa-check"></i> Xác nhận
                 </button>
-              ` : ''}
-              ${booking.status !== 'cancelled' && booking.status !== 'completed' ? `
+              `
+                  : ""
+              }
+              ${
+                booking.status !== "cancelled" && booking.status !== "completed"
+                  ? `
                 <button class="btn btn-sm btn-warning" onclick="completeBooking('${booking.id}')">
                   <i class="fa-solid fa-check-double"></i> Hoàn thành
                 </button>
-              ` : ''}
-              ${booking.status !== 'cancelled' ? `
+              `
+                  : ""
+              }
+              ${
+                booking.status !== "cancelled"
+                  ? `
                 <button class="btn btn-sm btn-danger" onclick="cancelBooking('${booking.id}')">
                   <i class="fa-solid fa-times"></i> Hủy
                 </button>
-              ` : ''}
+              `
+                  : ""
+              }
             </div>
-            ${hasNotes ? `
+            ${
+              hasNotes
+                ? `
               <div class="booking-notes">
                 <strong>Ghi chú:</strong>
                 <p>${booking.notes}</p>
               </div>
-            ` : ''}
+            `
+                : ""
+            }
           </div>
         `;
       }
 
       function updateBookingStats(bookings) {
         const totalBookings = bookings.length;
-        const pendingBookings = bookings.filter(b => b.status === 'pending').length;
-        const confirmedBookings = bookings.filter(b => b.status === 'confirmed').length;
-        const cancelledBookings = bookings.filter(b => b.status === 'cancelled').length;
+        const pendingBookings = bookings.filter(
+          (b) => b.status === "pending"
+        ).length;
+        const confirmedBookings = bookings.filter(
+          (b) => b.status === "confirmed"
+        ).length;
+        const cancelledBookings = bookings.filter(
+          (b) => b.status === "cancelled"
+        ).length;
 
-        document.getElementById('total-bookings').textContent = totalBookings;
-        document.getElementById('pending-bookings').textContent = pendingBookings;
-        document.getElementById('confirmed-bookings').textContent = confirmedBookings;
-        document.getElementById('cancelled-bookings').textContent = cancelledBookings;
+        document.getElementById("total-bookings").textContent = totalBookings;
+        document.getElementById("pending-bookings").textContent =
+          pendingBookings;
+        document.getElementById("confirmed-bookings").textContent =
+          confirmedBookings;
+        document.getElementById("cancelled-bookings").textContent =
+          cancelledBookings;
       }
 
       // Global functions for booking actions
-      window.confirmBooking = async function(bookingId) {
-        if (confirm('Xác nhận đặt bàn này?')) {
+      window.confirmBooking = async function (bookingId) {
+        if (confirm("Xác nhận đặt bàn này?")) {
           try {
-            await setDoc(doc(db, "bookings", bookingId), { 
-              status: 'confirmed',
-              confirmedAt: new Date()
-            }, { merge: true });
-            
-            showNotification('Đã xác nhận đặt bàn thành công', 'success');
+            await setDoc(
+              doc(db, "bookings", bookingId),
+              {
+                status: "confirmed",
+                confirmedAt: new Date(),
+              },
+              { merge: true }
+            );
+
+            showNotification("Đã xác nhận đặt bàn thành công", "success");
             loadBookings();
           } catch (error) {
             console.error("Error confirming booking:", error);
-            showNotification('Có lỗi xảy ra khi xác nhận đặt bàn', 'error');
+            showNotification("Có lỗi xảy ra khi xác nhận đặt bàn", "error");
           }
         }
       };
 
-      window.completeBooking = async function(bookingId) {
-        if (confirm('Đánh dấu đặt bàn này đã hoàn thành?')) {
+      window.completeBooking = async function (bookingId) {
+        if (confirm("Đánh dấu đặt bàn này đã hoàn thành?")) {
           try {
-            await setDoc(doc(db, "bookings", bookingId), { 
-              status: 'completed',
-              completedAt: new Date()
-            }, { merge: true });
-            
-            showNotification('Đã đánh dấu hoàn thành đặt bàn', 'success');
+            await setDoc(
+              doc(db, "bookings", bookingId),
+              {
+                status: "completed",
+                completedAt: new Date(),
+              },
+              { merge: true }
+            );
+
+            showNotification("Đã đánh dấu hoàn thành đặt bàn", "success");
             loadBookings();
           } catch (error) {
             console.error("Error completing booking:", error);
-            showNotification('Có lỗi xảy ra khi cập nhật trạng thái', 'error');
+            showNotification("Có lỗi xảy ra khi cập nhật trạng thái", "error");
           }
         }
       };
 
-      window.cancelBooking = async function(bookingId) {
-        if (confirm('Hủy đặt bàn này? Hành động này không thể hoàn tác.')) {
+      window.cancelBooking = async function (bookingId) {
+        if (confirm("Hủy đặt bàn này? Hành động này không thể hoàn tác.")) {
           try {
-            await setDoc(doc(db, "bookings", bookingId), { 
-              status: 'cancelled',
-              cancelledAt: new Date()
-            }, { merge: true });
-            
-            showNotification('Đã hủy đặt bàn', 'success');
+            await setDoc(
+              doc(db, "bookings", bookingId),
+              {
+                status: "cancelled",
+                cancelledAt: new Date(),
+              },
+              { merge: true }
+            );
+
+            showNotification("Đã hủy đặt bàn", "success");
             loadBookings();
           } catch (error) {
             console.error("Error cancelling booking:", error);
-            showNotification('Có lỗi xảy ra khi hủy đặt bàn', 'error');
+            showNotification("Có lỗi xảy ra khi hủy đặt bàn", "error");
           }
         }
       };
 
       // --- REVENUE MANAGEMENT SYSTEM ---
-      async function loadRevenueData(type = 'dine-in') {
+      async function loadRevenueData(type = "dine-in") {
         try {
-          console.log('Loading revenue data for type:', type);
-          
+          console.log("Loading revenue data for type:", type);
+
           // Load orders from Firebase
           let orders = [];
           const ordersCollectionRef = collection(db, "orders");
           const querySnapshot = await getDocs(ordersCollectionRef);
-          
+
           querySnapshot.forEach((doc) => {
             orders.push({ id: doc.id, ...doc.data() });
           });
-          
-          console.log('Loaded orders:', orders);
-          
+
+          console.log("Loaded orders:", orders);
+
           // Update revenue stats
           updateRevenueStats(orders);
-          
+
           // Update tab counts
           updateTabCounts(orders);
-          
+
           // Render orders for specific tab
-          if (type === 'dine-in') {
-            renderBillList('dine-in-order-list', orders.filter(o => o.type === 'dine-in'), 'Bill tại bàn');
+          if (type === "dine-in") {
+            renderBillList(
+              "dine-in-order-list",
+              orders.filter((o) => o.type === "dine-in"),
+              "Bill tại bàn"
+            );
           } else {
-            renderBillList('delivery-order-list', orders.filter(o => o.type === 'delivery'), 'Bill giao hàng');
+            renderBillList(
+              "delivery-order-list",
+              orders.filter((o) => o.type === "delivery"),
+              "Bill giao hàng"
+            );
           }
-          
         } catch (error) {
           console.error("Error loading revenue data:", error);
-          showNotification('Có lỗi xảy ra khi tải dữ liệu doanh thu', 'error');
+          showNotification("Có lỗi xảy ra khi tải dữ liệu doanh thu", "error");
         }
       }
 
       function updateRevenueStats(orders) {
         // Calculate revenue stats from orders (all 0 for now)
-        const dineOrders = orders.filter(o => o.type === 'dine-in');
-        const deliveryOrders = orders.filter(o => o.type === 'delivery');
-        
-        const dineRevenue = dineOrders.reduce((sum, order) => sum + (order.total || 0), 0);
-        const deliveryRevenue = deliveryOrders.reduce((sum, order) => sum + (order.total || 0), 0);
+        const dineOrders = orders.filter((o) => o.type === "dine-in");
+        const deliveryOrders = orders.filter((o) => o.type === "delivery");
+
+        const dineRevenue = dineOrders.reduce(
+          (sum, order) => sum + (order.total || 0),
+          0
+        );
+        const deliveryRevenue = deliveryOrders.reduce(
+          (sum, order) => sum + (order.total || 0),
+          0
+        );
         const totalRevenue = dineRevenue + deliveryRevenue;
         const totalBills = orders.length;
-        
+
         // Update display
-        document.getElementById('total-revenue').textContent = `${totalRevenue.toLocaleString('vi-VN')} VNĐ`;
-        document.getElementById('total-bills').textContent = totalBills;
-        document.getElementById('dine-revenue').textContent = `${dineRevenue.toLocaleString('vi-VN')} VNĐ`;
-        document.getElementById('delivery-revenue').textContent = `${deliveryRevenue.toLocaleString('vi-VN')} VNĐ`;
+        document.getElementById(
+          "total-revenue"
+        ).textContent = `${totalRevenue.toLocaleString("vi-VN")} VNĐ`;
+        document.getElementById("total-bills").textContent = totalBills;
+        document.getElementById(
+          "dine-revenue"
+        ).textContent = `${dineRevenue.toLocaleString("vi-VN")} VNĐ`;
+        document.getElementById(
+          "delivery-revenue"
+        ).textContent = `${deliveryRevenue.toLocaleString("vi-VN")} VNĐ`;
       }
 
       function updateTabCounts(orders) {
-        const dineCount = orders.filter(o => o.type === 'dine-in').length;
-        const deliveryCount = orders.filter(o => o.type === 'delivery').length;
-        
-        document.getElementById('dine-in-count').textContent = dineCount;
-        document.getElementById('delivery-count').textContent = deliveryCount;
+        const dineCount = orders.filter((o) => o.type === "dine-in").length;
+        const deliveryCount = orders.filter(
+          (o) => o.type === "delivery"
+        ).length;
+
+        document.getElementById("dine-in-count").textContent = dineCount;
+        document.getElementById("delivery-count").textContent = deliveryCount;
       }
 
       function renderBillList(containerId, bills, type) {
         const container = document.getElementById(containerId);
         if (!container) return;
-        
+
         if (bills.length === 0) {
           container.innerHTML = `
             <div class="empty-state">
@@ -1914,60 +2207,85 @@
             </div>
           `;
         } else {
-          container.innerHTML = bills.map(bill => createBillCard(bill)).join('');
+          container.innerHTML = bills
+            .map((bill) => createBillCard(bill))
+            .join("");
         }
       }
 
       function createBillCard(bill) {
         const statusColors = {
-          pending: '#fbbf24',
-          cooking: '#f97316', 
-          ready: '#10b981',
-          completed: '#059669',
-          cancelled: '#ef4444'
+          pending: "#fbbf24",
+          cooking: "#f97316",
+          ready: "#10b981",
+          completed: "#059669",
+          cancelled: "#ef4444",
         };
-        
+
         const statusLabels = {
-          pending: 'Chờ xử lý',
-          cooking: 'Đang nấu',
-          ready: 'Sẵn sàng',
-          completed: 'Hoàn thành',
-          cancelled: 'Đã hủy'
+          pending: "Chờ xử lý",
+          cooking: "Đang nấu",
+          ready: "Sẵn sàng",
+          completed: "Hoàn thành",
+          cancelled: "Đã hủy",
         };
-        
+
         return `
           <div class="bill-card">
             <div class="bill-header">
               <h4 class="bill-id">#${bill.id}</h4>
-              <span class="bill-status" style="background: ${statusColors[bill.status] || '#6b7280'}">
+              <span class="bill-status" style="background: ${
+                statusColors[bill.status] || "#6b7280"
+              }">
                 ${statusLabels[bill.status] || bill.status}
               </span>
             </div>
             <div class="bill-info">
               <div class="bill-customer">
                 <i class="fa-solid fa-user"></i>
-                ${bill.customer || 'Khách hàng'}
+                ${bill.customer || "Khách hàng"}
               </div>
-              ${bill.table ? `<div class="bill-table"><i class="fa-solid fa-chair"></i> ${bill.table}</div>` : ''}
+              ${
+                bill.table
+                  ? `<div class="bill-table"><i class="fa-solid fa-chair"></i> ${bill.table}</div>`
+                  : ""
+              }
               <div class="bill-time">
                 <i class="fa-solid fa-clock"></i>
-                ${bill.createdAt ? new Date(bill.createdAt).toLocaleString('vi-VN') : 'N/A'}
+                ${
+                  bill.createdAt
+                    ? new Date(bill.createdAt).toLocaleString("vi-VN")
+                    : "N/A"
+                }
               </div>
             </div>
             <div class="bill-items">
-              ${bill.items ? bill.items.map(item => 
-                `<div class="bill-item">${item.quantity}x ${item.name}</div>`
-              ).join('') : ''}
+              ${
+                bill.items
+                  ? bill.items
+                      .map(
+                        (item) =>
+                          `<div class="bill-item">${item.quantity}x ${item.name}</div>`
+                      )
+                      .join("")
+                  : ""
+              }
             </div>
             <div class="bill-footer">
               <div class="bill-total">
-                <strong>${(bill.total || 0).toLocaleString('vi-VN')} VNĐ</strong>
+                <strong>${(bill.total || 0).toLocaleString(
+                  "vi-VN"
+                )} VNĐ</strong>
               </div>
               <div class="bill-actions">
-                <button class="btn btn-sm btn-secondary" onclick="viewBillDetails('${bill.id}')" title="Xem chi tiết">
+                <button class="btn btn-sm btn-secondary" onclick="viewBillDetails('${
+                  bill.id
+                }')" title="Xem chi tiết">
                   <i class="fa-solid fa-eye"></i>
                 </button>
-                <button class="btn btn-sm btn-primary" onclick="printBill('${bill.id}')" title="In bill">
+                <button class="btn btn-sm btn-primary" onclick="printBill('${
+                  bill.id
+                }')" title="In bill">
                   <i class="fa-solid fa-print"></i>
                 </button>
               </div>
@@ -1976,61 +2294,64 @@
         `;
       }
 
-      window.viewBillDetails = function(billId) {
-        showNotification('Tính năng xem chi tiết bill đang được phát triển', 'info');
+      window.viewBillDetails = function (billId) {
+        showNotification(
+          "Tính năng xem chi tiết bill đang được phát triển",
+          "info"
+        );
       };
 
-      window.printBill = function(billId) {
-        showNotification('Tính năng in bill đang được phát triển', 'info');
+      window.printBill = function (billId) {
+        showNotification("Tính năng in bill đang được phát triển", "info");
       };
 
       // --- DASHBOARD MANAGEMENT SYSTEM ---
       let dashboardCharts = {};
 
       async function loadDashboard() {
-        const period = document.getElementById('dashboard-period')?.value || 'day';
-        
+        const period =
+          document.getElementById("dashboard-period")?.value || "day";
+
         try {
           // Show loading state
           showDashboardLoading();
-          
+
           // In production, fetch real data from Firebase here
           // For now, show empty state since no real data exists yet
           const data = getEmptyDashboardData(period);
-          
+
           // Update stats with real data (currently 0)
           updateDashboardStats(data);
-          
+
           // Update charts with empty data
           updateDashboardCharts(data, period);
-          
+
           // Update recent activity with real data
           updateRecentActivity();
-          
         } catch (error) {
           console.error("Error loading dashboard:", error);
-          showNotification('Có lỗi xảy ra khi tải dashboard', 'error');
+          showNotification("Có lỗi xảy ra khi tải dashboard", "error");
         }
       }
 
       function showDashboardLoading() {
-        document.getElementById('total-visits').textContent = '...';
-        document.getElementById('total-dine-orders').textContent = '...';
-        document.getElementById('total-bookings-dash').textContent = '...';
-        document.getElementById('total-deliveries').textContent = '...';
+        document.getElementById("total-visits").textContent = "...";
+        document.getElementById("total-dine-orders").textContent = "...";
+        document.getElementById("total-bookings-dash").textContent = "...";
+        document.getElementById("total-deliveries").textContent = "...";
       }
 
       function getEmptyDashboardData(period) {
         const labels = [];
         const emptyData = [];
-        
-        if (period === 'day') {
+
+        if (period === "day") {
           for (let i = 0; i < 24; i++) {
-            labels.push(`${String(i).padStart(2, '0')}:00`);
+            labels.push(`${String(i).padStart(2, "0")}:00`);
             emptyData.push(0);
           }
-        } else if (period === 'week') {
-          const days = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
+        } else if (period === "week") {
+          const days = ["CN", "T2", "T3", "T4", "T5", "T6", "T7"];
           labels.push(...days);
           emptyData.push(...new Array(7).fill(0));
         } else {
@@ -2040,158 +2361,193 @@
             emptyData.push(0);
           }
         }
-        
+
         return {
           labels,
           datasets: {
             visits: { current: emptyData, previous: emptyData },
             dineOrders: { current: emptyData, previous: emptyData },
             bookings: { current: emptyData, previous: emptyData },
-            deliveries: { current: emptyData, previous: emptyData }
-          }
+            deliveries: { current: emptyData, previous: emptyData },
+          },
         };
       }
 
       function updateDashboardStats(data) {
         // All data will be 0 since we removed sample data generation
-        const totalVisits = data.datasets.visits.current.reduce((a, b) => a + b, 0);
-        const totalDineOrders = data.datasets.dineOrders.current.reduce((a, b) => a + b, 0);
-        const totalBookings = data.datasets.bookings.current.reduce((a, b) => a + b, 0);
-        const totalDeliveries = data.datasets.deliveries.current.reduce((a, b) => a + b, 0);
-        
-        document.getElementById('total-visits').textContent = totalVisits;
-        document.getElementById('total-dine-orders').textContent = totalDineOrders;
-        document.getElementById('total-bookings-dash').textContent = totalBookings;
-        document.getElementById('total-deliveries').textContent = totalDeliveries;
-        
+        const totalVisits = data.datasets.visits.current.reduce(
+          (a, b) => a + b,
+          0
+        );
+        const totalDineOrders = data.datasets.dineOrders.current.reduce(
+          (a, b) => a + b,
+          0
+        );
+        const totalBookings = data.datasets.bookings.current.reduce(
+          (a, b) => a + b,
+          0
+        );
+        const totalDeliveries = data.datasets.deliveries.current.reduce(
+          (a, b) => a + b,
+          0
+        );
+
+        document.getElementById("total-visits").textContent = totalVisits;
+        document.getElementById("total-dine-orders").textContent =
+          totalDineOrders;
+        document.getElementById("total-bookings-dash").textContent =
+          totalBookings;
+        document.getElementById("total-deliveries").textContent =
+          totalDeliveries;
+
         // Show 0% change since no real data exists yet
-        const prevVisits = data.datasets.visits.previous.reduce((a, b) => a + b, 0);
-        const visitsChange = prevVisits > 0 ? Math.round(((totalVisits - prevVisits) / prevVisits) * 100) : 0;
-        document.getElementById('visits-change').textContent = `${visitsChange > 0 ? '+' : ''}${visitsChange}%`;
-        
+        const prevVisits = data.datasets.visits.previous.reduce(
+          (a, b) => a + b,
+          0
+        );
+        const visitsChange =
+          prevVisits > 0
+            ? Math.round(((totalVisits - prevVisits) / prevVisits) * 100)
+            : 0;
+        document.getElementById("visits-change").textContent = `${
+          visitsChange > 0 ? "+" : ""
+        }${visitsChange}%`;
+
         // Update other change indicators to 0%
-        document.getElementById('dine-orders-change').textContent = '0%';
-        document.getElementById('bookings-change').textContent = '0%';
-        document.getElementById('deliveries-change').textContent = '0%';
+        document.getElementById("dine-orders-change").textContent = "0%";
+        document.getElementById("bookings-change").textContent = "0%";
+        document.getElementById("deliveries-change").textContent = "0%";
       }
 
       function updateDashboardCharts(data, period) {
         const chartConfig = {
-          type: 'line',
+          type: "line",
           options: {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-              legend: { display: false }
+              legend: { display: false },
             },
             scales: {
-              y: { beginAtZero: true }
-            }
-          }
+              y: { beginAtZero: true },
+            },
+          },
         };
 
         // Visits Chart
         if (dashboardCharts.visits) dashboardCharts.visits.destroy();
-        dashboardCharts.visits = new Chart(document.getElementById('visitsChart'), {
-          ...chartConfig,
-          data: {
-            labels: data.labels,
-            datasets: [
-              {
-                label: 'Hiện tại',
-                data: data.datasets.visits.current,
-                borderColor: '#f97316',
-                backgroundColor: 'rgba(249, 115, 22, 0.1)',
-                tension: 0.4
-              },
-              {
-                label: 'Kỳ trước',
-                data: data.datasets.visits.previous,
-                borderColor: '#d1d5db',
-                backgroundColor: 'rgba(209, 213, 219, 0.1)',
-                tension: 0.4
-              }
-            ]
+        dashboardCharts.visits = new Chart(
+          document.getElementById("visitsChart"),
+          {
+            ...chartConfig,
+            data: {
+              labels: data.labels,
+              datasets: [
+                {
+                  label: "Hiện tại",
+                  data: data.datasets.visits.current,
+                  borderColor: "#f97316",
+                  backgroundColor: "rgba(249, 115, 22, 0.1)",
+                  tension: 0.4,
+                },
+                {
+                  label: "Kỳ trước",
+                  data: data.datasets.visits.previous,
+                  borderColor: "#d1d5db",
+                  backgroundColor: "rgba(209, 213, 219, 0.1)",
+                  tension: 0.4,
+                },
+              ],
+            },
           }
-        });
+        );
 
         // Similar configs for other charts...
         if (dashboardCharts.dineOrders) dashboardCharts.dineOrders.destroy();
-        dashboardCharts.dineOrders = new Chart(document.getElementById('dineOrdersChart'), {
-          ...chartConfig,
-          data: {
-            labels: data.labels,
-            datasets: [
-              {
-                label: 'Hiện tại',
-                data: data.datasets.dineOrders.current,
-                borderColor: '#10b981',
-                backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                tension: 0.4
-              },
-              {
-                label: 'Kỳ trước',
-                data: data.datasets.dineOrders.previous,
-                borderColor: '#d1d5db',
-                backgroundColor: 'rgba(209, 213, 219, 0.1)',
-                tension: 0.4
-              }
-            ]
+        dashboardCharts.dineOrders = new Chart(
+          document.getElementById("dineOrdersChart"),
+          {
+            ...chartConfig,
+            data: {
+              labels: data.labels,
+              datasets: [
+                {
+                  label: "Hiện tại",
+                  data: data.datasets.dineOrders.current,
+                  borderColor: "#10b981",
+                  backgroundColor: "rgba(16, 185, 129, 0.1)",
+                  tension: 0.4,
+                },
+                {
+                  label: "Kỳ trước",
+                  data: data.datasets.dineOrders.previous,
+                  borderColor: "#d1d5db",
+                  backgroundColor: "rgba(209, 213, 219, 0.1)",
+                  tension: 0.4,
+                },
+              ],
+            },
           }
-        });
+        );
 
         if (dashboardCharts.bookings) dashboardCharts.bookings.destroy();
-        dashboardCharts.bookings = new Chart(document.getElementById('bookingsChart'), {
-          ...chartConfig,
-          data: {
-            labels: data.labels,
-            datasets: [
-              {
-                label: 'Hiện tại',
-                data: data.datasets.bookings.current,
-                borderColor: '#f59e0b',
-                backgroundColor: 'rgba(245, 158, 11, 0.1)',
-                tension: 0.4
-              },
-              {
-                label: 'Kỳ trước',
-                data: data.datasets.bookings.previous,
-                borderColor: '#d1d5db',
-                backgroundColor: 'rgba(209, 213, 219, 0.1)',
-                tension: 0.4
-              }
-            ]
+        dashboardCharts.bookings = new Chart(
+          document.getElementById("bookingsChart"),
+          {
+            ...chartConfig,
+            data: {
+              labels: data.labels,
+              datasets: [
+                {
+                  label: "Hiện tại",
+                  data: data.datasets.bookings.current,
+                  borderColor: "#f59e0b",
+                  backgroundColor: "rgba(245, 158, 11, 0.1)",
+                  tension: 0.4,
+                },
+                {
+                  label: "Kỳ trước",
+                  data: data.datasets.bookings.previous,
+                  borderColor: "#d1d5db",
+                  backgroundColor: "rgba(209, 213, 219, 0.1)",
+                  tension: 0.4,
+                },
+              ],
+            },
           }
-        });
+        );
 
         if (dashboardCharts.deliveries) dashboardCharts.deliveries.destroy();
-        dashboardCharts.deliveries = new Chart(document.getElementById('deliveriesChart'), {
-          ...chartConfig,
-          data: {
-            labels: data.labels,
-            datasets: [
-              {
-                label: 'Hiện tại',
-                data: data.datasets.deliveries.current,
-                borderColor: '#ef4444',
-                backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                tension: 0.4
-              },
-              {
-                label: 'Kỳ trước',
-                data: data.datasets.deliveries.previous,
-                borderColor: '#d1d5db',
-                backgroundColor: 'rgba(209, 213, 219, 0.1)',
-                tension: 0.4
-              }
-            ]
+        dashboardCharts.deliveries = new Chart(
+          document.getElementById("deliveriesChart"),
+          {
+            ...chartConfig,
+            data: {
+              labels: data.labels,
+              datasets: [
+                {
+                  label: "Hiện tại",
+                  data: data.datasets.deliveries.current,
+                  borderColor: "#ef4444",
+                  backgroundColor: "rgba(239, 68, 68, 0.1)",
+                  tension: 0.4,
+                },
+                {
+                  label: "Kỳ trước",
+                  data: data.datasets.deliveries.previous,
+                  borderColor: "#d1d5db",
+                  backgroundColor: "rgba(209, 213, 219, 0.1)",
+                  tension: 0.4,
+                },
+              ],
+            },
           }
-        });
+        );
       }
 
       function updateRecentActivity() {
         // Show empty state for recent activity since no real data exists
-        const activityList = document.getElementById('recent-activity-list');
+        const activityList = document.getElementById("recent-activity-list");
         if (activityList) {
           activityList.innerHTML = `
             <div class="empty-state">
@@ -2211,49 +2567,54 @@
           // In production, fetch real orders from Firebase
           // For now, show empty state since we removed sample data
           const orders = [];
-          
+
           // Update stats with empty data
           updateOrderStats(orders);
-          
+
           // Render empty orders by type
           renderOrdersByType(orders);
-          
         } catch (error) {
           console.error("Error loading orders:", error);
-          showNotification('Có lỗi xảy ra khi tải đơn hàng', 'error');
+          showNotification("Có lỗi xảy ra khi tải đơn hàng", "error");
         }
       }
 
       function updateOrderStats(orders) {
         // All stats will be 0 since we removed sample data
-        const pending = orders.filter(o => o.status === 'pending').length;
-        const cooking = orders.filter(o => o.status === 'cooking').length;
-        const ready = orders.filter(o => o.status === 'ready').length;
-        const completed = orders.filter(o => o.status === 'completed').length;
-        
-        document.getElementById('pending-orders').textContent = pending;
-        document.getElementById('cooking-orders').textContent = cooking;
-        document.getElementById('ready-orders').textContent = ready;
-        document.getElementById('completed-orders').textContent = completed;
+        const pending = orders.filter((o) => o.status === "pending").length;
+        const cooking = orders.filter((o) => o.status === "cooking").length;
+        const ready = orders.filter((o) => o.status === "ready").length;
+        const completed = orders.filter((o) => o.status === "completed").length;
+
+        document.getElementById("pending-orders").textContent = pending;
+        document.getElementById("cooking-orders").textContent = cooking;
+        document.getElementById("ready-orders").textContent = ready;
+        document.getElementById("completed-orders").textContent = completed;
       }
 
       function renderOrdersByType(orders) {
-        const dineInOrders = orders.filter(o => o.type === 'dine-in');
-        const deliveryOrders = orders.filter(o => o.type === 'delivery');
-        
-        document.getElementById('dine-in-order-list').innerHTML = 
-          dineInOrders.length === 0 ? '<div class="empty-state"><p>Chưa có đơn hàng tại bàn</p></div>' :
-          dineInOrders.map(order => createOrderCard(order)).join('');
-          
-        document.getElementById('delivery-order-list').innerHTML = 
-          deliveryOrders.length === 0 ? '<div class="empty-state"><p>Chưa có đơn hàng giao hàng</p></div>' :
-          deliveryOrders.map(order => createOrderCard(order)).join('');
+        const dineInOrders = orders.filter((o) => o.type === "dine-in");
+        const deliveryOrders = orders.filter((o) => o.type === "delivery");
+
+        document.getElementById("dine-in-order-list").innerHTML =
+          dineInOrders.length === 0
+            ? '<div class="empty-state"><p>Chưa có đơn hàng tại bàn</p></div>'
+            : dineInOrders.map((order) => createOrderCard(order)).join("");
+
+        document.getElementById("delivery-order-list").innerHTML =
+          deliveryOrders.length === 0
+            ? '<div class="empty-state"><p>Chưa có đơn hàng giao hàng</p></div>'
+            : deliveryOrders.map((order) => createOrderCard(order)).join("");
       }
 
       function createOrderCard(order) {
-        const formatCurrency = (amount) => new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(amount);
-        const formatTime = (date) => new Date(date).toLocaleString('vi-VN');
-        
+        const formatCurrency = (amount) =>
+          new Intl.NumberFormat("vi-VN", {
+            style: "currency",
+            currency: "VND",
+          }).format(amount);
+        const formatTime = (date) => new Date(date).toLocaleString("vi-VN");
+
         return `
           <div class="order-item ${order.status}">
             <div class="order-header">
@@ -2262,45 +2623,77 @@
                 <div class="order-time">${formatTime(order.createdAt)}</div>
               </div>
               <div class="status-badge status-${order.status}">
-                ${order.status === 'pending' ? 'Chờ xử lý' :
-                  order.status === 'cooking' ? 'Đang nấu' :
-                  order.status === 'ready' ? 'Sẵn sàng' : 'Hoàn thành'}
+                ${
+                  order.status === "pending"
+                    ? "Chờ xử lý"
+                    : order.status === "cooking"
+                    ? "Đang nấu"
+                    : order.status === "ready"
+                    ? "Sẵn sàng"
+                    : "Hoàn thành"
+                }
               </div>
             </div>
             
             <div class="order-info">
-              <strong>${order.type === 'dine-in' ? order.table : 'Giao hàng'}</strong> - ${order.customer}
+              <strong>${
+                order.type === "dine-in" ? order.table : "Giao hàng"
+              }</strong> - ${order.customer}
             </div>
             
             <div class="order-items">
-              ${order.items.map(item => `
+              ${order.items
+                .map(
+                  (item) => `
                 <div class="order-item-detail">
                   <span>${item.quantity}x ${item.name}</span>
                   <span>${formatCurrency(item.price * item.quantity)}</span>
                 </div>
-              `).join('')}
-              <div class="order-total">Tổng: ${formatCurrency(order.total)}</div>
+              `
+                )
+                .join("")}
+              <div class="order-total">Tổng: ${formatCurrency(
+                order.total
+              )}</div>
             </div>
             
-            ${order.notes ? `<div class="order-notes"><strong>Ghi chú:</strong> ${order.notes}</div>` : ''}
+            ${
+              order.notes
+                ? `<div class="order-notes"><strong>Ghi chú:</strong> ${order.notes}</div>`
+                : ""
+            }
             
             <div class="order-actions">
-              ${order.status === 'pending' ? `
+              ${
+                order.status === "pending"
+                  ? `
                 <button class="btn btn-sm btn-warning" onclick="updateOrderStatus('${order.id}', 'cooking')">
                   <i class="fa-solid fa-fire"></i> Bắt đầu nấu
                 </button>
-              ` : ''}
-              ${order.status === 'cooking' ? `
+              `
+                  : ""
+              }
+              ${
+                order.status === "cooking"
+                  ? `
                 <button class="btn btn-sm btn-success" onclick="updateOrderStatus('${order.id}', 'ready')">
                   <i class="fa-solid fa-check"></i> Sẵn sàng
                 </button>
-              ` : ''}
-              ${order.status === 'ready' ? `
+              `
+                  : ""
+              }
+              ${
+                order.status === "ready"
+                  ? `
                 <button class="btn btn-sm btn-primary" onclick="updateOrderStatus('${order.id}', 'completed')">
                   <i class="fa-solid fa-check-double"></i> Hoàn thành
                 </button>
-              ` : ''}
-              <button class="btn btn-sm btn-danger" onclick="updateOrderStatus('${order.id}', 'cancelled')">
+              `
+                  : ""
+              }
+              <button class="btn btn-sm btn-danger" onclick="updateOrderStatus('${
+                order.id
+              }', 'cancelled')">
                 <i class="fa-solid fa-times"></i> Hủy
               </button>
             </div>
@@ -2313,61 +2706,63 @@
 
       async function loadKitchen() {
         try {
-          console.log('Loading kitchen data...');
-          
+          console.log("Loading kitchen data...");
+
           // Load orders from Firebase for kitchen display
           let orders = [];
           const ordersCollectionRef = collection(db, "orders");
           const querySnapshot = await getDocs(ordersCollectionRef);
-          
+
           querySnapshot.forEach((doc) => {
             orders.push({ id: doc.id, ...doc.data() });
           });
-          
-          console.log('Kitchen orders loaded:', orders);
-          
+
+          console.log("Kitchen orders loaded:", orders);
+
           // Update kitchen stats
           updateKitchenStats(orders);
-          
+
           // Render kitchen board
           renderKitchenBoard(orders);
-          
+
           // Setup auto-refresh
           setupKitchenAutoRefresh();
-          
         } catch (error) {
           console.error("Error loading kitchen:", error);
-          showNotification('Có lỗi xảy ra khi tải dữ liệu bếp', 'error');
+          showNotification("Có lỗi xảy ra khi tải dữ liệu bếp", "error");
         }
       }
 
       function updateKitchenStats(orders) {
         // All stats will be 0 since we removed sample data
-        const pending = orders.filter(o => o.status === 'pending').length;
-        const cooking = orders.filter(o => o.status === 'cooking').length;
-        const ready = orders.filter(o => o.status === 'ready').length;
+        const pending = orders.filter((o) => o.status === "pending").length;
+        const cooking = orders.filter((o) => o.status === "cooking").length;
+        const ready = orders.filter((o) => o.status === "ready").length;
         const completedToday = 0; // No sample data
-        
-        document.getElementById('kitchen-pending').textContent = pending;
-        document.getElementById('kitchen-cooking').textContent = cooking;
-        document.getElementById('kitchen-ready').textContent = ready;
-        document.getElementById('kitchen-completed').textContent = completedToday;
+
+        document.getElementById("kitchen-pending").textContent = pending;
+        document.getElementById("kitchen-cooking").textContent = cooking;
+        document.getElementById("kitchen-ready").textContent = ready;
+        document.getElementById("kitchen-completed").textContent =
+          completedToday;
       }
 
       function renderKitchenBoard(orders) {
         const ordersByStatus = {
-          pending: orders.filter(o => o.status === 'pending'),
-          cooking: orders.filter(o => o.status === 'cooking'),
-          ready: orders.filter(o => o.status === 'ready'),
-          completed: orders.filter(o => o.status === 'completed')
+          pending: orders.filter((o) => o.status === "pending"),
+          cooking: orders.filter((o) => o.status === "cooking"),
+          ready: orders.filter((o) => o.status === "ready"),
+          completed: orders.filter((o) => o.status === "completed"),
         };
 
-        Object.keys(ordersByStatus).forEach(status => {
+        Object.keys(ordersByStatus).forEach((status) => {
           const container = document.getElementById(`${status}-kitchen-orders`);
           const count = document.getElementById(`${status}-count`);
-          
+
           count.textContent = ordersByStatus[status].length;
-          container.innerHTML = ordersByStatus[status].map(order => createKitchenOrderCard(order)).join('');
+          container.innerHTML = ordersByStatus[status]
+            .map((order) => createKitchenOrderCard(order))
+            .join("");
         });
       }
 
@@ -2380,57 +2775,78 @@
         };
 
         return `
-          <div class="kitchen-order-card" onclick="viewOrderDetail('${order.id}')">
+          <div class="kitchen-order-card" onclick="viewOrderDetail('${
+            order.id
+          }')">
             <div class="kitchen-order-header">
               <div class="kitchen-order-id">${order.id}</div>
               <div class="kitchen-order-type ${order.type}">
-                ${order.type === 'dine-in' ? 'Tại bàn' : 'Ship'}
+                ${order.type === "dine-in" ? "Tại bàn" : "Ship"}
               </div>
             </div>
             <div class="kitchen-order-time">${formatTime(order.createdAt)}</div>
             <div class="kitchen-order-items">
-              ${order.items.map(item => `${item.quantity}x ${item.name}`).join(', ')}
+              ${order.items
+                .map((item) => `${item.quantity}x ${item.name}`)
+                .join(", ")}
             </div>
             <div class="kitchen-order-actions">
-              ${order.status === 'pending' ? `
+              ${
+                order.status === "pending"
+                  ? `
                 <button class="btn btn-sm btn-warning" onclick="event.stopPropagation(); updateOrderStatus('${order.id}', 'cooking')">
                   Bắt đầu
                 </button>
-              ` : ''}
-              ${order.status === 'cooking' ? `
+              `
+                  : ""
+              }
+              ${
+                order.status === "cooking"
+                  ? `
                 <button class="btn btn-sm btn-success" onclick="event.stopPropagation(); updateOrderStatus('${order.id}', 'ready')">
                   Xong
                 </button>
-              ` : ''}
-              ${order.status === 'ready' ? `
+              `
+                  : ""
+              }
+              ${
+                order.status === "ready"
+                  ? `
                 <button class="btn btn-sm btn-primary" onclick="event.stopPropagation(); updateOrderStatus('${order.id}', 'completed')">
                   Phục vụ
                 </button>
-              ` : ''}
+              `
+                  : ""
+              }
             </div>
           </div>
         `;
       }
 
       function setupKitchenAutoRefresh() {
-        const autoRefreshCheckbox = document.getElementById('auto-refresh-kitchen');
-        
+        const autoRefreshCheckbox = document.getElementById(
+          "auto-refresh-kitchen"
+        );
+
         if (kitchenAutoRefresh) {
           clearInterval(kitchenAutoRefresh);
         }
-        
+
         if (autoRefreshCheckbox?.checked) {
           kitchenAutoRefresh = setInterval(() => {
             loadKitchen();
           }, 30000); // 30 seconds
         }
-        
-        autoRefreshCheckbox?.addEventListener('change', setupKitchenAutoRefresh);
+
+        autoRefreshCheckbox?.addEventListener(
+          "change",
+          setupKitchenAutoRefresh
+        );
       }
 
       // Global functions
-      window.updateOrderStatus = function(orderId, newStatus) {
-        showNotification(`Đã cập nhật trạng thái đơn ${orderId}`, 'success');
+      window.updateOrderStatus = function (orderId, newStatus) {
+        showNotification(`Đã cập nhật trạng thái đơn ${orderId}`, "success");
         // In production, update Firebase here
         setTimeout(() => {
           loadOrders();
@@ -2438,8 +2854,8 @@
         }, 500);
       };
 
-      window.viewOrderDetail = function(orderId) {
-        showNotification(`Xem chi tiết đơn ${orderId}`, 'info');
+      window.viewOrderDetail = function (orderId) {
+        showNotification(`Xem chi tiết đơn ${orderId}`, "info");
         // In production, show order detail modal
       };
     </script>

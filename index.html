@@ -2,124 +2,2047 @@
 <html lang="vi">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>YUMMY – Redirect</title>
-    <meta name="robots" content="noindex" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nhà Hàng Rực Rỡ</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js for charts in Admin -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide-react@0.292.0/dist/lucide-react.js"></script>
+
     <style>
-      html,
+      /* Custom styles */
       body {
-        height: 100%;
-        margin: 0;
-        font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial,
-          sans-serif;
-        background: #f5f7fa;
-        color: #222;
+        font-family: "Inter", sans-serif;
+        background-color: #f8f9fa;
+      }
+      /* Chalkboard menu theme */
+      .chalkboard {
+        background-color: #1f2937; /* slate-800 */
+        color: #f9fafb; /* white-ish */
+        background-image: radial-gradient(rgba(255,255,255,0.04) 1px, transparent 1px);
+        background-size: 6px 6px;
+      }
+      .chalk-title {
+        font-family: 'Permanent Marker', cursive;
+        letter-spacing: 1px;
+        color: #ffffff;
+        text-shadow: 0 1px 0 rgba(0,0,0,0.4);
+      }
+      .chalk-heading {
+        font-family: 'Shadows Into Light Two', cursive;
+        font-weight: 700;
+        color: #f3f4f6; /* gray-100 */
+      }
+      .chalk-section + .chalk-section { margin-top: 1.25rem; }
+      .chalk-item-name { color: #e5e7eb; }
+      .chalk-leader { border-bottom: 2px dotted rgba(255,255,255,0.25); height: 0; }
+      .chalk-price { color: #fca5a5; font-weight: 700; }
+      .chalk-status-ok { color: #86efac; }
+      .chalk-status-out { color: #d1d5db; }
+      /* Navigation link styles (replacing Tailwind @apply for CDN mode) */
+      .nav-link {
+        padding: 0.5rem 1rem; /* px-4 py-2 */
+        color: #4b5563; /* text-gray-600 */
+        border-radius: 0.5rem; /* rounded-lg */
+        transition: all 0.3s ease; /* transition-all duration-300 */
+      }
+      .nav-link:hover {
+        color: #dc2626; /* hover:text-red-600 */
+        background-color: #fef2f2; /* hover:bg-red-50 */
+      }
+      .nav-link.active {
+        color: #b91c1c; /* text-red-700 */
+        background-color: #fee2e2; /* bg-red-100 */
+        font-weight: 600; /* font-semibold */
+      }
+      .page {
+        display: none;
+      }
+      .page.active {
+        display: block;
+      }
+      .menu-item.unavailable {
+        opacity: 0.5;
+        background-color: #f1f5f9;
+      }
+      .admin-nav-link.active {
+        background-color: #dc2626; /* bg-red-600 */
+        color: #ffffff; /* text-white */
+      }
+
+      /* Hero banner image extracted from inline style */
+      .hero-banner {
+        background-image: url('https://placehold.co/1200x400/f87171/ffffff?text=Món+Ăn+Đặc+Sắc');
+      }
+
+      /* User Menu sectioned tiles theme */
+      .menu-section {
+        background: #ffffff;
+        border: 1px solid #e5e7eb; /* gray-200 */
+        border-radius: 0.75rem; /* rounded-xl */
+        overflow: hidden;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+      }
+      .menu-section__header {
         display: flex;
         align-items: center;
-        justify-content: center;
+        justify-content: space-between;
+        background: #fef2f2; /* red-50 */
+        color: #991b1b; /* red-800 */
+        font-weight: 700;
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid #fecaca; /* red-200 */
       }
-      .card {
-        background: #fff;
-        padding: 2.2rem 2.4rem;
-        border-radius: 20px;
-        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08),
-          0 2px 4px rgba(0, 0, 0, 0.06);
-        max-width: 340px;
-        width: 92%;
-        text-align: center;
-        animation: fade 0.5s ease;
+      .menu-section__list { padding: 0.5rem 0.75rem; }
+      .menu-line {
+        display: flex;
+        align-items: baseline;
+        gap: 0.5rem;
+        padding: 0.5rem 0.25rem;
       }
-      h1 {
-        margin: 0 0 0.75rem;
-        font-size: 1.35rem;
-        letter-spacing: 0.5px;
-        font-weight: 600;
-      }
-      p {
-        margin: 0.35rem 0;
-        font-size: 0.85rem;
-        opacity: 0.72;
-      }
-      small {
-        display: block;
-        margin-top: 1rem;
-        font-size: 0.65rem;
-        letter-spacing: 0.5px;
-        opacity: 0.55;
-      }
-      .bar-outer {
-        height: 8px;
-        background: #eef1f4;
-        border-radius: 6px;
-        overflow: hidden;
-        margin: 1.15rem 0 0.25rem;
-      }
-      .bar {
-        height: 100%;
-        width: 0;
-        background: linear-gradient(90deg, #ff7a45, #ff5c35);
-        animation: load 1.1s cubic-bezier(0.65, 0.05, 0.36, 1) forwards;
-      }
-      .pulse {
-        animation: pulse 1.5s ease-in-out infinite;
-      }
-      @keyframes load {
-        to {
-          width: 100%;
-        }
-      }
-      @keyframes fade {
-        from {
-          opacity: 0;
-          transform: translateY(8px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-      @keyframes pulse {
-        0%,
-        100% {
-          opacity: 0.55;
-        }
-        50% {
-          opacity: 0.85;
-        }
-      }
+      .menu-line + .menu-line { border-top: 1px dashed #e5e7eb; }
+      .menu-line__name { color: #111827; font-weight: 500; }
+      .menu-line__dots { flex: 1 1 auto; border-bottom: 2px dotted #e5e7eb; height: 0; margin: 0 0.5rem; }
+      .menu-line__price { color: #dc2626; font-weight: 700; }
+      .menu-line__status { font-size: 0.75rem; margin-left: 0.5rem; }
+      .status-ok { color: #16a34a; }
+      .status-out { color: #9ca3af; }
     </style>
+    <link rel="preconnect" href="https://rsms.me/" />
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Shadows+Into+Light+Two&display=swap" rel="stylesheet">
   </head>
-  <body>
-    <div class="card" role="status" aria-live="polite">
-      <h1>Đang chuyển hướng…</h1>
-      <p>Chuẩn bị nội dung phù hợp cho bạn</p>
-      <div class="bar-outer"><div class="bar"></div></div>
-      <p class="pulse" id="hint">Vui lòng đợi giây lát</p>
-      <small>YUMMY Router</small>
+  <body class="bg-gray-50">
+    <!-- =========== HEADER & NAVIGATION =========== -->
+    <header class="bg-white shadow-md sticky top-0 z-50">
+      <nav
+        class="container mx-auto px-6 py-3 flex justify-between items-center"
+      >
+        <a
+          href="#"
+          class="text-2xl font-bold text-red-600"
+          onclick="showPage('home')"
+          >Nhà Hàng Rực Rỡ</a
+        >
+        <div class="hidden md:flex items-center space-x-2">
+          <a
+            href="#"
+            class="nav-link active"
+            data-page="home"
+            onclick="switchPage(event)"
+            >Trang Chủ</a
+          >
+          <a
+            href="#"
+            class="nav-link"
+            data-page="menu"
+            onclick="switchPage(event)"
+            >Thực Đơn</a
+          >
+          <a
+            href="#"
+            class="nav-link"
+            data-page="order"
+            onclick="switchPage(event)"
+            >Order Tại Bàn</a
+          >
+          <a
+            href="#"
+            class="nav-link"
+            data-page="reservation"
+            onclick="switchPage(event)"
+            >Đặt Bàn</a
+          >
+          <a
+            href="#"
+            class="nav-link"
+            data-page="contact"
+            onclick="switchPage(event)"
+            >Liên Hệ</a
+          >
+        </div>
+        <a
+          href="#"
+          class="px-5 py-2 text-white bg-red-600 hover:bg-red-700 rounded-full transition-colors"
+          onclick="showAdminLogin()"
+        >
+          Admin
+        </a>
+      </nav>
+    </header>
+
+    <!-- =========== MAIN CONTENT =========== -->
+    <main class="container mx-auto p-4 md:p-6">
+      <!-- =========== USER PAGES =========== -->
+
+      <!-- Trang Chủ -->
+      <section id="page-home" class="page active">
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+          <div
+            class="h-64 md:h-96 bg-cover bg-center hero-banner"
+          >
+            <div
+              class="bg-black bg-opacity-40 h-full flex items-center justify-center"
+            >
+              <h1 class="text-4xl md:text-6xl text-white font-bold text-center">
+                Trải nghiệm Ẩm thực Tinh hoa
+              </h1>
+            </div>
+          </div>
+          <div class="p-6 md:p-10">
+            <h2 class="text-3xl font-bold text-gray-800 mb-4 text-center">
+              Chào mừng đến với Nhà Hàng Rực Rỡ
+            </h2>
+            <p class="text-gray-600 text-center max-w-3xl mx-auto mb-8">
+              Nơi mỗi món ăn là một câu chuyện, mỗi không gian là một kỷ niệm.
+              Chúng tôi tự hào mang đến cho bạn những hương vị độc đáo và dịch
+              vụ tận tâm nhất.
+            </p>
+            <div class="flex justify-center space-x-4">
+              <button
+                class="px-8 py-3 bg-red-600 text-white font-semibold rounded-full hover:bg-red-700 transition-transform hover:scale-105"
+                onclick="showPage('menu')"
+              >
+                Xem Thực Đơn
+              </button>
+              <button
+                class="px-8 py-3 bg-gray-800 text-white font-semibold rounded-full hover:bg-gray-900 transition-transform hover:scale-105"
+                onclick="showPage('reservation')"
+              >
+                Đặt Bàn Ngay
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Thực Đơn -->
+      <section id="page-menu" class="page">
+        <h1 class="text-4xl font-bold text-center text-gray-800 mb-6">Thực Đơn</h1>
+        <div id="menu-categories" class="flex justify-center flex-wrap gap-2 mb-6"></div>
+        <div id="menu-subcategories" class="flex justify-center flex-wrap gap-2 mb-6"></div>
+        <div id="menu-list-user" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Menu items will be rendered here by JavaScript -->
+        </div>
+      </section>
+
+      <!-- Order Tại Bàn -->
+      <section id="page-order" class="page">
+        <div class="grid lg:grid-cols-12 gap-8">
+          <!-- Left: Table selection grid -->
+          <div class="lg:col-span-2">
+            <div class="bg-white p-6 rounded-lg shadow-lg sticky top-24">
+              <h2 class="text-2xl font-bold mb-4">Chọn Bàn</h2>
+              <div id="order-table-grid" class="grid grid-cols-1 gap-3"></div>
+            </div>
+          </div>
+          <!-- Middle: Menu -->
+          <div class="lg:col-span-7">
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">
+              Order tại <span class="text-red-600">Bàn số <span id="order-table-label">--</span></span>
+            </h1>
+            <p class="text-gray-500 mb-6">
+              Chọn món ăn yêu thích của bạn và gửi yêu cầu đến bếp.
+            </p>
+            <!-- Filter toolbar -->
+            <div class="flex flex-wrap items-end gap-4 mb-4">
+              <div class="flex-1 min-w-0">
+                <label class="block text-sm font-medium text-gray-700">Tìm món</label>
+                <input id="order-search-input" type="text" placeholder="Nhập tên món" class="border rounded px-3 py-2 w-full" />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700">Giá từ</label>
+                <input id="order-price-min" type="number" min="0" step="500" class="border rounded px-3 py-2 w-32" />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700">Đến</label>
+                <input id="order-price-max" type="number" min="0" step="500" class="border rounded px-3 py-2 w-32" />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700">Danh mục</label>
+                <select id="order-category-select" class="border rounded px-3 py-2 bg-white w-44"></select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700">Sắp xếp</label>
+                <select id="order-sort-select" class="border rounded px-3 py-2 bg-white w-40">
+                  <option value="">Mặc định</option>
+                  <option value="name-asc">Tên A → Z</option>
+                  <option value="name-desc">Tên Z → A</option>
+                  <option value="price-asc">Giá tăng dần</option>
+                  <option value="price-desc">Giá giảm dần</option>
+                </select>
+              </div>
+            </div>
+            <div id="order-categories" class="flex flex-wrap gap-2 mb-6"></div>
+            <div id="order-subcategories" class="flex flex-wrap gap-2 mb-6"></div>
+            <div id="menu-list-order" class="grid md:grid-cols-1 gap-4">
+              <!-- Order items will be rendered here -->
+            </div>
+          </div>
+          <!-- Right: Cart -->
+          <div class="lg:col-span-3">
+            <div class="bg-white p-6 rounded-lg shadow-lg sticky top-24">
+              <h2 class="text-2xl font-bold mb-4 flex items-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="lucide lucide-shopping-cart mr-2"
+                >
+                  <circle cx="8" cy="21" r="1" />
+                  <circle cx="19" cy="21" r="1" />
+                  <path
+                    d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"
+                  /></svg
+                >Đơn Hàng Của Bạn
+              </h2>
+              <div
+                id="cart-items"
+                class="space-y-3 mb-4 max-h-80 overflow-y-auto"
+              >
+                <p class="text-gray-500 text-center">Giỏ hàng trống</p>
+              </div>
+              <div class="border-t pt-4">
+                <div
+                  class="flex justify-between items-center text-xl font-bold"
+                >
+                  <span>Tổng cộng:</span>
+                  <span id="cart-total" class="text-red-600">0đ</span>
+                </div>
+                <button
+                  id="submit-order-btn"
+                  class="w-full mt-4 bg-green-600 text-white font-bold py-3 rounded-lg hover:bg-green-700 transition-colors"
+                >
+                  Gửi Đơn Hàng
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Đặt Bàn -->
+      <section id="page-reservation" class="page">
+        <div class="max-w-2xl mx-auto bg-white p-8 rounded-xl shadow-lg">
+          <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">
+            Đặt Bàn Trước
+          </h1>
+          <form id="reservation-form" class="space-y-6">
+            <div>
+              <label for="name" class="block text-sm font-medium text-gray-700"
+                >Họ và Tên</label
+              >
+              <input
+                type="text"
+                id="name"
+                required
+                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
+              />
+            </div>
+            <div>
+              <label for="phone" class="block text-sm font-medium text-gray-700"
+                >Số Điện Thoại</label
+              >
+              <input
+                type="tel"
+                id="phone"
+                required
+                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
+              />
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label
+                  for="date"
+                  class="block text-sm font-medium text-gray-700"
+                  >Ngày</label
+                >
+                <input
+                  type="date"
+                  id="date"
+                  required
+                  class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
+                />
+              </div>
+              <div>
+                <label
+                  for="time"
+                  class="block text-sm font-medium text-gray-700"
+                  >Giờ</label
+                >
+                <input
+                  type="time"
+                  id="time"
+                  required
+                  class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
+                />
+              </div>
+            </div>
+            <div>
+              <label
+                for="guests"
+                class="block text-sm font-medium text-gray-700"
+                >Số Lượng Khách</label
+              >
+              <select
+                id="guests"
+                class="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
+              >
+                <option>2 người</option>
+                <option>3 người</option>
+                <option>4 người</option>
+                <option>5 người</option>
+                <option>6 người</option>
+                <option>8 người</option>
+                <option>10+ người</option>
+              </select>
+            </div>
+            <button
+              type="submit"
+              class="w-full bg-red-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-red-700 transition-colors"
+            >
+              Xác Nhận Đặt Bàn
+            </button>
+          </form>
+        </div>
+      </section>
+
+      <!-- Liên Hệ -->
+      <section id="page-contact" class="page">
+        <div class="bg-white p-8 rounded-xl shadow-lg">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+            <div>
+              <h1 class="text-3xl font-bold text-gray-800 mb-4">
+                Liên Hệ Với Chúng Tôi
+              </h1>
+              <p class="text-gray-600 mb-6">
+                Chúng tôi luôn sẵn lòng lắng nghe bạn. Vui lòng liên hệ qua
+                thông tin dưới đây.
+              </p>
+              <div class="space-y-4">
+                <p class="flex items-center">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="lucide lucide-map-pin mr-3 text-red-600"
+                  >
+                    <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                    <circle cx="12" cy="10" r="3" /></svg
+                  >123 Đường ABC, Phường XYZ, Quận 1, TP.HCM
+                </p>
+                <p class="flex items-center">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="lucide lucide-phone mr-3 text-red-600"
+                  >
+                    <path
+                      d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"
+                    />
+                  </svg>
+                  (028) 3812 3456
+                </p>
+                <p class="flex items-center">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="lucide lucide-mail mr-3 text-red-600"
+                  >
+                    <rect width="20" height="16" x="2" y="4" rx="2" />
+                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                  </svg>
+                  contact@nhahangrucro.com
+                </p>
+                <p class="flex items-center">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="lucide lucide-clock mr-3 text-red-600"
+                  >
+                    <circle cx="12" cy="12" r="10" />
+                    <polyline points="12 6 12 12 16 14" />
+                  </svg>
+                  Mở cửa: 10:00 - 22:00, mỗi ngày
+                </p>
+              </div>
+            </div>
+            <div>
+              <div class="w-full h-64 md:h-full rounded-lg overflow-hidden">
+                <iframe
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.447914995536!2d106.6952726758652!3d10.776989989371994!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f3987e372af%3A0x5a2414299c14886f!2zQ2jhu6MgQuG6v24gVGjDoG5o!5e0!3m2!1svi!2s!4v1700627589254!5m2!1svi!2s"
+                  width="100%"
+                  height="100%"
+                  allowfullscreen=""
+                  loading="lazy"
+                  class="border-0"
+                ></iframe>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =========== ADMIN PAGES =========== -->
+      <section id="page-admin" class="page">
+        <div class="flex">
+          <!-- Admin Sidebar -->
+          <aside class="w-64 bg-gray-800 text-white min-h-screen p-4">
+            <h2 class="text-2xl font-bold mb-8">Admin Panel</h2>
+            <!-- Back to User Home in sidebar -->
+            <div class="mb-4">
+              <a
+                href="#"
+                class="w-full inline-flex items-center gap-2 p-3 rounded-lg bg-gray-700 hover:bg-gray-600 text-white transition-colors"
+                onclick="showPage('home')"
+                title="Quay lại Trang Chủ"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="lucide lucide-arrow-left"
+                >
+                  <path d="M19 12H5" />
+                  <path d="m12 19-7-7 7-7" />
+                </svg>
+                <span>Quay lại Trang Chủ</span>
+              </a>
+            </div>
+            <hr class="border-gray-700 mb-4" />
+            <nav class="flex flex-col space-y-2">
+              <a
+                href="#"
+                class="admin-nav-link p-3 rounded-lg hover:bg-gray-700 active"
+                data-admin-page="dashboard"
+                onclick="switchAdminPage(event)"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="lucide lucide-layout-dashboard inline-block mr-2"
+                >
+                  <rect width="7" height="9" x="3" y="3" rx="1" />
+                  <rect width="7" height="5" x="14" y="3" rx="1" />
+                  <rect width="7" height="9" x="14" y="12" rx="1" />
+                  <rect width="7" height="5" x="3" y="16" rx="1" />
+                </svg>
+                Tổng Quan
+              </a>
+              <a
+                href="#"
+                class="admin-nav-link p-3 rounded-lg hover:bg-gray-700"
+                data-admin-page="orders"
+                onclick="switchAdminPage(event)"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="lucide lucide-clipboard-list inline-block mr-2"
+                >
+                  <rect width="8" height="4" x="8" y="2" rx="1" ry="1" />
+                  <path
+                    d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"
+                  />
+                  <path d="M12 11h4" />
+                  <path d="M12 16h4" />
+                  <path d="M8 11h.01" />
+                  <path d="M8 16h.01" />
+                </svg>
+                Quản Lý Đơn Hàng
+              </a>
+              <a
+                href="#"
+                class="admin-nav-link p-3 rounded-lg hover:bg-gray-700"
+                data-admin-page="menu"
+                onclick="switchAdminPage(event)"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="lucide lucide-book-open inline-block mr-2"
+                >
+                  <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+                  <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+                </svg>
+                Quản Lý Menu
+              </a>
+              <a
+                href="#"
+                class="admin-nav-link p-3 rounded-lg hover:bg-gray-700"
+                data-admin-page="tables"
+                onclick="switchAdminPage(event)"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="lucide lucide-table inline-block mr-2"
+                >
+                  <path d="M3 10h18" />
+                  <path d="M10 3v18" />
+                  <rect x="3" y="3" width="18" height="18" rx="2" />
+                </svg>
+                Quản Lý Bàn
+              </a>
+              <a
+                href="#"
+                class="admin-nav-link p-3 rounded-lg hover:bg-gray-700"
+                data-admin-page="reservations"
+                onclick="switchAdminPage(event)"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="lucide lucide-calendar-check inline-block mr-2"
+                >
+                  <rect width="18" height="18" x="3" y="4" rx="2" ry="2" />
+                  <line x1="16" x2="16" y1="2" y2="6" />
+                  <line x1="8" x2="8" y1="2" y2="6" />
+                  <line x1="3" x2="21" y1="10" y2="10" />
+                  <path d="m9 16 2 2 4-4" />
+                </svg>
+                Quản Lý Đặt Bàn
+              </a>
+              <a
+                href="#"
+                class="admin-nav-link p-3 rounded-lg hover:bg-gray-700"
+                data-admin-page="finance"
+                onclick="switchAdminPage(event)"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="lucide lucide-area-chart inline-block mr-2"
+                >
+                  <path d="M3 3v18h18" />
+                  <path d="M7 12v5h12V8l-5 5-4-4Z" />
+                </svg>
+                Doanh Thu & Chi Tiêu
+              </a>
+            </nav>
+          </aside>
+
+          <!-- Admin Content -->
+          <main class="flex-1 p-8 bg-white">
+            <!-- Admin Dashboard -->
+            <div id="admin-dashboard" class="admin-page active">
+              <h2 class="text-3xl font-bold mb-6">Tổng Quan</h2>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="bg-blue-100 p-6 rounded-lg">
+                  <h3 class="font-bold text-blue-800">Doanh Thu Hôm Nay</h3>
+                  <p
+                    id="revenue-today"
+                    class="text-3xl font-bold text-blue-900"
+                  >
+                    1.250.000đ
+                  </p>
+                </div>
+                <div class="bg-green-100 p-6 rounded-lg">
+                  <h3 class="font-bold text-green-800">Đơn Hàng Mới</h3>
+                  <p
+                    id="new-orders-count"
+                    class="text-3xl font-bold text-green-900"
+                  >
+                    5
+                  </p>
+                </div>
+                <div class="bg-yellow-100 p-6 rounded-lg">
+                  <h3 class="font-bold text-yellow-800">Lượt Đặt Bàn</h3>
+                  <p
+                    id="reservations-count"
+                    class="text-3xl font-bold text-yellow-900"
+                  >
+                    8
+                  </p>
+                </div>
+              </div>
+              <h3 class="text-2xl font-bold mb-4">Biểu đồ Doanh Thu Tuần</h3>
+              <canvas id="revenueChart"></canvas>
+            </div>
+
+            <!-- Admin Order Management -->
+            <div id="admin-orders" class="admin-page hidden">
+              <h2 class="text-3xl font-bold mb-6">Quản Lý Đơn Hàng</h2>
+              <!-- Filter + Summary -->
+              <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-4">
+                <div class="flex items-end gap-2">
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700">Tháng</label>
+                    <select id="orders-filter-month" class="border rounded px-3 py-2 bg-white">
+                      <option value="01">01</option>
+                      <option value="02">02</option>
+                      <option value="03">03</option>
+                      <option value="04">04</option>
+                      <option value="05">05</option>
+                      <option value="06">06</option>
+                      <option value="07">07</option>
+                      <option value="08">08</option>
+                      <option value="09">09</option>
+                      <option value="10">10</option>
+                      <option value="11">11</option>
+                      <option value="12">12</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700">Năm</label>
+                    <select id="orders-filter-year" class="border rounded px-3 py-2 bg-white"></select>
+                  </div>
+                </div>
+                <div class="bg-gray-50 rounded border p-3 flex items-center gap-6">
+                  <div>
+                    <p class="text-xs text-gray-500">Số bill trong tháng</p>
+                    <p id="orders-summary-count" class="text-xl font-bold">0</p>
+                  </div>
+                  <div>
+                    <p class="text-xs text-gray-500">Tổng doanh thu</p>
+                    <p id="orders-summary-total" class="text-xl font-bold text-red-600">0đ</p>
+                  </div>
+                </div>
+              </div>
+              <div id="admin-order-list" class="space-y-4">
+                <!-- Orders rendered here -->
+                <p class="text-gray-500">Chưa có đơn hàng nào.</p>
+              </div>
+            </div>
+
+            <!-- Admin Menu Management -->
+            <div id="admin-menu" class="admin-page hidden">
+              <h2 class="text-3xl font-bold mb-6">Quản Lý Thực Đơn</h2>
+              <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Category Management Panel -->
+                <div class="lg:col-span-1 bg-gray-50 rounded-lg border p-4 h-max">
+                  <h3 class="text-xl font-bold mb-3">Danh mục</h3>
+                  <form id="add-category-form" class="space-y-3 mb-4">
+                    <div>
+                      <label class="block text-sm font-medium mb-1">Tên danh mục</label>
+                      <input id="new-category-name" type="text" class="w-full border rounded px-3 py-2" placeholder="VD: Mì cay" required />
+                    </div>
+                    <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold px-3 py-2 rounded">Thêm danh mục</button>
+                  </form>
+
+                  <h3 class="text-xl font-bold mb-3">Danh mục con</h3>
+                  <form id="add-subcategory-form" class="space-y-3 mb-4">
+                    <div>
+                      <label class="block text-sm font-medium mb-1">Thuộc danh mục</label>
+                      <select id="parent-category-select" class="w-full border rounded px-3 py-2"></select>
+                    </div>
+                    <div>
+                      <label class="block text-sm font-medium mb-1">Tên danh mục con</label>
+                      <input id="new-subcategory-name" type="text" class="w-full border rounded px-3 py-2" required />
+                    </div>
+                    <button type="submit" class="w-full bg-gray-800 hover:bg-gray-900 text-white font-semibold px-3 py-2 rounded">Thêm danh mục con</button>
+                  </form>
+
+                  <div>
+                    <h4 class="text-lg font-semibold mb-2">Cấu trúc danh mục</h4>
+                    <div id="admin-category-tree" class="space-y-2 text-sm"></div>
+                  </div>
+                </div>
+
+                <!-- Menu Items Panel -->
+                <div class="lg:col-span-2">
+                  <div id="admin-menu-list">
+                    <!-- Menu management list rendered here -->
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Admin Reservation Management -->
+            <div id="admin-tables" class="admin-page hidden">
+              <h2 class="text-3xl font-bold mb-6">Quản Lý Bàn</h2>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <form id="add-table-form" class="bg-gray-50 p-4 rounded-lg border flex items-end gap-3">
+                  <div class="flex-1">
+                    <label class="block text-sm font-medium mb-1">Số bàn</label>
+                    <input id="new-table-number" type="number" min="1" class="w-full border rounded px-3 py-2" placeholder="VD: 12" required />
+                  </div>
+                  <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">Thêm bàn</button>
+                </form>
+                <div class="bg-white p-4 rounded-lg border">
+                  <h3 class="text-lg font-semibold mb-2">Danh sách bàn</h3>
+                  <div id="admin-table-list" class="space-y-2 text-sm"></div>
+                </div>
+              </div>
+            </div>
+
+            <div
+              id="admin-reservations"
+              class="admin-page hidden"
+            >
+              <h2 class="text-3xl font-bold mb-6">Quản Lý Đặt Bàn</h2>
+              <div id="admin-reservation-list" class="space-y-4">
+                <!-- Reservations rendered here -->
+                <p class="text-gray-500">Chưa có lượt đặt bàn nào.</p>
+              </div>
+            </div>
+
+            <!-- Admin Finance Management -->
+            <div id="admin-finance" class="admin-page hidden">
+              <h2 class="text-3xl font-bold mb-6">
+                Quản Lý Doanh Thu & Chi Tiêu
+              </h2>
+              <!-- Finance content here -->
+              <p>Tính năng đang được phát triển.</p>
+            </div>
+          </main>
+        </div>
+      </section>
+    </main>
+
+    <!-- Modal for success messages -->
+    <div
+      id="success-modal"
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden"
+    >
+      <div class="bg-white p-8 rounded-lg shadow-xl text-center">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="48"
+          height="48"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="lucide lucide-check-circle-2 text-green-500 mx-auto mb-4"
+        >
+          <path
+            d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"
+          />
+          <path d="m9 12 2 2 4-4" />
+        </svg>
+        <p id="modal-message" class="text-lg font-semibold text-gray-800"></p>
+      </div>
     </div>
+
     <script>
-      (() => {
-        const KEY = "yummyVisitCount";
-        const rawPath = location.pathname;
-        const norm = rawPath.replace(/\/+/g, "/");
-        const isRoot = norm === "/" || /\/index\.html$/.test(norm);
-        if (!isRoot) {
-          console.debug("[YUMMY Router] No redirect (not root):", norm);
-          return;
+      document.addEventListener("DOMContentLoaded", function () {
+        // --- DATABASE (DỮ LIỆU MẪU) ---
+        // Danh mục cha/con (quản lý trong Admin)
+        let categories = [
+          {
+            id: "mi-cay",
+            name: "Mì cay",
+            subcategories: [{ id: "mi-cay-hai-san", name: "Mì cay hải sản" }],
+          },
+          { id: "nuoc-uong", name: "Nước uống", subcategories: [] },
+          { id: "coffee", name: "Coffee", subcategories: [] },
+          {
+            id: "milk-tea",
+            name: "Milk tea",
+            subcategories: [
+              { id: "tra-sua-truyen-thong", name: "Trà sữa truyền thống" },
+            ],
+          },
+        ];
+
+        let menuData = [
+          {
+            id: 1,
+            name: "Phở Bò Đặc Biệt",
+            price: 65000,
+            desc: "Nước dùng đậm đà, thịt bò mềm tan.",
+            img: "https://placehold.co/300x200/ef4444/white?text=Phở+Bò",
+            category: "Món chính",
+            isAvailable: true,
+          },
+          {
+            id: 2,
+            name: "Bún Chả Hà Nội",
+            price: 50000,
+            desc: "Thịt nướng thơm lừng, nước mắm chua ngọt.",
+            img: "https://placehold.co/300x200/f97316/white?text=Bún+Chả",
+            category: "Món chính",
+            isAvailable: true,
+          },
+          {
+            id: 3,
+            name: "Gỏi Cuốn Tôm Thịt",
+            price: 45000,
+            desc: "Tươi mát, thanh đạm, chấm cùng tương đậu phộng.",
+            img: "https://placehold.co/300x200/84cc16/white?text=Gỏi+Cuốn",
+            category: "Khai vị",
+            isAvailable: true,
+          },
+          {
+            id: 4,
+            name: "Nem Rán Giòn Tan",
+            price: 40000,
+            desc: "Vỏ giòn rụm, nhân thịt đậm đà.",
+            img: "https://placehold.co/300x200/eab308/white?text=Nem+Rán",
+            category: "Khai vị",
+            isAvailable: false,
+          },
+          {
+            id: 5,
+            name: "Cà Phê Sữa Đá",
+            price: 25000,
+            desc: "Đậm vị cà phê, ngọt ngào sữa đặc.",
+            img: "https://placehold.co/300x200/22c55e/white?text=Cà+Phê",
+            category: "Đồ uống",
+            categoryId: "coffee",
+            isAvailable: true,
+          },
+          {
+            id: 6,
+            name: "Nước Cam Vắt",
+            price: 30000,
+            desc: "Tươi ngon, giàu vitamin C.",
+            img: "https://placehold.co/300x200/f59e0b/white?text=Nước+Cam",
+            category: "Đồ uống",
+            categoryId: "nuoc-uong",
+            isAvailable: true,
+          },
+          {
+            id: 7,
+            name: "Mì cay hải sản",
+            price: 85000,
+            desc: "Mì cay cấp độ tuỳ chọn với hải sản tươi.",
+            img: "https://placehold.co/300x200/ef4444/white?text=Mi+Cay+Hai+San",
+            category: "Món chính",
+            categoryId: "mi-cay",
+            subcategoryId: "mi-cay-hai-san",
+            isAvailable: true,
+          },
+          {
+            id: 8,
+            name: "Trà sữa truyền thống",
+            price: 45000,
+            desc: "Vị trà đậm, sữa béo ngậy, trân châu dẻo.",
+            img: "https://placehold.co/300x200/8b5cf6/white?text=Tra+Sua+Truyen+Thong",
+            category: "Đồ uống",
+            categoryId: "milk-tea",
+            subcategoryId: "tra-sua-truyen-thong",
+            isAvailable: true,
+          },
+    ];
+
+    let cart = {};
+    let orders = [];
+    let reservations = [];
+    let orderCounter = 1;
+    // Trạng thái lọc danh mục hiện tại
+    let selectedCategoryId = null; // null = Tất Cả
+    let selectedSubcategoryId = null; // null = Tất Cả
+    // Bàn và lựa chọn bàn
+    let tables = [];
+    let selectedTable = null;
+  // Lọc đơn hàng theo tháng (YYYY-MM)
+  let selectedOrdersMonth = null;
+  // Bộ lọc Order tại bàn
+  let orderSearchQuery = "";
+  let orderPriceMin = null;
+  let orderPriceMax = null;
+  let orderSort = ""; // '', name-asc, name-desc, price-asc, price-desc
+
+        // --- STORAGE HELPERS ---
+        function saveTables() {
+          try { localStorage.setItem('yummy_tables', JSON.stringify(tables)); } catch {}
         }
-        const FIRST = "landing-home.html";
-        const RETURNING = "customer/order-booking.html";
-        let count = parseInt(localStorage.getItem(KEY) || "0", 10);
-        if (isNaN(count)) count = 0;
-        count += 1;
-        localStorage.setItem(KEY, String(count));
-        const target = count === 1 ? FIRST : RETURNING;
-        console.debug("[YUMMY Router] visit", count, "→", target);
-        setTimeout(() => {
-          if (location.pathname.endsWith(target)) return;
-          window.location.href = "/" + target;
-        }, 480);
-      })();
+        function saveSelectedTable() {
+          try { localStorage.setItem('yummy_selected_table', JSON.stringify(selectedTable)); } catch {}
+        }
+        function loadTablesFromStorage() {
+          try {
+            const t = JSON.parse(localStorage.getItem('yummy_tables'));
+            if (Array.isArray(t)) tables = t;
+          } catch {}
+          if (!tables || tables.length === 0) {
+            tables = [1,2,3,4,5];
+            saveTables();
+          }
+          try {
+            const st = JSON.parse(localStorage.getItem('yummy_selected_table'));
+            selectedTable = st ?? null;
+          } catch {}
+        }
+
+        // Orders storage
+        function saveOrders() {
+          try { localStorage.setItem('yummy_orders', JSON.stringify(orders)); } catch {}
+        }
+        function loadOrdersFromStorage() {
+          try {
+            const o = JSON.parse(localStorage.getItem('yummy_orders'));
+            if (Array.isArray(o)) orders = o;
+          } catch {}
+          // Reset orderCounter based on existing orders
+          if (orders && orders.length) {
+            const maxId = Math.max.apply(null, orders.map(o => Number(o.id) || 0));
+            orderCounter = isFinite(maxId) ? maxId + 1 : 1;
+          }
+        }
+
+        function formatDateTime(iso) {
+          try {
+            const d = new Date(iso);
+            const dd = String(d.getDate()).padStart(2,'0');
+            const mm = String(d.getMonth()+1).padStart(2,'0');
+            const yyyy = d.getFullYear();
+            const hh = String(d.getHours()).padStart(2,'0');
+            const min = String(d.getMinutes()).padStart(2,'0');
+            const ss = String(d.getSeconds()).padStart(2,'0');
+            return `${dd}/${mm}/${yyyy} - ${hh}:${min}:${ss}`;
+          } catch { return iso; }
+        }
+
+        // --- RENDER FUNCTIONS (HÀM HIỂN THỊ) ---
+
+        // Render bộ lọc danh mục cha và con cho cả phần User và Order
+        function renderCategoryFilters() {
+          const userCats = document.getElementById("menu-categories");
+          const orderCats = document.getElementById("order-categories");
+          const catButton = (cat) =>
+            `<button class="category-btn ${
+              selectedCategoryId === (cat ? cat.id : null)
+                ? "active bg-red-100 text-red-700"
+                : "bg-gray-100 text-gray-600"
+            } px-4 py-2 rounded-full font-semibold" data-category-id="${
+              cat ? cat.id : ""
+            }">${cat ? cat.name : "Tất Cả"}</button>`;
+
+          let catsHTML = catButton(null);
+          categories.forEach((c) => (catsHTML += catButton(c)));
+          userCats.innerHTML = catsHTML;
+          orderCats.innerHTML = catsHTML;
+
+          document
+            .querySelectorAll(
+              "#menu-categories .category-btn, #order-categories .category-btn"
+            )
+            .forEach((btn) => {
+              btn.addEventListener("click", (e) => {
+                const id = e.currentTarget.dataset.categoryId || null;
+                selectedCategoryId = id ? id : null;
+                selectedSubcategoryId = null; // reset when parent changes
+                renderSubcategoryFilters();
+                renderUserMenu(selectedCategoryId, selectedSubcategoryId);
+                renderOrderMenu(selectedCategoryId, selectedSubcategoryId);
+              });
+            });
+
+          // Render subcategories initially
+          renderSubcategoryFilters();
+        }
+
+        function renderSubcategoryFilters() {
+          const userSubs = document.getElementById("menu-subcategories");
+          const orderSubs = document.getElementById("order-subcategories");
+          const parent = categories.find((c) => c.id === selectedCategoryId);
+          if (!parent) {
+            userSubs.innerHTML = "";
+            orderSubs.innerHTML = "";
+            return;
+          }
+          // If parent has 0 or 1 subcategory, hide the Order subcategory row to avoid duplication
+          if ((parent.subcategories || []).length <= 1) {
+            orderSubs.innerHTML = "";
+          }
+          const subButton = (sub) =>
+            `<button class="subcategory-btn ${
+              selectedSubcategoryId === sub?.id ? "active bg-red-50 text-red-700" : "bg-gray-100 text-gray-600"
+            } px-3 py-1.5 rounded-full text-sm font-semibold" data-subcategory-id="${
+              sub?.id ?? ""
+            }">${sub ? sub.name : "Tất Cả"}</button>`;
+          let subsHTML = subButton(null);
+          parent.subcategories.forEach((s) => (subsHTML += subButton(s)));
+          userSubs.innerHTML = subsHTML;
+          // Show on Order only when there are at least 2 subcategories (avoid duplicate filters line under the main chips)
+          orderSubs.innerHTML = (parent.subcategories || []).length >= 2 ? subsHTML : "";
+
+          document.querySelectorAll("#menu-subcategories .subcategory-btn, #order-subcategories .subcategory-btn").forEach((btn) => {
+            btn.addEventListener("click", (e) => {
+              const id = e.currentTarget.dataset.subcategoryId || null;
+              selectedSubcategoryId = id ? id : null;
+              highlightActiveButtons();
+              renderUserMenu(selectedCategoryId, selectedSubcategoryId);
+              renderOrderMenu(selectedCategoryId, selectedSubcategoryId);
+            });
+          });
+        }
+
+        function highlightActiveButtons() {
+          // Toggle classes quickly using CSS utility classes already added when rendering
+          // Re-rendering already sets correct classes, so this can be a no-op kept for future polishing
+        }
+
+        function renderUserMenu(filterCategoryId = null, filterSubcategoryId = null) {
+          const menuList = document.getElementById("menu-list-user");
+          menuList.innerHTML = "";
+
+          // Filter by selected category/subcategory
+          const filteredData = menuData.filter((item) => {
+            if (!filterCategoryId) return true;
+            if (item.categoryId !== filterCategoryId) return false;
+            if (!filterSubcategoryId) return true;
+            return item.subcategoryId === filterSubcategoryId;
+          });
+
+          // Group items by category name; fallback to legacy item.category; else 'Khác'
+          const groups = {};
+          filteredData.forEach((item) => {
+            let groupName = "";
+            if (item.categoryId) {
+              const cat = categories.find((c) => c.id === item.categoryId);
+              groupName = cat?.name || "Khác";
+            } else {
+              groupName = item.category || "Khác";
+            }
+            if (!groups[groupName]) groups[groupName] = [];
+            groups[groupName].push(item);
+          });
+
+          // Establish group render order
+          const groupOrder = [];
+          if (filterCategoryId) {
+            const cat = categories.find((c) => c.id === filterCategoryId);
+            if (cat && groups[cat.name]) groupOrder.push(cat.name);
+          } else {
+            // Follow categories array order when present
+            categories.forEach((c) => {
+              if (groups[c.name]) groupOrder.push(c.name);
+            });
+            // Include any other legacy groups (not in categories) except 'Khác'
+            Object.keys(groups).forEach((g) => {
+              if (!groupOrder.includes(g) && g !== "Khác") groupOrder.push(g);
+            });
+          }
+          if (groups["Khác"]) groupOrder.push("Khác");
+
+          // Layout: center when only one group is visible; otherwise 2 columns
+          const presentGroups = groupOrder.filter((g) => (groups[g] || []).length > 0);
+          const single = presentGroups.length === 1;
+          menuList.className = single
+            ? "grid grid-cols-1 gap-6 justify-items-center"
+            : "grid grid-cols-1 md:grid-cols-2 gap-6";
+
+          // Render each group as a boxed section tile
+          groupOrder.forEach((gName) => {
+            const items = groups[gName];
+            if (!items || items.length === 0) return;
+
+            const listItems = items.map((item) => {
+              const unavailable = !item.isAvailable;
+              const statusText = unavailable ? 'Hết món' : 'Còn món';
+              const statusClass = unavailable ? 'status-out' : 'status-ok';
+              return `
+                <div class="menu-line ${unavailable ? 'opacity-60' : ''}">
+                  <span class="menu-line__name">${item.name}</span>
+                  <span class="menu-line__dots"></span>
+                  <span class="menu-line__price">${item.price.toLocaleString('vi-VN')}đ</span>
+                  <span class="menu-line__status ${statusClass}">${statusText}</span>
+                </div>
+              `;
+            }).join('');
+
+            const sectionHTML = `
+              <section class="menu-section${single ? ' w-full md:w-2/3' : ''}">
+                <div class="menu-section__header">
+                  <span>${gName}</span>
+                </div>
+                <div class="menu-section__list">
+                  ${listItems}
+                </div>
+              </section>
+            `;
+            menuList.innerHTML += sectionHTML;
+          });
+
+          if (menuList.innerHTML === "") {
+            menuList.innerHTML = '<p class="text-gray-500 text-center">Không có món nào phù hợp.</p>';
+          }
+        }
+
+        function renderOrderMenu(filterCategoryId = null, filterSubcategoryId = null) {
+          const menuList = document.getElementById("menu-list-order");
+          menuList.innerHTML = "";
+          // Normalize price min/max (swap if user reversed)
+          let pMin = orderPriceMin;
+          let pMax = orderPriceMax;
+          if (pMin != null && pMax != null && pMin > pMax) {
+            const tmp = pMin; pMin = pMax; pMax = tmp;
+          }
+
+          let filteredData = menuData.filter((item) => {
+            if (!filterCategoryId) return true;
+            if (item.categoryId !== filterCategoryId) return false;
+            if (!filterSubcategoryId) return true;
+            return item.subcategoryId === filterSubcategoryId;
+          });
+
+          // Text search
+          if (orderSearchQuery && orderSearchQuery.trim() !== "") {
+            const q = orderSearchQuery.trim().toLowerCase();
+            filteredData = filteredData.filter(i => i.name.toLowerCase().includes(q));
+          }
+          // Price range
+          if (pMin != null) filteredData = filteredData.filter(i => Number(i.price) >= pMin);
+          if (pMax != null) filteredData = filteredData.filter(i => Number(i.price) <= pMax);
+          // Sorting
+          if (orderSort === 'name-asc') filteredData.sort((a,b)=> a.name.localeCompare(b.name,'vi',{sensitivity:'base'}));
+          else if (orderSort === 'name-desc') filteredData.sort((a,b)=> b.name.localeCompare(a.name,'vi',{sensitivity:'base'}));
+          else if (orderSort === 'price-asc') filteredData.sort((a,b)=> Number(a.price)-Number(b.price));
+          else if (orderSort === 'price-desc') filteredData.sort((a,b)=> Number(b.price)-Number(a.price));
+
+          // Group by category name for clear sections
+          const groups = {};
+          filteredData.forEach((item) => {
+            let groupName = "";
+            if (item.categoryId) {
+              const cat = categories.find((c) => c.id === item.categoryId);
+              groupName = cat?.name || "Khác";
+            } else {
+              groupName = item.category || "Khác";
+            }
+            if (!groups[groupName]) groups[groupName] = [];
+            groups[groupName].push(item);
+          });
+
+          // Determine group order
+          const groupOrder = [];
+          if (filterCategoryId) {
+            const cat = categories.find((c) => c.id === filterCategoryId);
+            if (cat && groups[cat.name]) groupOrder.push(cat.name);
+          } else {
+            categories.forEach((c) => { if (groups[c.name]) groupOrder.push(c.name); });
+            Object.keys(groups).forEach((g) => { if (!groupOrder.includes(g) && g !== 'Khác') groupOrder.push(g); });
+          }
+          if (groups['Khác']) groupOrder.push('Khác');
+
+          // Render groups with headers; if a category has multiple items, group into one big box
+          groupOrder.forEach((gName) => {
+            const items = groups[gName];
+            if (!items || items.length === 0) return;
+
+            let contentHTML = '';
+            if (items.length > 1) {
+              // One large box with rows
+              const rows = items.map((item, idx) => `
+                <div class="flex items-center gap-4 p-4 ${idx < items.length - 1 ? 'border-b' : ''}">
+                  <img src="${item.img}" alt="${item.name}" class="w-14 h-14 object-cover rounded-md">
+                  <div class="flex-grow">
+                    <h4 class="font-semibold">${item.name}</h4>
+                    <p class="text-red-600 font-semibold">${item.price.toLocaleString('vi-VN')}đ</p>
+                  </div>
+                  ${item.isAvailable
+                    ? `<button class="add-to-cart-btn bg-red-600 text-white rounded-full w-12 h-12 flex items-center justify-center text-3xl font-bold hover:bg-red-700 transition-colors" data-id="${item.id}" aria-label="Thêm vào giỏ" title="Thêm vào giỏ">+</button>`
+                    : '<span class="text-sm font-semibold text-gray-500">Hết món</span>'}
+                </div>
+              `).join('');
+              contentHTML = `<div class="bg-white rounded-lg shadow">${rows}</div>`;
+            } else {
+              // Single item keeps its own card style
+              const item = items[0];
+              contentHTML = `
+                <div class="bg-white rounded-lg p-4 flex items-center gap-4 shadow ${!item.isAvailable ? 'unavailable' : ''}">
+                  <img src="${item.img}" alt="${item.name}" class="w-14 h-14 object-cover rounded-md">
+                  <div class="flex-grow">
+                    <h4 class="font-semibold">${item.name}</h4>
+                    <p class="text-red-600 font-semibold">${item.price.toLocaleString('vi-VN')}đ</p>
+                  </div>
+                  ${item.isAvailable
+                    ? `<button class="add-to-cart-btn bg-red-600 text-white rounded-full w-12 h-12 flex items-center justify-center text-3xl font-bold hover:bg-red-700 transition-colors" data-id="${item.id}" aria-label="Thêm vào giỏ" title="Thêm vào giỏ">+</button>`
+                    : '<span class="text-sm font-semibold text-gray-500">Hết món</span>'}
+                </div>`;
+            }
+
+            const section = `
+              <section class="mb-4">
+                <h3 class="text-xl font-bold text-gray-800 mb-2">${gName}</h3>
+                ${contentHTML}
+              </section>
+            `;
+            menuList.innerHTML += section;
+          });
+
+          if (menuList.innerHTML.trim() === "") {
+            menuList.innerHTML = '<p class="text-gray-500">Không có món nào phù hợp.</p>';
+          }
+
+          // Gắn lại sự kiện cho các nút mới
+          document.querySelectorAll(".add-to-cart-btn").forEach((btn) => {
+            btn.addEventListener("click", addToCart);
+          });
+        }
+
+        function renderOrderCategorySelect() {
+          const sel = document.getElementById('order-category-select');
+          if (!sel) return;
+          sel.innerHTML = '<option value="">Tất Cả</option>' +
+            categories.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+          sel.value = selectedCategoryId || '';
+        }
+
+        function renderOrderTableSelect() {
+          const sel = document.getElementById('order-table-select');
+          const label = document.getElementById('order-table-label');
+          // Update label even if there is no select
+          if (label) label.textContent = selectedTable ? selectedTable : '--';
+          if (!sel) return;
+          // Build options when select exists
+          const current = String(selectedTable ?? "");
+          sel.innerHTML = '<option value="">-- Chọn bàn --</option>' +
+            tables.map(n => `<option value="${n}">${n}</option>`).join('');
+          sel.value = current;
+        }
+
+        function renderOrderTableGrid() {
+          const grid = document.getElementById('order-table-grid');
+          if (!grid) return;
+          const sorted = (tables || []).slice().sort((a,b)=>a-b);
+          grid.innerHTML = sorted.map(n => {
+            const selected = selectedTable === n;
+            const cls = selected
+              ? 'table-tile bg-red-600 text-white'
+              : 'table-tile bg-gray-100 text-gray-800 hover:bg-red-50';
+            return `<button type="button" data-table="${n}" class="${cls} rounded-lg p-4 font-bold text-center">${n}</button>`;
+          }).join('');
+          grid.querySelectorAll('.table-tile').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+              const n = parseInt(e.currentTarget.getAttribute('data-table'), 10);
+              selectedTable = n;
+              saveSelectedTable();
+              renderOrderTableGrid();
+              renderOrderTableSelect();
+            });
+          });
+        }
+
+        function renderAdminMenu() {
+          const menuList = document.getElementById("admin-menu-list");
+          menuList.innerHTML = "";
+          menuData.forEach((item) => {
+            const itemHTML = `
+                <div class="flex items-center justify-between p-4 border-b">
+                    <div class="flex items-center gap-4">
+                        <img src="${
+                          item.img
+                        }" class="w-16 h-16 rounded-md object-cover">
+                        <div>
+                            <p class="font-bold">${item.name}</p>
+                            <div class="flex items-center gap-2 text-sm">
+                              <input type="number" min="0" step="500" value="${
+                                item.price
+                              }" data-id="${item.id}" class="admin-price-input w-28 border rounded px-2 py-1" />
+                              <button data-id="${
+                                item.id
+                              }" class="admin-price-save px-2 py-1 bg-red-600 text-white rounded text-xs">Lưu</button>
+                            </div>
+                            ${
+                              item.categoryId
+                                ? `<p class="text-xs text-gray-500">Danh mục: ${
+                                    categories.find((c) => c.id === item.categoryId)?.name ||
+                                    ""
+                                  }${
+                                    item.subcategoryId
+                                      ? ` / ${categories
+                                          .find((c) => c.id === item.categoryId)
+                                          ?.subcategories.find((s) => s.id === item.subcategoryId)?.name || ""}`
+                                      : ""
+                                  }</p>`
+                                : ""
+                            }
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <span class="font-semibold ${
+                          item.isAvailable ? "text-green-600" : "text-red-600"
+                        }">
+                            ${item.isAvailable ? "Còn món" : "Hết món"}
+                        </span>
+                        <label class="inline-flex items-center cursor-pointer">
+                          <input type="checkbox" value="" class="sr-only peer menu-status-toggle" data-id="${
+                            item.id
+                          }" ${item.isAvailable ? "checked" : ""}>
+                          <div class="relative w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-red-300 dark:peer-focus:ring-red-800 dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-red-600"></div>
+                        </label>
+                    </div>
+                </div>
+            `;
+            menuList.innerHTML += itemHTML;
+          });
+          // Events for toggle
+          document.querySelectorAll(".menu-status-toggle").forEach((toggle) => {
+            toggle.addEventListener("change", toggleMenuStatus);
+          });
+          // Events for price editing
+          document.querySelectorAll(".admin-price-save").forEach((btn) => {
+            btn.addEventListener("click", (e) => {
+              const id = e.currentTarget.dataset.id;
+              const input = document.querySelector(`.admin-price-input[data-id="${id}"]`);
+              if (!input) return;
+              const val = parseInt(input.value, 10);
+              if (isNaN(val) || val < 0) {
+                alert("Giá không hợp lệ");
+                return;
+              }
+              const item = menuData.find((i) => i.id == id);
+              if (item) {
+                item.price = val;
+                renderAdminMenu();
+                renderUserMenu(selectedCategoryId, selectedSubcategoryId);
+                renderOrderMenu(selectedCategoryId, selectedSubcategoryId);
+                showModal("Đã cập nhật giá món ăn");
+              }
+            });
+          });
+          document.querySelectorAll(".admin-price-input").forEach((inp) => {
+            inp.addEventListener("keydown", (e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                const id = e.currentTarget.dataset.id;
+                const btn = document.querySelector(`.admin-price-save[data-id="${id}"]`);
+                btn?.click();
+              }
+            });
+          });
+        }
+
+        function renderAdminCategoryTree() {
+          const tree = document.getElementById("admin-category-tree");
+          const select = document.getElementById("parent-category-select");
+          if (!tree || !select) return;
+          // Tree
+          if (categories.length === 0) {
+            tree.innerHTML = '<p class="text-gray-500">Chưa có danh mục.</p>';
+          } else {
+            tree.innerHTML = categories
+              .map((c) => {
+                const subs = c.subcategories
+                  .map((s) => `<li class="ml-4 list-disc">${s.name}</li>`) 
+                  .join("");
+                return `<div class="p-2 bg-white rounded border"><p class="font-semibold">${c.name}</p>${subs ? `<ul class="mt-1">${subs}</ul>` : ""}</div>`;
+              })
+              .join("<div class=\"h-2\"></div>");
+          }
+
+          // Parent select options
+          select.innerHTML = categories
+            .map((c) => `<option value="${c.id}">${c.name}</option>`) 
+            .join("");
+        }
+
+        function renderAdminTables() {
+          const list = document.getElementById('admin-table-list');
+          if (!list) return;
+          if (!tables || tables.length === 0) {
+            list.innerHTML = '<p class="text-gray-500">Chưa có bàn nào.</p>';
+            return;
+          }
+          list.innerHTML = tables
+            .sort((a,b)=>a-b)
+            .map(n => `
+              <div class="flex items-center justify-between p-2 bg-gray-50 rounded border">
+                <span class="font-medium">Bàn số ${n}</span>
+                <button class="px-2 py-1 text-xs bg-red-600 text-white rounded hover:bg-red-700" data-table="${n}" onclick="deleteTable(${n})">Xóa</button>
+              </div>
+            `).join('');
+        }
+
+        window.deleteTable = function (n) {
+          const idx = tables.indexOf(n);
+          if (idx === -1) return;
+          if (!confirm(`Xóa Bàn số ${n}?`)) return;
+          tables.splice(idx,1);
+          if (selectedTable === n) {
+            selectedTable = null;
+            saveSelectedTable();
+          }
+          saveTables();
+          renderAdminTables();
+          renderOrderTableSelect();
+        }
+
+        function addCategory(name) {
+          const id = name
+            .toLowerCase()
+            .trim()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/[^a-z0-9]+/g, "-")
+            .replace(/(^-|-$)/g, "");
+          if (!name) return;
+          if (categories.some((c) => c.id === id)) {
+            alert("Danh mục đã tồn tại.");
+            return;
+          }
+          categories.push({ id, name, subcategories: [] });
+          renderCategoryFilters();
+          renderAdminCategoryTree();
+        }
+
+        function addSubcategory(parentId, name) {
+          const parent = categories.find((c) => c.id === parentId);
+          if (!parent) return;
+          const id = name
+            .toLowerCase()
+            .trim()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/[^a-z0-9]+/g, "-")
+            .replace(/(^-|-$)/g, "");
+          if (parent.subcategories.some((s) => s.id === id)) {
+            alert("Danh mục con đã tồn tại trong danh mục này.");
+            return;
+          }
+          parent.subcategories.push({ id, name });
+          renderSubcategoryFilters();
+          renderAdminCategoryTree();
+        }
+
+
+        function renderCart() {
+          const cartItemsContainer = document.getElementById("cart-items");
+          const cartTotalEl = document.getElementById("cart-total");
+          cartItemsContainer.innerHTML = "";
+          let total = 0;
+
+          if (Object.keys(cart).length === 0) {
+            cartItemsContainer.innerHTML =
+              '<p class="text-gray-500 text-center">Giỏ hàng trống</p>';
+            cartTotalEl.innerText = "0đ";
+            return;
+          }
+
+          for (const id in cart) {
+            const cartItem = cart[id];
+            total += cartItem.price * cartItem.quantity;
+            const itemHTML = `
+                <div class="flex justify-between items-center text-sm">
+                    <div>
+                        <p class="font-bold">${cartItem.name}</p>
+                        <p class="text-gray-500">${cartItem.price.toLocaleString(
+                          "vi-VN"
+                        )}đ</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                         <button class="cart-quantity-change bg-gray-200 rounded-full w-6 h-6" data-id="${id}" data-change="-1">-</button>
+                        <span>${cartItem.quantity}</span>
+                         <button class="cart-quantity-change bg-gray-200 rounded-full w-6 h-6" data-id="${id}" data-change="1">+</button>
+                    </div>
+                </div>`;
+            cartItemsContainer.innerHTML += itemHTML;
+          }
+          cartTotalEl.innerText = `${total.toLocaleString("vi-VN")}đ`;
+
+          document.querySelectorAll(".cart-quantity-change").forEach((btn) => {
+            btn.addEventListener("click", changeCartQuantity);
+          });
+        }
+
+        function renderAdminOrders() {
+          const orderListContainer =
+            document.getElementById("admin-order-list");
+          const monthSel = document.getElementById('orders-filter-month');
+          const yearSel = document.getElementById('orders-filter-year');
+          const summaryCount = document.getElementById('orders-summary-count');
+          const summaryTotal = document.getElementById('orders-summary-total');
+
+          // Determine filter month (YYYY-MM)
+          const month = selectedOrdersMonth;
+          const filtered = (orders || []).filter(o => {
+            if (!month) return true;
+            const iso = o.createdAt || o.iso || new Date().toISOString();
+            const m = new Date(iso);
+            const ym = `${m.getFullYear()}-${String(m.getMonth()+1).padStart(2,'0')}`;
+            return ym === month;
+          });
+
+          // Summary
+          const count = filtered.length;
+          const total = filtered.reduce((s,o)=> s + (Number(o.total)||0), 0);
+          if (summaryCount) summaryCount.textContent = String(count);
+          if (summaryTotal) summaryTotal.textContent = `${total.toLocaleString('vi-VN')}đ`;
+
+          if (filtered.length === 0) {
+            orderListContainer.innerHTML = '<p class="text-gray-500">Chưa có đơn hàng nào.</p>';
+          } else {
+            orderListContainer.innerHTML = "";
+            filtered
+              .slice()
+              .reverse()
+              .forEach((order) => {
+                const orderItemsHTML = Object.values(order.items)
+                  .map(
+                    (item) => `
+                  <li class=\"flex justify-between\">
+                      <span>${item.name} x${item.quantity}</span>
+                      <span>${(item.price * item.quantity).toLocaleString(
+                        "vi-VN"
+                      )}đ</span>
+                  </li>
+              `
+                  )
+                  .join("");
+
+                const dt = formatDateTime(order.createdAt || new Date().toISOString());
+                const orderHTML = `
+                  <div class=\"bg-gray-50 p-4 rounded-lg border\">
+                      <div class=\"flex justify-between items-start\">
+                          <div>
+                              <p class=\"font-bold text-lg\">Đơn #${order.id} - Bàn ${order.table}</p>
+                              <p class=\"text-sm text-gray-500\">${dt}</p>
+                          </div>
+                          <div class=\"text-right\">
+                               <p class=\"font-bold text-xl text-red-600\">${order.total.toLocaleString("vi-VN")}đ</p>
+                               <span class=\"px-2 py-1 text-xs font-semibold rounded-full ${order.status === "Mới" ? "bg-blue-200 text-blue-800" : "bg-green-200 text-green-800"}\">${order.status}</span>
+                          </div>
+                      </div>
+                      <ul class=\"mt-2 space-y-1 text-sm border-t pt-2\">${orderItemsHTML}</ul>
+                      ${order.status === "Mới" ? `<button class=\"mt-2 px-3 py-1 bg-green-500 text-white text-sm rounded hover:bg-green-600\" onclick=\"updateOrderStatus(${order.id}, 'Hoàn thành')\">Đã xong</button>` : ""}
+                  </div>
+              `;
+                orderListContainer.innerHTML += orderHTML;
+              });
+          }
+          const newOrders = (orders || []).filter((o) => o.status === "Mới").length;
+          const newOrdersEl = document.getElementById("new-orders-count");
+          if (newOrdersEl) newOrdersEl.innerText = newOrders;
+          // Ensure selects reflect current month filter
+          if (selectedOrdersMonth && monthSel && yearSel) {
+            const [yy, mm] = selectedOrdersMonth.split('-');
+            monthSel.value = mm;
+            yearSel.value = yy;
+          }
+        }
+
+        function renderAdminReservations() {
+          const resListContainer = document.getElementById(
+            "admin-reservation-list"
+          );
+          if (reservations.length === 0) {
+            resListContainer.innerHTML =
+              '<p class="text-gray-500">Chưa có lượt đặt bàn nào.</p>';
+            return;
+          }
+          resListContainer.innerHTML = "";
+          reservations
+            .slice()
+            .reverse()
+            .forEach((res, index) => {
+              const resHTML = `
+                <div class="bg-gray-50 p-4 rounded-lg border flex justify-between items-center">
+                    <div>
+                        <p><span class="font-bold">${res.name}</span> - ${res.phone}</p>
+                        <p class="text-sm text-gray-600">${res.guests} | ${res.date} lúc ${res.time}</p>
+                    </div>
+                     <div>
+                        <button class="px-3 py-1 bg-green-500 text-white text-sm rounded hover:bg-green-600 mr-2" onclick="handleReservation(${index}, 'confirm')">Xác nhận</button>
+                        <button class="px-3 py-1 bg-red-500 text-white text-sm rounded hover:bg-red-600" onclick="handleReservation(${index}, 'cancel')">Hủy</button>
+                    </div>
+                </div>
+            `;
+              resListContainer.innerHTML += resHTML;
+            });
+          document.getElementById("reservations-count").innerText =
+            reservations.length;
+        }
+
+        function renderRevenueChart() {
+          const ctx = document.getElementById("revenueChart").getContext("2d");
+          new Chart(ctx, {
+            type: "bar",
+            data: {
+              labels: ["T2", "T3", "T4", "T5", "T6", "T7", "CN"],
+              datasets: [
+                {
+                  label: "Doanh thu (nghìn đồng)",
+                  data: [500, 750, 600, 900, 1250, 1100, 1500],
+                  backgroundColor: "rgba(239, 68, 68, 0.6)",
+                  borderColor: "rgba(220, 38, 38, 1)",
+                  borderWidth: 1,
+                },
+              ],
+            },
+            options: { scales: { y: { beginAtZero: true } } },
+          });
+        }
+
+        // --- EVENT HANDLERS (HÀM XỬ LÝ SỰ KIỆN) ---
+
+        function addToCart(event) {
+          const id = event.target.dataset.id;
+          const menuItem = menuData.find((item) => item.id == id);
+
+          if (cart[id]) {
+            cart[id].quantity++;
+          } else {
+            cart[id] = {
+              name: menuItem.name,
+              price: menuItem.price,
+              quantity: 1,
+            };
+          }
+          renderCart();
+        }
+
+        function changeCartQuantity(event) {
+          const id = event.target.dataset.id;
+          const change = parseInt(event.target.dataset.change);
+
+          if (cart[id]) {
+            cart[id].quantity += change;
+            if (cart[id].quantity <= 0) {
+              delete cart[id];
+            }
+          }
+          renderCart();
+        }
+
+        function submitOrder() {
+          if (!selectedTable) {
+            alert("Vui lòng chọn bàn trước khi gửi đơn!");
+            return;
+          }
+          if (Object.keys(cart).length === 0) {
+            alert("Giỏ hàng của bạn đang trống!");
+            return;
+          }
+          const total = Object.values(cart).reduce(
+            (sum, item) => sum + item.price * item.quantity,
+            0
+          );
+          const newOrder = {
+            id: orderCounter++,
+            table: selectedTable,
+            items: cart,
+            total: total,
+            status: "Mới",
+            createdAt: new Date().toISOString(),
+          };
+          orders.push(newOrder);
+          saveOrders();
+
+          cart = {}; // Reset cart
+          renderCart();
+          renderAdminOrders();
+          showModal("Đã gửi đơn hàng thành công!");
+        }
+
+        document
+          .getElementById("submit-order-btn")
+          .addEventListener("click", submitOrder);
+
+        document
+          .getElementById("reservation-form")
+          .addEventListener("submit", function (e) {
+            e.preventDefault();
+            const newReservation = {
+              name: document.getElementById("name").value,
+              phone: document.getElementById("phone").value,
+              date: document.getElementById("date").value,
+              time: document.getElementById("time").value,
+              guests: document.getElementById("guests").value,
+            };
+            reservations.push(newReservation);
+            renderAdminReservations();
+            showModal("Yêu cầu đặt bàn của bạn đã được gửi!");
+            e.target.reset();
+          });
+
+        function toggleMenuStatus(event) {
+          const id = event.target.dataset.id;
+          const menuItem = menuData.find((item) => item.id == id);
+          menuItem.isAvailable = event.target.checked;
+
+          // Cập nhật lại tất cả các view liên quan
+          renderAdminMenu();
+          renderUserMenu(selectedCategoryId, selectedSubcategoryId);
+          renderOrderMenu(selectedCategoryId, selectedSubcategoryId);
+        }
+
+        window.updateOrderStatus = function (orderId, newStatus) {
+          const order = orders.find((o) => o.id === orderId);
+          if (order) {
+            order.status = newStatus;
+            renderAdminOrders();
+            saveOrders();
+          }
+        };
+
+        window.handleReservation = function (index, action) {
+          reservations.splice(index, 1); // For demo, just remove it
+          renderAdminReservations();
+          if (action === "confirm")
+            showModal("Đã xác nhận đặt bàn thành công!");
+          else showModal("Đã hủy yêu cầu đặt bàn.");
+        };
+
+        // --- PAGE NAVIGATION (ĐIỀU HƯỚNG TRANG) ---
+
+        // For User pages
+        window.switchPage = function (event) {
+          event.preventDefault();
+          const pageId = event.target.dataset.page;
+          showPage(pageId);
+
+          // Update active link
+          document
+            .querySelectorAll(".nav-link")
+            .forEach((link) => link.classList.remove("active"));
+          event.target.classList.add("active");
+        };
+
+        window.showPage = function (pageId) {
+          // Nếu chuyển qua trang admin, ẩn header chính
+          if (pageId === "admin") {
+            document.querySelector("header").style.display = "none";
+          } else {
+            document.querySelector("header").style.display = "block";
+          }
+
+          document
+            .querySelectorAll(".page")
+            .forEach((page) => page.classList.remove("active"));
+          document.getElementById(`page-${pageId}`).classList.add("active");
+
+          // Cập nhật active link tương ứng
+          document.querySelectorAll(".nav-link").forEach((link) => {
+            link.classList.toggle("active", link.dataset.page === pageId);
+          });
+        };
+
+        // For Admin pages
+        window.switchAdminPage = function (event) {
+          event.preventDefault();
+          const pageId = event.target.dataset.adminPage;
+          document
+            .querySelectorAll(".admin-page")
+            .forEach((page) => (page.style.display = "none"));
+          document.getElementById(`admin-${pageId}`).style.display = "block";
+
+          // Update active link
+          document
+            .querySelectorAll(".admin-nav-link")
+            .forEach((link) => link.classList.remove("active"));
+          event.currentTarget.classList.add("active");
+        };
+
+        // Admin Login Simulation
+        window.showAdminLogin = function () {
+          const password = prompt('Vui lòng nhập mật khẩu admin (gõ "123"):');
+          if (password === "123") {
+            showPage("admin");
+          } else {
+            alert("Mật khẩu không đúng!");
+          }
+        };
+
+        // Success Modal
+        function showModal(message) {
+          const modal = document.getElementById("success-modal");
+          const modalMessage = document.getElementById("modal-message");
+          modalMessage.textContent = message;
+          modal.classList.remove("hidden");
+          setTimeout(() => {
+            modal.classList.add("hidden");
+          }, 2000);
+        }
+
+        // --- INITIALIZATION (KHỞI TẠO) ---
+        function initialize() {
+          // Load persisted data
+          loadOrdersFromStorage();
+          loadTablesFromStorage();
+          // Default month filter is current month
+          const now = new Date();
+          selectedOrdersMonth = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+          renderCategoryFilters();
+          renderUserMenu(selectedCategoryId, selectedSubcategoryId);
+          renderOrderMenu(selectedCategoryId, selectedSubcategoryId);
+          renderOrderTableSelect();
+          renderOrderTableGrid();
+          renderOrderCategorySelect();
+          renderCart();
+          renderAdminMenu();
+          renderAdminOrders();
+          renderAdminReservations();
+          renderRevenueChart();
+          renderAdminCategoryTree();
+          renderAdminTables();
+
+          // Admin forms
+          const addCatForm = document.getElementById("add-category-form");
+          const addSubForm = document.getElementById("add-subcategory-form");
+          const addTableForm = document.getElementById("add-table-form");
+          if (addCatForm) {
+            addCatForm.addEventListener("submit", (e) => {
+              e.preventDefault();
+              const name = document.getElementById("new-category-name").value.trim();
+              if (!name) return;
+              addCategory(name);
+              e.target.reset();
+              renderOrderCategorySelect();
+            });
+          }
+          if (addSubForm) {
+            addSubForm.addEventListener("submit", (e) => {
+              e.preventDefault();
+              const parentId = document.getElementById("parent-category-select").value;
+              const name = document.getElementById("new-subcategory-name").value.trim();
+              if (!name || !parentId) return;
+              addSubcategory(parentId, name);
+              e.target.reset();
+            });
+          }
+          if (addTableForm) {
+            addTableForm.addEventListener("submit", (e) => {
+              e.preventDefault();
+              const val = parseInt(document.getElementById('new-table-number').value, 10);
+              if (!val || val < 1) return alert('Số bàn không hợp lệ');
+              if (tables.includes(val)) return alert('Bàn đã tồn tại');
+              tables.push(val);
+              saveTables();
+              renderAdminTables();
+              renderOrderTableSelect();
+              e.target.reset();
+            });
+          }
+
+          // If an (old) select exists, keep it working
+          const orderTableSelect = document.getElementById('order-table-select');
+          if (orderTableSelect) {
+            orderTableSelect.addEventListener('change', (e) => {
+              const v = e.target.value;
+              selectedTable = v ? parseInt(v,10) : null;
+              saveSelectedTable();
+              renderOrderTableGrid();
+              renderOrderTableSelect();
+            });
+          }
+
+          // Admin month filter change
+          // Build year select (range: current year -4 .. current year +1)
+          const monthSel = document.getElementById('orders-filter-month');
+          const yearSel = document.getElementById('orders-filter-year');
+          if (yearSel && monthSel) {
+            const now = new Date();
+            const currentYear = now.getFullYear();
+            const years = [];
+            for (let y = currentYear - 4; y <= currentYear + 1; y++) years.push(y);
+            yearSel.innerHTML = years.map(y=>`<option value="${y}">${y}</option>`).join('');
+            const mm = String(now.getMonth()+1).padStart(2,'0');
+            monthSel.value = mm;
+            yearSel.value = String(currentYear);
+            selectedOrdersMonth = `${currentYear}-${mm}`;
+            const onChange = () => {
+              const m = monthSel.value; const y = yearSel.value;
+              selectedOrdersMonth = y && m ? `${y}-${m}` : null;
+              renderAdminOrders();
+            };
+            monthSel.addEventListener('change', onChange);
+            yearSel.addEventListener('change', onChange);
+          }
+
+          // Filter toolbar events
+          const searchInput = document.getElementById('order-search-input');
+          const priceMinInput = document.getElementById('order-price-min');
+          const priceMaxInput = document.getElementById('order-price-max');
+          const sortSelect = document.getElementById('order-sort-select');
+          const catSelect = document.getElementById('order-category-select');
+          if (searchInput) searchInput.addEventListener('input', (e) => { orderSearchQuery = e.target.value || ''; renderOrderMenu(selectedCategoryId, selectedSubcategoryId); });
+          if (priceMinInput) priceMinInput.addEventListener('input', (e) => { const v = e.target.value; orderPriceMin = v === '' ? null : parseInt(v,10); renderOrderMenu(selectedCategoryId, selectedSubcategoryId); });
+          if (priceMaxInput) priceMaxInput.addEventListener('input', (e) => { const v = e.target.value; orderPriceMax = v === '' ? null : parseInt(v,10); renderOrderMenu(selectedCategoryId, selectedSubcategoryId); });
+          if (sortSelect) sortSelect.addEventListener('change', (e) => { orderSort = e.target.value || ''; renderOrderMenu(selectedCategoryId, selectedSubcategoryId); });
+          if (catSelect) catSelect.addEventListener('change', (e) => {
+            const v = e.target.value || '';
+            selectedCategoryId = v || null;
+            selectedSubcategoryId = null;
+            renderCategoryFilters(); // sync chips
+            renderUserMenu(selectedCategoryId, selectedSubcategoryId);
+            renderOrderMenu(selectedCategoryId, selectedSubcategoryId);
+          });
+        }
+
+        initialize();
+      });
     </script>
   </body>
 </html>

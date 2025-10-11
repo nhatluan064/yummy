@@ -1246,7 +1246,8 @@
   margin-bottom: 0.5rem;
 }
 
-.empty-state small {
+.empty-state small,
+.empty-state span {
   font-size: 0.9rem;
   color: var(--text-light-color);
   line-height: 1.4;

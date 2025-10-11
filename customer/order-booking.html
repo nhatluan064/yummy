@@ -1,285 +1,1480 @@
-<!-- Renamed from customer/index.html -->
-<!DOCTYPE html>
+<!DOCTYPE html><!DOCTYPE html><!DOCTYPE html><!-- Renamed from customer/index.html -->
+
 <html lang="vi">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<head><html lang="vi">
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"><head><html lang="vi"><!DOCTYPE html>
+
     <title>YUMMY - Order & Booking</title>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
-    />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="../css/styles.css" />
-    <link rel="stylesheet" href="../css/customer.css" />
-  </head>
-  <body>
-    <!-- Navigation -->
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">    <meta charset="UTF-8">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>    <meta name="viewport" content="width=device-width, initial-scale=1.0"><head><html lang="vi">
+
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="../css/styles.css">    <title>YUMMY - Order & Booking</title>
+
+    <link rel="stylesheet" href="../css/customer.css">
+
+</head>    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">    <meta charset="UTF-8">  <head>
+
+<body>
+
+    <!-- Navigation -->    <link rel="preconnect" href="https://fonts.googleapis.com">
+
     <nav class="navbar">
-      <div class="navbar-logo">
-        <a href="../landing-home.html"
-          ><i class="fa-solid fa-utensils"></i>YUMMY</a
-        >
-      </div>
-      <ul class="navbar-links">
-        <li>
-          <a href="../landing-home.html"
-            ><i class="fa-solid fa-house"></i>Trang chủ</a
-          >
-        </li>
-        <li>
-          <a data-page="menu" class="nav-link active"
-            ><i class="fa-solid fa-bag-shopping"></i>Order</a
-          >
-        </li>
-        <li>
-          <a href="../menu/public-menu.html"
-            ><i class="fa-solid fa-list"></i>Menu Hôm Nay</a
-          >
-        </li>
-        <li>
-          <a href="delivery.html"><i class="fa-solid fa-truck"></i>Giao hàng</a>
-        </li>
-        <li>
-          <a data-page="booking" class="nav-link"
-            ><i class="fa-solid fa-calendar-days"></i>Đặt bàn</a
-          >
-        </li>
-      </ul>
-    </nav>
 
-    <!-- PAGE: ORDER -->
-    <div id="page-menu" class="page active">
-      <div class="container">
-        <header class="main-header">
-          <h1>Order món ăn tại bàn</h1>
-          <p>Chọn bàn → Chọn món → Xác nhận đơn hàng</p>
-        </header>
+        <div class="navbar-logo">    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>    <meta name="viewport" content="width=device-width, initial-scale=1.0">    <meta charset="UTF-8" />
 
-        <!-- 3-Column Layout -->
+            <a href="../landing-home.html"><i class="fa-solid fa-utensils"></i>YUMMY</a>
+
+        </div>    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700&display=swap" rel="stylesheet">
+
+        <ul class="navbar-links">
+
+            <li><a href="../landing-home.html"><i class="fa-solid fa-house"></i>Trang chủ</a></li>    <link rel="stylesheet" href="../css/styles.css">    <title>YUMMY - Order & Booking</title>    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+            <li><a class="nav-link active"><i class="fa-solid fa-bag-shopping"></i>Order</a></li>
+
+            <li><a href="../menu/public-menu.html"><i class="fa-solid fa-list"></i>Menu Hôm Nay</a></li>    <link rel="stylesheet" href="../css/customer.css">
+
+            <li><a href="delivery.html"><i class="fa-solid fa-truck"></i>Giao hàng</a></li>
+
+            <li><a href="#" class="nav-link"><i class="fa-solid fa-calendar-days"></i>Đặt bàn</a></li></head>    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">    <title>YUMMY - Order & Booking</title>
+
+        </ul>
+
+    </nav><body>
+
+
+
+    <!-- Order Content -->    <!-- Navigation -->    <link rel="preconnect" href="https://fonts.googleapis.com">    <link
+
+    <div class="container">
+
+        <div class="page-header">    <nav class="navbar">
+
+            <h1><i class="fa-solid fa-utensils"></i> Order món ăn tại bàn</h1>
+
+            <p class="page-subtitle">Chọn bàn → Chọn món → Xác nhận đơn hàng</p>        <div class="navbar-logo">    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>      rel="stylesheet"
+
+        </div>
+
+            <a href="../landing-home.html"><i class="fa-solid fa-utensils"></i>YUMMY</a>
+
         <div class="order-layout">
-          <!-- LEFT: Table Selection -->
-          <div class="order-column table-column">
-            <div class="column-header">
-              <h2><i class="fa-solid fa-chair"></i> Chọn bàn</h2>
-            </div>
-            <div class="table-grid"></div>
-          </div>
 
-          <!-- CENTER: Menu -->
-          <div class="order-column menu-column">
-            <div class="column-header">
-              <h2><i class="fa-solid fa-utensils"></i> Thực đơn</h2>
-              <div class="menu-controls">
-                <div class="search-bar">
-                  <input
-                    type="text"
-                    id="menu-search"
-                    placeholder="Tìm kiếm món ăn..."
-                  />
-                  <i class="fa-solid fa-search"></i>
-                </div>
-                <div class="menu-filters">
-                  <select id="category-filter" title="Chọn danh mục">
-                    <option value="">Tất cả danh mục</option>
-                  </select>
-                  <select id="sort-filter" title="Sắp xếp">
-                    <option value="name-asc">Tên A-Z</option>
-                    <option value="name-desc">Tên Z-A</option>
-                    <option value="price-asc">Giá thấp → cao</option>
-                    <option value="price-desc">Giá cao → thấp</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-            <div id="menu-categories-container">
-              <div class="loading-spinner">
-                <i class="fa-solid fa-spinner fa-spin"></i>
-                <p>Đang tải thực đơn...</p>
-              </div>
-            </div>
-          </div>
+            <!-- Table Selection -->        </div>    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700&display=swap" rel="stylesheet">      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
 
-          <!-- RIGHT: Order Cart -->
-          <div class="order-column cart-column">
-            <div class="column-header">
-              <h2><i class="fa-solid fa-shopping-cart"></i> Giỏ hàng</h2>
-              <p id="selected-table-info">Chưa chọn bàn</p>
+            <div class="order-column table-column">
+
+                <div class="column-header">        <ul class="navbar-links">
+
+                    <h2><i class="fa-solid fa-chair"></i> Chọn bàn</h2>
+
+                    <p>Click vào bàn để chọn</p>            <li><a href="../landing-home.html"><i class="fa-solid fa-house"></i>Trang chủ</a></li>    <link rel="stylesheet" href="../css/styles.css">    />
+
+                </div>
+
+                <div class="table-grid">            <li><a class="nav-link active"><i class="fa-solid fa-bag-shopping"></i>Order</a></li>
+
+                    <!-- Tables will be generated by JS -->
+
+                </div>            <li><a href="../menu/public-menu.html"><i class="fa-solid fa-list"></i>Menu Hôm Nay</a></li>    <link rel="stylesheet" href="../css/customer.css">    <link rel="preconnect" href="https://fonts.googleapis.com" />
+
+                <div class="selected-table-info">
+
+                    <i class="fa-solid fa-info-circle"></i>            <li><a href="delivery.html"><i class="fa-solid fa-truck"></i>Giao hàng</a></li>
+
+                    <span id="selected-table">Chưa chọn bàn</span>
+
+                </div>            <li><a href="#" class="nav-link"><i class="fa-solid fa-calendar-days"></i>Đặt bàn</a></li></head>    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
             </div>
-            <div id="order-cart" class="order-cart">
-              <div class="empty-cart">
-                <i class="fa-solid fa-shopping-cart"></i>
-                <p>Giỏ hàng trống</p>
-                <small>Chọn món từ menu</small>
-              </div>
+
+        </ul>
+
+            <!-- Menu -->
+
+            <div class="order-column menu-column">    </nav><body>    <link
+
+                <div class="column-header">
+
+                    <h2><i class="fa-solid fa-utensils"></i> Thực đơn</h2>
+
+                    <p>Chọn món ăn yêu thích</p>
+
+                </div>    <!-- Order Content -->    <!-- Navigation -->      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700&display=swap"
+
+                <div id="menu-container" class="menu-container">
+
+                    <div class="menu-loading">    <div class="container">
+
+                        <i class="fa-solid fa-spinner fa-spin"></i>
+
+                        <h3>Đang tải thực đơn...</h3>        <div class="page-header">    <nav class="navbar">      rel="stylesheet"
+
+                        <p>Vui lòng chờ trong giây lát</p>
+
+                    </div>            <h1><i class="fa-solid fa-utensils"></i> Order món ăn tại bàn</h1>
+
+                </div>
+
+            </div>            <p class="page-subtitle">Chọn bàn → Chọn món → Xác nhận đơn hàng</p>        <div class="navbar-logo">    />
+
+
+
+            <!-- Cart -->        </div>
+
+            <div class="order-column cart-column">
+
+                <div class="column-header">            <a href="../landing-home.html"><i class="fa-solid fa-utensils"></i>YUMMY</a>    <link rel="stylesheet" href="../css/styles.css" />
+
+                    <h2><i class="fa-solid fa-shopping-cart"></i> Giỏ hàng</h2>
+
+                    <p>Món đã chọn</p>        <div class="order-layout">
+
+                </div>
+
+                <div id="cart-container" class="cart-container">            <!-- Table Selection -->        </div>    <link rel="stylesheet" href="../css/customer.css" />
+
+                    <div class="empty-cart">
+
+                        <i class="fa-solid fa-shopping-cart"></i>            <div class="order-column table-column">
+
+                        <h3>Giỏ hàng trống</h3>
+
+                        <p>Chọn món từ menu để bắt đầu</p>                <div class="column-header">        <ul class="navbar-links">  </head>
+
+                    </div>
+
+                </div>                    <h2><i class="fa-solid fa-chair"></i> Chọn bàn</h2>
+
+                <div class="cart-summary">
+
+                    <div class="cart-total">                    <p>Click vào bàn để chọn</p>            <li><a href="../landing-home.html"><i class="fa-solid fa-house"></i>Trang chủ</a></li>  <body>
+
+                        <span>Tổng cộng:</span>
+
+                        <span id="total-amount" class="total-price">0 VNĐ</span>                </div>
+
+                    </div>
+
+                    <button id="submit-order" class="btn btn-primary submit-order-btn" disabled>                <div class="table-grid">            <li><a class="nav-link active"><i class="fa-solid fa-bag-shopping"></i>Order</a></li>    <!-- Navigation -->
+
+                        <i class="fa-solid fa-check"></i>
+
+                        <span>Xác nhận đơn hàng</span>                    <!-- Tables will be generated by JS -->
+
+                    </button>
+
+                </div>                </div>            <li><a href="../menu/public-menu.html"><i class="fa-solid fa-list"></i>Menu Hôm Nay</a></li>    <nav class="navbar">
+
             </div>
-            <div class="cart-summary">
-              <div class="cart-total">
-                <span>Tổng cộng: </span>
-                <span id="cart-total">0 VNĐ</span>
-              </div>
-              <button id="submit-order-btn" class="submit-order-btn" disabled>
-                <i class="fa-solid fa-paper-plane"></i>
-                Xác nhận đơn hàng
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+
+        </div>                <div class="selected-table-info">
+
     </div>
 
-    <!-- PAGE: BOOKING -->
-    <div id="page-booking" class="page">
-      <div class="container">
-        <header class="main-header">
-          <h1>Đặt bàn trước</h1>
-          <p>Đặt chỗ để có trải nghiệm tốt nhất</p>
-        </header>
-        <div class="booking-form-container">
-          <form id="booking-form">
-            <div class="form-group">
-              <label for="name">Họ và tên *</label
-              ><input type="text" id="name" required />
-            </div>
-            <div class="form-group">
-              <label for="phone">Số điện thoại *</label
-              ><input type="tel" id="phone" required />
-            </div>
-            <div class="form-group">
-              <label for="email">Email</label><input type="email" id="email" />
-            </div>
-            <div class="form-group">
-              <label for="date">Ngày *</label
-              ><input type="date" id="date" required />
-            </div>
-            <div class="form-group">
-              <label for="time">Giờ *</label
-              ><input type="time" id="time" required />
-            </div>
-            <div class="form-group">
-              <label for="people">Số người *</label
-              ><select id="people" required>
-                <option value="">Chọn</option>
-                <option value="2">2</option>
-                <option value="4">4</option>
-                <option value="6">6</option>
-                <option value="8">8+</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label for="notes">Ghi chú</label
-              ><textarea
-                id="notes"
-                placeholder="Yêu cầu đặc biệt..."
-              ></textarea>
-            </div>
-            <button type="submit" class="btn btn-primary" style="width: 100%">
-              <i class="fa-solid fa-calendar-check"></i>Xác nhận
-            </button>
-          </form>
-        </div>
-      </div>
-    </div>
+                    <i class="fa-solid fa-info-circle"></i>            <li><a href="delivery.html"><i class="fa-solid fa-truck"></i>Giao hàng</a></li>      <div class="navbar-logo">
 
-    <script src="../js/app.js"></script>
-    <script src="../js/shared-menu.js"></script>
-    <script src="../js/cart.js"></script>
-    <script src="../js/booking.js"></script>
     <script type="module">
-      import {
-        initializeApp,
-        getApps,
-        getApp,
-      } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
-      import {
-        getAnalytics,
-        isSupported as analyticsIsSupported,
-      } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-analytics.js";
-      import {
-        getFirestore,
-        collection,
-        getDocs,
-      } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 
-      const firebaseConfig = {
-        apiKey: "AIzaSyCbUNjBPEaZOtI_cNCcCJ1DBXUUdrP_6oE",
-        authDomain: "order-yummy.firebaseapp.com",
-        projectId: "order-yummy",
-        storageBucket: "order-yummy.firebasestorage.app",
-        messagingSenderId: "142798840175",
-        appId: "1:142798840175:web:1091d97784312c1fe4089a",
-        measurementId: "G-GQ7MEPZSSJ",
-      };
-      const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
-      const db = getFirestore(app);
+        import { initializeApp, getApps, getApp } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js';                    <span id="selected-table">Chưa chọn bàn</span>
 
-      // Make Firebase available globally for booking.js
-      window.firebaseApp = app;
-      window.firebaseDb = db;
+        import { getFirestore, collection, getDocs } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js';
 
-      analyticsIsSupported()
-        .then((s) => {
-          if (s) {
-            getAnalytics(app);
-          }
-        })
-        .catch((e) => console.warn("Analytics unavailable", e));
+                </div>            <li><a href="#" class="nav-link"><i class="fa-solid fa-calendar-days"></i>Đặt bàn</a></li>        <a href="../landing-home.html"
 
-      // Global variables for order management
-      let selectedTable = null;
-      let orderCart = [];
-      let allMenuItems = [];
-      let allCategories = [];
+        const firebaseConfig = {
 
-      // Initialize order page
-      document.addEventListener("DOMContentLoaded", function () {
-        loadTablesFromFirebase();
-        loadMenuFromFirebase();
-        loadCategoriesFromFirebase();
-        setupEventListeners();
-      });
+            apiKey: "AIzaSyCbUNjBPEaZOtI_cNCcCJ1DBXUUdrP_6oE",            </div>
 
-      // Load tables from Firebase
-      async function loadTablesFromFirebase() {
-        const tableGrid = document.querySelector(".table-grid");
+            authDomain: "order-yummy.firebaseapp.com",
 
-        try {
-          // For now, generate sample tables (in production, load from Firebase)
-          const tables = [];
-          for (let i = 1; i <= 20; i++) {
-            tables.push({
-              id: i,
-              number: i,
-              status: Math.random() > 0.8 ? "occupied" : "available",
-            });
-          }
+            projectId: "order-yummy",        </ul>          ><i class="fa-solid fa-utensils"></i>YUMMY</a
 
-          tableGrid.innerHTML = tables
-            .map(
-              (table) => `
-          <div class="table-item ${table.status}" data-table-id="${table.id}" onclick="selectTable(${table.id})">
-            <i class="fa-solid fa-chair"></i>
-            <span>Bàn ${table.number}</span>
-          </div>
-        `
-            )
-            .join("");
-        } catch (error) {
-          console.error("Error loading tables:", error);
-          tableGrid.innerHTML = "<p>Không thể tải danh sách bàn</p>";
+            storageBucket: "order-yummy.firebasestorage.app",
+
+            messagingSenderId: "142798840175",            <!-- Menu -->
+
+            appId: "1:142798840175:web:1091d97784312c1fe4089a"
+
+        };            <div class="order-column menu-column">    </nav>        >
+
+
+
+        const app = getApps().length ? getApp() : initializeApp(firebaseConfig);                <div class="column-header">
+
+        const db = getFirestore(app);
+
+                    <h2><i class="fa-solid fa-utensils"></i> Thực đơn</h2>      </div>
+
+        // Global state
+
+        let selectedTable = null;                    <p>Chọn món ăn yêu thích</p>
+
+        let cart = [];
+
+                </div>    <!-- Order Content -->      <ul class="navbar-links">
+
+        // Initialize page
+
+        document.addEventListener('DOMContentLoaded', function() {                <div id="menu-container" class="menu-container">
+
+            console.log('🚀 Initializing order page...');
+
+            initializeTables();                    <div class="menu-loading">    <div class="container">        <li>
+
+            loadMenuFromFirebase();
+
+        });                        <i class="fa-solid fa-spinner fa-spin"></i>
+
+
+
+        // Initialize tables                        <h3>Đang tải thực đơn...</h3>        <div class="page-header">          <a href="../landing-home.html"
+
+        function initializeTables() {
+
+            const tableGrid = document.querySelector('.table-grid');                        <p>Vui lòng chờ trong giây lát</p>
+
+            for (let i = 1; i <= 20; i++) {
+
+                const table = document.createElement('div');                    </div>            <h1><i class="fa-solid fa-utensils"></i> Order món ăn tại bàn</h1>            ><i class="fa-solid fa-house"></i>Trang chủ</a
+
+                table.className = 'table-item';
+
+                table.innerHTML = `                </div>
+
+                    <div class="table-number">${i}</div>
+
+                    <div class="table-status">Trống</div>            </div>            <p class="page-subtitle">Chọn bàn → Chọn món → Xác nhận đơn hàng</p>          >
+
+                `;
+
+                table.onclick = () => selectTable(i);
+
+                tableGrid.appendChild(table);
+
+            }            <!-- Cart -->        </div>        </li>
+
         }
-      }
 
-      // Load categories from Firebase
-      async function loadCategoriesFromFirebase() {
-        try {
-          const categoriesCollectionRef = collection(db, "categories");
-          const querySnapshot = await getDocs(categoriesCollectionRef);
+            <div class="order-column cart-column">
+
+        // Select table
+
+        function selectTable(tableNumber) {                <div class="column-header">        <li>
+
+            // Remove previous selection
+
+            document.querySelectorAll('.table-item').forEach(item => {                    <h2><i class="fa-solid fa-shopping-cart"></i> Giỏ hàng</h2>
+
+                item.classList.remove('selected');
+
+            });                    <p>Món đã chọn</p>        <div class="order-layout">          <a data-page="menu" class="nav-link active"
+
+
+
+            // Select new table                </div>
+
+            event.target.closest('.table-item').classList.add('selected');
+
+            selectedTable = tableNumber;                <div id="cart-container" class="cart-container">            <!-- Table Selection -->            ><i class="fa-solid fa-bag-shopping"></i>Order</a
+
+            document.getElementById('selected-table').textContent = `Đã chọn bàn số ${tableNumber}`;
+
+            updateSubmitButton();                    <div class="empty-cart">
+
+        }
+
+                        <i class="fa-solid fa-shopping-cart"></i>            <div class="order-column table-column">          >
+
+        // Load menu from Firebase
+
+        async function loadMenuFromFirebase() {                        <h3>Giỏ hàng trống</h3>
+
+            const menuContainer = document.getElementById('menu-container');
+
+                        <p>Chọn món từ menu để bắt đầu</p>                <div class="column-header">        </li>
+
+            try {
+
+                console.log('🔥 Loading menu from Firebase...');                    </div>
+
+
+
+                // Load categories                </div>                    <h2><i class="fa-solid fa-chair"></i> Chọn bàn</h2>        <li>
+
+                const categoriesRef = collection(db, "categories");
+
+                const categoriesSnapshot = await getDocs(categoriesRef);                <div class="cart-summary">
+
+                const categoriesMap = {};
+
+                categoriesSnapshot.forEach((doc) => {                    <div class="cart-total">                    <p>Click vào bàn để chọn</p>          <a href="../menu/public-menu.html"
+
+                    categoriesMap[doc.id] = doc.data().name;
+
+                });                        <span>Tổng cộng:</span>
+
+
+
+                console.log('✅ Categories loaded:', Object.keys(categoriesMap).length);                        <span id="total-amount" class="total-price">0 VNĐ</span>                </div>            ><i class="fa-solid fa-list"></i>Menu Hôm Nay</a
+
+
+
+                // Load menu items                    </div>
+
+                const menuRef = collection(db, "menuItems");
+
+                const menuSnapshot = await getDocs(menuRef);                    <button id="submit-order" class="btn btn-primary submit-order-btn" disabled>                <div class="table-grid">          >
+
+
+
+                if (menuSnapshot.empty) {                        <i class="fa-solid fa-check"></i>
+
+                    menuContainer.innerHTML = `
+
+                        <div class="empty-menu">                        <span>Xác nhận đơn hàng</span>                    <!-- Tables will be generated by JS -->        </li>
+
+                            <i class="fa-solid fa-utensils"></i>
+
+                            <h3>Chưa có món ăn nào</h3>                    </button>
+
+                            <p>Admin chưa thêm món vào hệ thống</p>
+
+                            <a href="../admin/admin-panel.html" class="btn btn-primary">                </div>                </div>        <li>
+
+                                <i class="fa-solid fa-plus"></i> Vào Admin Panel
+
+                            </a>            </div>
+
+                        </div>
+
+                    `;        </div>                <div class="selected-table-info">          <a href="delivery.html"><i class="fa-solid fa-truck"></i>Giao hàng</a>
+
+                    return;
+
+                }    </div>
+
+
+
+                // Group items by category                    <i class="fa-solid fa-info-circle"></i>        </li>
+
+                const itemsByCategory = {};
+
+                menuSnapshot.forEach((doc) => {    <script type="module">
+
+                    const data = doc.data();
+
+                    const category = categoriesMap[data.categoryId] || 'Món khác';        import { initializeApp, getApps, getApp } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js';                    <span id="selected-table">Chưa chọn bàn</span>        <li>
+
+
+
+                    if (!itemsByCategory[category]) {        import { getFirestore, collection, getDocs } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js';
+
+                        itemsByCategory[category] = [];
+
+                    }                </div>          <a data-page="booking" class="nav-link"
+
+
+
+                    itemsByCategory[category].push({        const firebaseConfig = {
+
+                        id: doc.id,
+
+                        ...data            apiKey: "AIzaSyCbUNjBPEaZOtI_cNCcCJ1DBXUUdrP_6oE",            </div>            ><i class="fa-solid fa-calendar-days"></i>Đặt bàn</a
+
+                    });
+
+                });            authDomain: "order-yummy.firebaseapp.com",
+
+
+
+                // Display menu by categories            projectId: "order-yummy",          >
+
+                let menuHTML = '';
+
+                for (const [category, items] of Object.entries(itemsByCategory)) {            storageBucket: "order-yummy.firebasestorage.app",
+
+                    menuHTML += `
+
+                        <div class="menu-category">            messagingSenderId: "142798840175",            <!-- Menu -->        </li>
+
+                            <h3 class="category-title">
+
+                                <i class="fa-solid fa-utensils"></i>            appId: "1:142798840175:web:1091d97784312c1fe4089a"
+
+                                ${category}
+
+                            </h3>        };            <div class="order-column menu-column">      </ul>
+
+                            <div class="menu-items">
+
+                    `;
+
+
+
+                    items.forEach(item => {        const app = getApps().length ? getApp() : initializeApp(firebaseConfig);                <div class="column-header">    </nav>
+
+                        const price = new Intl.NumberFormat('vi-VN', {
+
+                            style: 'currency',        const db = getFirestore(app);
+
+                            currency: 'VND'
+
+                        }).format(item.price || 0);                    <h2><i class="fa-solid fa-utensils"></i> Thực đơn</h2>
+
+
+
+                        const placeholderImg = `https://placehold.co/100x100/f97316/FFFFFF?text=${encodeURIComponent(item.name.substring(0,2))}`;        // Global state
+
+
+
+                        menuHTML += `        let selectedTable = null;                    <p>Chọn món ăn yêu thích</p>    <!-- PAGE: ORDER -->
+
+                            <div class="menu-item-card">
+
+                                <div class="menu-item-image">        let cart = [];
+
+                                    <img src="${item.image || placeholderImg}" alt="${item.name}" onerror="this.src='${placeholderImg}'">
+
+                                    ${item.isAvailable ? '<span class="availability-badge available">Còn món</span>' : '<span class="availability-badge unavailable">Hết món</span>'}                </div>    <div id="page-menu" class="page active">
+
+                                </div>
+
+                                <div class="menu-item-content">        // Initialize page
+
+                                    <h4 class="menu-item-name">${item.name}</h4>
+
+                                    <p class="menu-item-description">${item.description || 'Chưa có mô tả'}</p>        document.addEventListener('DOMContentLoaded', function() {                <div id="menu-container" class="menu-container">      <div class="container">
+
+                                    <div class="menu-item-footer">
+
+                                        <span class="menu-item-price">${price}</span>            console.log('🚀 Initializing order page...');
+
+                                        <button class="add-to-cart-btn" onclick="addToCart('${item.id}', '${item.name}', ${item.price})" ${!item.isAvailable ? 'disabled' : ''}>
+
+                                            <i class="fa-solid fa-plus"></i>            initializeTables();                    <div class="menu-loading">        <header class="main-header">
+
+                                            Thêm
+
+                                        </button>            loadMenuFromFirebase();
+
+                                    </div>
+
+                                </div>        });                        <i class="fa-solid fa-spinner fa-spin"></i>          <h1>Order món ăn tại bàn</h1>
+
+                            </div>
+
+                        `;
+
+                    });
+
+        // Initialize tables                        <h3>Đang tải thực đơn...</h3>          <p>Chọn bàn → Chọn món → Xác nhận đơn hàng</p>
+
+                    menuHTML += `
+
+                            </div>        function initializeTables() {
+
+                        </div>
+
+                    `;            const tableGrid = document.querySelector('.table-grid');                        <p>Vui lòng chờ trong giây lát</p>        </header>
+
+                }
+
+            for (let i = 1; i <= 20; i++) {
+
+                menuContainer.innerHTML = menuHTML;
+
+                console.log('✅ Menu displayed successfully');                const table = document.createElement('div');                    </div>
+
+
+
+            } catch (error) {                table.className = 'table-item';
+
+                console.error('❌ Error loading menu:', error);
+
+                menuContainer.innerHTML = `                table.innerHTML = `                </div>        <!-- 3-Column Layout -->
+
+                    <div class="error-menu">
+
+                        <i class="fa-solid fa-exclamation-triangle"></i>                    <div class="table-number">${i}</div>
+
+                        <h3>Không thể tải thực đơn</h3>
+
+                        <p>Lỗi: ${error.message}</p>                    <div class="table-status">Trống</div>            </div>        <div class="order-layout">
+
+                        <button onclick="loadMenuFromFirebase()" class="btn btn-secondary">
+
+                            <i class="fa-solid fa-refresh"></i> Thử lại                `;
+
+                        </button>
+
+                    </div>                table.onclick = () => selectTable(i);          <!-- LEFT: Table Selection -->
+
+                `;
+
+            }                tableGrid.appendChild(table);
+
+        }
+
+            }            <!-- Cart -->          <div class="order-column table-column">
+
+        // Add to cart
+
+        window.addToCart = function(id, name, price) {        }
+
+            console.log('Adding to cart:', name, price);
+
+            <div class="order-column cart-column">            <div class="column-header">
+
+            const existingItem = cart.find(item => item.id === id);
+
+            if (existingItem) {        // Select table
+
+                existingItem.quantity += 1;
+
+            } else {        function selectTable(tableNumber) {                <div class="column-header">              <h2><i class="fa-solid fa-chair"></i> Chọn bàn</h2>
+
+                cart.push({ id, name, price, quantity: 1 });
+
+            }            // Remove previous selection
+
+
+
+            updateCartDisplay();            document.querySelectorAll('.table-item').forEach(item => {                    <h2><i class="fa-solid fa-shopping-cart"></i> Giỏ hàng</h2>            </div>
+
+            updateSubmitButton();
+
+        };                item.classList.remove('selected');
+
+
+
+        // Update cart display            });                    <p>Món đã chọn</p>            <div class="table-grid"></div>
+
+        function updateCartDisplay() {
+
+            const cartContainer = document.getElementById('cart-container');
+
+
+
+            if (cart.length === 0) {            // Select new table                </div>          </div>
+
+                cartContainer.innerHTML = `
+
+                    <div class="empty-cart">            event.target.closest('.table-item').classList.add('selected');
+
+                        <i class="fa-solid fa-shopping-cart"></i>
+
+                        <h3>Giỏ hàng trống</h3>            selectedTable = tableNumber;                <div id="cart-container" class="cart-container">
+
+                        <p>Chọn món từ menu để bắt đầu</p>
+
+                    </div>            document.getElementById('selected-table').textContent = `Đã chọn bàn số ${tableNumber}`;
+
+                `;
+
+                document.getElementById('total-amount').textContent = '0 VNĐ';            updateSubmitButton();                    <div class="empty-cart">          <!-- CENTER: Menu -->
+
+                return;
+
+            }        }
+
+
+
+            let cartHTML = '';                        <i class="fa-solid fa-shopping-cart"></i>          <div class="order-column menu-column">
+
+            let total = 0;
+
+        // Load menu from Firebase
+
+            cart.forEach(item => {
+
+                const itemTotal = item.price * item.quantity;        async function loadMenuFromFirebase() {                        <h3>Giỏ hàng trống</h3>            <div class="column-header">
+
+                total += itemTotal;
+
+            const menuContainer = document.getElementById('menu-container');
+
+                cartHTML += `
+
+                    <div class="cart-item">                        <p>Chọn món từ menu để bắt đầu</p>              <h2><i class="fa-solid fa-utensils"></i> Thực đơn</h2>
+
+                        <div class="cart-item-info">
+
+                            <h5 class="cart-item-name">${item.name}</h5>            try {
+
+                            <span class="cart-item-price">${new Intl.NumberFormat('vi-VN', {style: 'currency', currency: 'VND'}).format(item.price)}</span>
+
+                        </div>                console.log('🔥 Loading menu from Firebase...');                    </div>              <div class="menu-controls">
+
+                        <div class="cart-item-controls">
+
+                            <button class="quantity-btn decrease" onclick="changeQuantity('${item.id}', -1)">
+
+                                <i class="fa-solid fa-minus"></i>
+
+                            </button>                // Load categories                </div>                <div class="search-bar">
+
+                            <span class="quantity">${item.quantity}</span>
+
+                            <button class="quantity-btn increase" onclick="changeQuantity('${item.id}', 1)">                const categoriesRef = collection(db, "categories");
+
+                                <i class="fa-solid fa-plus"></i>
+
+                            </button>                const categoriesSnapshot = await getDocs(categoriesRef);                <div class="cart-summary">                  <input
+
+                        </div>
+
+                    </div>                const categoriesMap = {};
+
+                `;
+
+            });                categoriesSnapshot.forEach((doc) => {                    <div class="cart-total">                    type="text"
+
+
+
+            cartContainer.innerHTML = cartHTML;                    categoriesMap[doc.id] = doc.data().name;
+
+            document.getElementById('total-amount').textContent = new Intl.NumberFormat('vi-VN', {
+
+                style: 'currency',                });                        <span>Tổng cộng:</span>                    id="menu-search"
+
+                currency: 'VND'
+
+            }).format(total);
+
+        }
+
+                console.log('✅ Categories loaded:', Object.keys(categoriesMap).length);                        <span id="total-amount" class="total-price">0 VNĐ</span>                    placeholder="Tìm kiếm món ăn..."
+
+        // Change quantity
+
+        window.changeQuantity = function(id, change) {
+
+            const item = cart.find(item => item.id === id);
+
+            if (item) {                // Load menu items                    </div>                  />
+
+                item.quantity += change;
+
+                if (item.quantity <= 0) {                const menuRef = collection(db, "menuItems");
+
+                    cart = cart.filter(cartItem => cartItem.id !== id);
+
+                }                const menuSnapshot = await getDocs(menuRef);                    <button id="submit-order" class="btn btn-primary submit-order-btn" disabled>                  <i class="fa-solid fa-search"></i>
+
+                updateCartDisplay();
+
+                updateSubmitButton();
+
+            }
+
+        };                if (menuSnapshot.empty) {                        <i class="fa-solid fa-check"></i>                </div>
+
+
+
+        // Update submit button                    menuContainer.innerHTML = `
+
+        function updateSubmitButton() {
+
+            const submitBtn = document.getElementById('submit-order');                        <div class="empty-menu">                        <span>Xác nhận đơn hàng</span>                <div class="menu-filters">
+
+            submitBtn.disabled = !selectedTable || cart.length === 0;
+
+        }                            <i class="fa-solid fa-utensils"></i>
+
+
+
+        // Submit order                            <h3>Chưa có món ăn nào</h3>                    </button>                  <select id="category-filter" title="Chọn danh mục">
+
+        document.getElementById('submit-order').addEventListener('click', function() {
+
+            if (!selectedTable || cart.length === 0) return;                            <p>Admin chưa thêm món vào hệ thống</p>
+
+
+
+            alert(`Đặt hàng thành công!\\nBàn: ${selectedTable}\\nMón: ${cart.length} món\\nTổng: ${document.getElementById('total-amount').textContent}`);                            <a href="../admin/admin-panel.html" class="btn btn-primary">                </div>                    <option value="">Tất cả danh mục</option>
+
+
+
+            // Reset                                <i class="fa-solid fa-plus"></i> Vào Admin Panel
+
+            cart = [];
+
+            selectedTable = null;                            </a>            </div>                  </select>
+
+            document.getElementById('selected-table').textContent = 'Chưa chọn bàn';
+
+            document.querySelectorAll('.table-item').forEach(item => {                        </div>
+
+                item.classList.remove('selected');
+
+            });                    `;        </div>                  <select id="sort-filter" title="Sắp xếp">
+
+            updateCartDisplay();
+
+            updateSubmitButton();                    return;
+
+        });
+
+                }    </div>                    <option value="name-asc">Tên A-Z</option>
+
+        // Make functions global
+
+        window.loadMenuFromFirebase = loadMenuFromFirebase;
+
+    </script>
+
+</body>                // Group items by category                    <option value="name-desc">Tên Z-A</option>
+
+</html>
+                const itemsByCategory = {};
+
+                menuSnapshot.forEach((doc) => {    <script type="module">                    <option value="price-asc">Giá thấp → cao</option>
+
+                    const data = doc.data();
+
+                    const category = categoriesMap[data.categoryId] || 'Món khác';        import { initializeApp, getApps, getApp } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js';                    <option value="price-desc">Giá cao → thấp</option>
+
+
+
+                    if (!itemsByCategory[category]) {        import { getFirestore, collection, getDocs } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js';                  </select>
+
+                        itemsByCategory[category] = [];
+
+                    }                </div>
+
+
+
+                    itemsByCategory[category].push({        const firebaseConfig = {              </div>
+
+                        id: doc.id,
+
+                        ...data            apiKey: "AIzaSyCbUNjBPEaZOtI_cNCcCJ1DBXUUdrP_6oE",            </div>
+
+                    });
+
+                });            authDomain: "order-yummy.firebaseapp.com",            <div id="menu-categories-container">
+
+
+
+                // Display menu by categories            projectId: "order-yummy",              <div class="menu-loading">
+
+                let menuHTML = '';
+
+                for (const [category, items] of Object.entries(itemsByCategory)) {            storageBucket: "order-yummy.firebasestorage.app",                <i class="fa-solid fa-spinner fa-spin"></i>
+
+                    menuHTML += `
+
+                        <div class="menu-category">            messagingSenderId: "142798840175",                <h3>Đang tải thực đơn...</h3>
+
+                            <h3 class="category-title">
+
+                                <i class="fa-solid fa-utensils"></i>            appId: "1:142798840175:web:1091d97784312c1fe4089a"                <p>Vui lòng chờ trong giây lát</p>
+
+                                ${category}
+
+                            </h3>        };              </div>
+
+                            <div class="menu-items">
+
+                    `;            </div>
+
+
+
+                    items.forEach(item => {        const app = getApps().length ? getApp() : initializeApp(firebaseConfig);          </div>
+
+                        const price = new Intl.NumberFormat('vi-VN', {
+
+                            style: 'currency',        const db = getFirestore(app);
+
+                            currency: 'VND'
+
+                        }).format(item.price || 0);          <!-- RIGHT: Order Cart -->
+
+
+
+                        const placeholderImg = `https://placehold.co/100x100/f97316/FFFFFF?text=${encodeURIComponent(item.name.substring(0,2))}`;        // Global state          <div class="order-column cart-column">
+
+
+
+                        menuHTML += `        let selectedTable = null;            <div class="column-header">
+
+                            <div class="menu-item-card">
+
+                                <div class="menu-item-image">        let cart = [];              <h2><i class="fa-solid fa-shopping-cart"></i> Giỏ hàng</h2>
+
+                                    <img src="${item.image || placeholderImg}" alt="${item.name}" onerror="this.src='${placeholderImg}'">
+
+                                    ${item.isAvailable ? '<span class="availability-badge available">Còn món</span>' : '<span class="availability-badge unavailable">Hết món</span>'}              <p id="selected-table-info">Chưa chọn bàn</p>
+
+                                </div>
+
+                                <div class="menu-item-content">        // Initialize page            </div>
+
+                                    <h4 class="menu-item-name">${item.name}</h4>
+
+                                    <p class="menu-item-description">${item.description || 'Chưa có mô tả'}</p>        document.addEventListener('DOMContentLoaded', function() {            <div id="order-cart" class="order-cart">
+
+                                    <div class="menu-item-footer">
+
+                                        <span class="menu-item-price">${price}</span>            console.log('🚀 Initializing order page...');              <div class="empty-cart">
+
+                                        <button class="add-to-cart-btn" onclick="addToCart('${item.id}', '${item.name}', ${item.price})" ${!item.isAvailable ? 'disabled' : ''}>
+
+                                            <i class="fa-solid fa-plus"></i>            initializeTables();                <i class="fa-solid fa-shopping-cart"></i>
+
+                                            Thêm
+
+                                        </button>            loadMenuFromFirebase();                <p>Giỏ hàng trống</p>
+
+                                    </div>
+
+                                </div>        });                <small>Chọn món từ menu</small>
+
+                            </div>
+
+                        `;              </div>
+
+                    });
+
+        // Initialize tables            </div>
+
+                    menuHTML += `
+
+                            </div>        function initializeTables() {            <div class="cart-summary">
+
+                        </div>
+
+                    `;            const tableGrid = document.querySelector('.table-grid');              <div class="cart-total">
+
+                }
+
+            for (let i = 1; i <= 20; i++) {                <span>Tổng cộng: </span>
+
+                menuContainer.innerHTML = menuHTML;
+
+                console.log('✅ Menu displayed successfully');                const table = document.createElement('div');                <span id="cart-total">0 VNĐ</span>
+
+
+
+            } catch (error) {                table.className = 'table-item';              </div>
+
+                console.error('❌ Error loading menu:', error);
+
+                menuContainer.innerHTML = `                table.innerHTML = `              <button id="submit-order-btn" class="submit-order-btn" disabled>
+
+                    <div class="error-menu">
+
+                        <i class="fa-solid fa-exclamation-triangle"></i>                    <div class="table-number">${i}</div>                <i class="fa-solid fa-paper-plane"></i>
+
+                        <h3>Không thể tải thực đơn</h3>
+
+                        <p>Lỗi: ${error.message}</p>                    <div class="table-status">Trống</div>                Xác nhận đơn hàng
+
+                        <button onclick="loadMenuFromFirebase()" class="btn btn-secondary">
+
+                            <i class="fa-solid fa-refresh"></i> Thử lại                `;              </button>
+
+                        </button>
+
+                    </div>                table.onclick = () => selectTable(i);            </div>
+
+                `;
+
+            }                tableGrid.appendChild(table);          </div>
+
+        }
+
+            }        </div>
+
+        // Add to cart
+
+        window.addToCart = function(id, name, price) {        }      </div>
+
+            console.log('Adding to cart:', name, price);
+
+    </div>
+
+            const existingItem = cart.find(item => item.id === id);
+
+            if (existingItem) {        // Select table
+
+                existingItem.quantity += 1;
+
+            } else {        function selectTable(tableNumber) {    <!-- PAGE: BOOKING -->
+
+                cart.push({ id, name, price, quantity: 1 });
+
+            }            // Remove previous selection    <div id="page-booking" class="page">
+
+
+
+            updateCartDisplay();            document.querySelectorAll('.table-item').forEach(item => {      <div class="container">
+
+            updateSubmitButton();
+
+        };                item.classList.remove('selected');        <header class="main-header">
+
+
+
+        // Update cart display            });          <h1>Đặt bàn trước</h1>
+
+        function updateCartDisplay() {
+
+            const cartContainer = document.getElementById('cart-container');                      <p>Đặt chỗ để có trải nghiệm tốt nhất</p>
+
+
+
+            if (cart.length === 0) {            // Select new table        </header>
+
+                cartContainer.innerHTML = `
+
+                    <div class="empty-cart">            event.target.closest('.table-item').classList.add('selected');        <div class="booking-form-container">
+
+                        <i class="fa-solid fa-shopping-cart"></i>
+
+                        <h3>Giỏ hàng trống</h3>            selectedTable = tableNumber;          <form id="booking-form">
+
+                        <p>Chọn món từ menu để bắt đầu</p>
+
+                    </div>            document.getElementById('selected-table').textContent = `Đã chọn bàn số ${tableNumber}`;            <div class="form-group">
+
+                `;
+
+                document.getElementById('total-amount').textContent = '0 VNĐ';            updateSubmitButton();              <label for="name">Họ và tên *</label
+
+                return;
+
+            }        }              ><input type="text" id="name" required />
+
+
+
+            let cartHTML = '';            </div>
+
+            let total = 0;
+
+        // Load menu from Firebase            <div class="form-group">
+
+            cart.forEach(item => {
+
+                const itemTotal = item.price * item.quantity;        async function loadMenuFromFirebase() {              <label for="phone">Số điện thoại *</label
+
+                total += itemTotal;
+
+            const menuContainer = document.getElementById('menu-container');              ><input type="tel" id="phone" required />
+
+                cartHTML += `
+
+                    <div class="cart-item">                        </div>
+
+                        <div class="cart-item-info">
+
+                            <h5 class="cart-item-name">${item.name}</h5>            try {            <div class="form-group">
+
+                            <span class="cart-item-price">${new Intl.NumberFormat('vi-VN', {style: 'currency', currency: 'VND'}).format(item.price)}</span>
+
+                        </div>                console.log('🔥 Loading menu from Firebase...');              <label for="email">Email</label><input type="email" id="email" />
+
+                        <div class="cart-item-controls">
+
+                            <button class="quantity-btn decrease" onclick="changeQuantity('${item.id}', -1)">                            </div>
+
+                                <i class="fa-solid fa-minus"></i>
+
+                            </button>                // Load categories            <div class="form-group">
+
+                            <span class="quantity">${item.quantity}</span>
+
+                            <button class="quantity-btn increase" onclick="changeQuantity('${item.id}', 1)">                const categoriesRef = collection(db, "categories");              <label for="date">Ngày *</label
+
+                                <i class="fa-solid fa-plus"></i>
+
+                            </button>                const categoriesSnapshot = await getDocs(categoriesRef);              ><input type="date" id="date" required />
+
+                        </div>
+
+                    </div>                const categoriesMap = {};            </div>
+
+                `;
+
+            });                categoriesSnapshot.forEach((doc) => {            <div class="form-group">
+
+
+
+            cartContainer.innerHTML = cartHTML;                    categoriesMap[doc.id] = doc.data().name;              <label for="time">Giờ *</label
+
+            document.getElementById('total-amount').textContent = new Intl.NumberFormat('vi-VN', {
+
+                style: 'currency',                });              ><input type="time" id="time" required />
+
+                currency: 'VND'
+
+            }).format(total);                            </div>
+
+        }
+
+                console.log('✅ Categories loaded:', Object.keys(categoriesMap).length);            <div class="form-group">
+
+        // Change quantity
+
+        window.changeQuantity = function(id, change) {                              <label for="people">Số người *</label
+
+            const item = cart.find(item => item.id === id);
+
+            if (item) {                // Load menu items              ><select id="people" required>
+
+                item.quantity += change;
+
+                if (item.quantity <= 0) {                const menuRef = collection(db, "menuItems");                <option value="">Chọn</option>
+
+                    cart = cart.filter(cartItem => cartItem.id !== id);
+
+                }                const menuSnapshot = await getDocs(menuRef);                <option value="2">2</option>
+
+                updateCartDisplay();
+
+                updateSubmitButton();                                <option value="4">4</option>
+
+            }
+
+        };                if (menuSnapshot.empty) {                <option value="6">6</option>
+
+
+
+        // Update submit button                    menuContainer.innerHTML = `                <option value="8">8+</option>
+
+        function updateSubmitButton() {
+
+            const submitBtn = document.getElementById('submit-order');                        <div class="empty-menu">              </select>
+
+            submitBtn.disabled = !selectedTable || cart.length === 0;
+
+        }                            <i class="fa-solid fa-utensils"></i>            </div>
+
+
+
+        // Submit order                            <h3>Chưa có món ăn nào</h3>            <div class="form-group">
+
+        document.getElementById('submit-order').addEventListener('click', function() {
+
+            if (!selectedTable || cart.length === 0) return;                            <p>Admin chưa thêm món vào hệ thống</p>              <label for="notes">Ghi chú</label
+
+
+
+            alert(`Đặt hàng thành công!\\nBàn: ${selectedTable}\\nMón: ${cart.length} món\\nTổng: ${document.getElementById('total-amount').textContent}`);                            <a href="../admin/admin-panel.html" class="btn btn-primary">              ><textarea
+
+
+
+            // Reset                                <i class="fa-solid fa-plus"></i> Vào Admin Panel                id="notes"
+
+            cart = [];
+
+            selectedTable = null;                            </a>                placeholder="Yêu cầu đặc biệt..."
+
+            document.getElementById('selected-table').textContent = 'Chưa chọn bàn';
+
+            document.querySelectorAll('.table-item').forEach(item => {                        </div>              ></textarea>
+
+                item.classList.remove('selected');
+
+            });                    `;            </div>
+
+            updateCartDisplay();
+
+            updateSubmitButton();                    return;            <button type="submit" class="btn btn-primary" style="width: 100%">
+
+        });
+
+                }              <i class="fa-solid fa-calendar-check"></i>Xác nhận
+
+        // Make functions global
+
+        window.loadMenuFromFirebase = loadMenuFromFirebase;                            </button>
+
+    </script>
+
+</body>                // Group items by category          </form>
+
+</html>
+                const itemsByCategory = {};        </div>
+
+                menuSnapshot.forEach((doc) => {      </div>
+
+                    const data = doc.data();    </div>
+
+                    const category = categoriesMap[data.categoryId] || 'Món khác';
+
+                        <script src="../js/app.js"></script>
+
+                    if (!itemsByCategory[category]) {    <script src="../js/shared-menu.js"></script>
+
+                        itemsByCategory[category] = [];    <script src="../js/cart.js"></script>
+
+                    }    <script src="../js/booking.js"></script>
+
+                        <script type="module">
+
+                    itemsByCategory[category].push({      import {
+
+                        id: doc.id,        initializeApp,
+
+                        ...data        getApps,
+
+                    });        getApp,
+
+                });      } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+
+                      import {
+
+                // Display menu by categories        getAnalytics,
+
+                let menuHTML = '';        isSupported as analyticsIsSupported,
+
+                for (const [category, items] of Object.entries(itemsByCategory)) {      } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-analytics.js";
+
+                    menuHTML += `      import {
+
+                        <div class="menu-category">        getFirestore,
+
+                            <h3 class="category-title">        collection,
+
+                                <i class="fa-solid fa-utensils"></i>        getDocs,
+
+                                ${category}      } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+
+                            </h3>
+
+                            <div class="menu-items">      const firebaseConfig = {
+
+                    `;        apiKey: "AIzaSyCbUNjBPEaZOtI_cNCcCJ1DBXUUdrP_6oE",
+
+                            authDomain: "order-yummy.firebaseapp.com",
+
+                    items.forEach(item => {        projectId: "order-yummy",
+
+                        const price = new Intl.NumberFormat('vi-VN', {        storageBucket: "order-yummy.firebasestorage.app",
+
+                            style: 'currency',        messagingSenderId: "142798840175",
+
+                            currency: 'VND'        appId: "1:142798840175:web:1091d97784312c1fe4089a",
+
+                        }).format(item.price || 0);        measurementId: "G-GQ7MEPZSSJ",
+
+                              };
+
+                        const placeholder = `https://placehold.co/100x100/f97316/FFFFFF?text=${encodeURIComponent(item.name.substring(0,2))}`;      const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+
+                              const db = getFirestore(app);
+
+                        menuHTML += `
+
+                            <div class="menu-item-card">      // Make Firebase available globally for booking.js
+
+                                <div class="menu-item-image">      window.firebaseApp = app;
+
+                                    <img src="${item.image || placeholder}" alt="${item.name}" onerror="this.src='${placeholder}'">      window.firebaseDb = db;
+
+                                    ${item.isAvailable ? '<span class="availability-badge available">Còn món</span>' : '<span class="availability-badge unavailable">Hết món</span>'}
+
+                                </div>      analyticsIsSupported()
+
+                                <div class="menu-item-content">        .then((s) => {
+
+                                    <h4 class="menu-item-name">${item.name}</h4>          if (s) {
+
+                                    <p class="menu-item-description">${item.description || 'Chưa có mô tả'}</p>            getAnalytics(app);
+
+                                    <div class="menu-item-footer">          }
+
+                                        <span class="menu-item-price">${price}</span>        })
+
+                                        <button class="add-to-cart-btn" onclick="addToCart('${item.id}', '${item.name}', ${item.price})" ${!item.isAvailable ? 'disabled' : ''}>        .catch((e) => console.warn("Analytics unavailable", e));
+
+                                            <i class="fa-solid fa-plus"></i>
+
+                                            Thêm      // Global variables for order management
+
+                                        </button>      let selectedTable = null;
+
+                                    </div>      let orderCart = [];
+
+                                </div>      let allMenuItems = [];
+
+                            </div>      let allCategories = [];
+
+                        `;
+
+                    });      // Initialize order page
+
+                          document.addEventListener("DOMContentLoaded", function () {
+
+                    menuHTML += `        console.log('🚀 Initializing order page...');
+
+                            </div>        loadTablesFromFirebase();
+
+                        </div>        loadMenuFromFirebase();
+
+                    `;        loadCategoriesFromFirebase();
+
+                }        setupEventListeners();
+
+                      });
+
+                menuContainer.innerHTML = menuHTML;
+
+                console.log('✅ Menu displayed successfully');      // Add to cart function
+
+                      function addToCart(itemId, itemName, itemPrice) {
+
+            } catch (error) {        console.log('Adding to cart:', itemId, itemName, itemPrice);
+
+                console.error('❌ Error loading menu:', error);        const existingItem = orderCart.find(item => item.id === itemId);
+
+                menuContainer.innerHTML = `        
+
+                    <div class="error-menu">        if (existingItem) {
+
+                        <i class="fa-solid fa-exclamation-triangle"></i>          existingItem.quantity += 1;
+
+                        <h3>Không thể tải thực đơn</h3>        } else {
+
+                        <p>Lỗi: ${error.message}</p>          orderCart.push({
+
+                        <button onclick="loadMenuFromFirebase()" class="btn btn-secondary">            id: itemId,
+
+                            <i class="fa-solid fa-refresh"></i> Thử lại            name: itemName,
+
+                        </button>            price: itemPrice,
+
+                    </div>            quantity: 1
+
+                `;          });
+
+            }        }
+
+        }        
+
+        updateCartDisplay();
+
+        // Add to cart        updateSubmitButton();
+
+        window.addToCart = function(id, name, price) {      }
+
+            console.log('Adding to cart:', name, price);
+
+                  // Update cart display
+
+            const existingItem = cart.find(item => item.id === id);      function updateCartDisplay() {
+
+            if (existingItem) {        const cartContainer = document.getElementById('order-cart');
+
+                existingItem.quantity += 1;        
+
+            } else {        if (orderCart.length === 0) {
+
+                cart.push({ id, name, price, quantity: 1 });          cartContainer.innerHTML = `
+
+            }            <div class="empty-cart">
+
+                          <i class="fa-solid fa-shopping-cart"></i>
+
+            updateCartDisplay();              <p>Giỏ hàng trống</p>
+
+            updateSubmitButton();              <small>Chọn món từ menu</small>
+
+        };            </div>
+
+          `;
+
+        // Update cart display          return;
+
+        function updateCartDisplay() {        }
+
+            const cartContainer = document.getElementById('cart-container');        
+
+                    const total = orderCart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+            if (cart.length === 0) {        
+
+                cartContainer.innerHTML = `        let cartHTML = '';
+
+                    <div class="empty-cart">        orderCart.forEach(item => {
+
+                        <i class="fa-solid fa-shopping-cart"></i>          cartHTML += `
+
+                        <h3>Giỏ hàng trống</h3>            <div class="cart-item">
+
+                        <p>Chọn món từ menu để bắt đầu</p>              <div class="cart-item-info">
+
+                    </div>                <h5>${item.name}</h5>
+
+                `;                <p>${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.price)}</p>
+
+                document.getElementById('total-amount').textContent = '0 VNĐ';              </div>
+
+                return;              <div class="cart-item-controls">
+
+            }                <button onclick="decreaseQuantity('${item.id}')">-</button>
+
+                            <span>${item.quantity}</span>
+
+            let cartHTML = '';                <button onclick="increaseQuantity('${item.id}')">+</button>
+
+            let total = 0;              </div>
+
+                        </div>
+
+            cart.forEach(item => {          `;
+
+                const itemTotal = item.price * item.quantity;        });
+
+                total += itemTotal;        
+
+                        cartHTML += `
+
+                cartHTML += `          <div class="cart-total">
+
+                    <div class="cart-item">            <strong>Tổng: ${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(total)}</strong>
+
+                        <div class="cart-item-info">          </div>
+
+                            <h5 class="cart-item-name">${item.name}</h5>        `;
+
+                            <span class="cart-item-price">${new Intl.NumberFormat('vi-VN', {style: 'currency', currency: 'VND'}).format(item.price)}</span>        
+
+                        </div>        cartContainer.innerHTML = cartHTML;
+
+                        <div class="cart-item-controls">      }
+
+                            <button class="quantity-btn decrease" onclick="changeQuantity('${item.id}', -1)">
+
+                                <i class="fa-solid fa-minus"></i>      // Increase quantity
+
+                            </button>      function increaseQuantity(itemId) {
+
+                            <span class="quantity">${item.quantity}</span>        const item = orderCart.find(item => item.id === itemId);
+
+                            <button class="quantity-btn increase" onclick="changeQuantity('${item.id}', 1)">        if (item) {
+
+                                <i class="fa-solid fa-plus"></i>          item.quantity += 1;
+
+                            </button>          updateCartDisplay();
+
+                        </div>        }
+
+                    </div>      }
+
+                `;
+
+            });      // Decrease quantity
+
+                  function decreaseQuantity(itemId) {
+
+            cartContainer.innerHTML = cartHTML;        const item = orderCart.find(item => item.id === itemId);
+
+            document.getElementById('total-amount').textContent = new Intl.NumberFormat('vi-VN', {        if (item) {
+
+                style: 'currency',          if (item.quantity > 1) {
+
+                currency: 'VND'            item.quantity -= 1;
+
+            }).format(total);          } else {
+
+        }            orderCart = orderCart.filter(cartItem => cartItem.id !== itemId);
+
+          }
+
+        // Change quantity          updateCartDisplay();
+
+        window.changeQuantity = function(id, change) {          updateSubmitButton();
+
+            const item = cart.find(item => item.id === id);        }
+
+            if (item) {      }
+
+                item.quantity += change;
+
+                if (item.quantity <= 0) {      // Load tables from Firebase
+
+                    cart = cart.filter(cartItem => cartItem.id !== id);      async function loadTablesFromFirebase() {
+
+                }        const tableGrid = document.querySelector(".table-grid");
+
+                updateCartDisplay();
+
+                updateSubmitButton();        try {
+
+            }          // For now, generate sample tables (in production, load from Firebase)
+
+        };          const tables = [];
+
+          for (let i = 1; i <= 20; i++) {
+
+        // Update submit button            tables.push({
+
+        function updateSubmitButton() {              id: i,
+
+            const submitBtn = document.getElementById('submit-order');              number: i,
+
+            submitBtn.disabled = !selectedTable || cart.length === 0;              status: Math.random() > 0.8 ? "occupied" : "available",
+
+        }            });
+
+          }
+
+        // Submit order
+
+        document.getElementById('submit-order').addEventListener('click', function() {          tableGrid.innerHTML = tables
+
+            if (!selectedTable || cart.length === 0) return;            .map(
+
+                          (table) => `
+
+            alert(`Đặt hàng thành công!\\nBàn: ${selectedTable}\\nMón: ${cart.length} món\\nTổng: ${document.getElementById('total-amount').textContent}`);          <div class="table-item ${table.status}" data-table-id="${table.id}" onclick="selectTable(${table.id})">
+
+                        <i class="fa-solid fa-chair"></i>
+
+            // Reset            <span>Bàn ${table.number}</span>
+
+            cart = [];          </div>
+
+            selectedTable = null;        `
+
+            document.getElementById('selected-table').textContent = 'Chưa chọn bàn';            )
+
+            document.querySelectorAll('.table-item').forEach(item => {            .join("");
+
+                item.classList.remove('selected');        } catch (error) {
+
+            });          console.error("Error loading tables:", error);
+
+            updateCartDisplay();          tableGrid.innerHTML = "<p>Không thể tải danh sách bàn</p>";
+
+            updateSubmitButton();        }
+
+        });      }
+
+
+
+        // Make functions global      // Load categories from Firebase
+
+        window.loadMenuFromFirebase = loadMenuFromFirebase;      async function loadCategoriesFromFirebase() {
+
+    </script>        try {
+
+</body>          const categoriesCollectionRef = collection(db, "categories");
+
+</html>          const querySnapshot = await getDocs(categoriesCollectionRef);
 
           allCategories = [];
           querySnapshot.forEach((doc) => {
@@ -374,7 +1569,8 @@
             (item.description || "").toLowerCase().includes(searchTerm);
           const matchesCategory =
             !selectedCategory || item.category === selectedCategory;
-          return matchesSearch && matchesCategory && item.isAvailable;
+          // Temporary: Show all items regardless of availability for testing
+          return matchesSearch && matchesCategory;
         });
 
         // Sort items
@@ -594,14 +1790,21 @@
 
       // Menu loading functionality
       async function loadMenuFromFirebase() {
-        const menuContainer = document.getElementById(
-          "menu-categories-container"
-        );
+        console.log('🔥 Loading menu from Firebase...');
+        const menuContainer = document.getElementById("menu-categories-container");
 
         try {
-          console.log('🔥 Loading menu from Firebase...');
+          // Show loading state
+          menuContainer.innerHTML = `
+            <div class="menu-loading">
+              <i class="fa-solid fa-spinner fa-spin"></i>
+              <h3>Đang tải thực đơn...</h3>
+              <p>Vui lòng chờ trong giây lát</p>
+            </div>
+          `;
           
           // Load categories first to map categoryId to category name
+          console.log('📂 Loading categories...');
           const categoriesCollectionRef = collection(db, "categories");
           const categoriesSnapshot = await getDocs(categoriesCollectionRef);
           
@@ -613,6 +1816,7 @@
           console.log('✅ Categories loaded:', Object.keys(categoriesMap).length, 'categories');
           
           // Load menu items from Firebase
+          console.log('🍽️ Loading menu items...');
           const menuCollectionRef = collection(db, "menuItems");
           const querySnapshot = await getDocs(menuCollectionRef);
 
@@ -646,6 +1850,7 @@
           // Display all items initially and load categories for filter
           displayMenuItems(allMenuItems);
           loadCategoriesForFilter();
+          
         } catch (error) {
           console.error("❌ Error loading menu:", error);
           menuContainer.innerHTML = `
@@ -1037,9 +2242,52 @@
         }
       }
 
+      // Setup event listeners
+      function setupEventListeners() {
+        console.log('Setting up event listeners...');
+        // Add any additional event listeners here
+      }
+
+      // Update submit button
+      function updateSubmitButton() {
+        const submitBtn = document.getElementById('submit-order-btn');
+        if (submitBtn) {
+          submitBtn.disabled = orderCart.length === 0 || !selectedTable;
+        }
+      }
+
+      // Select table function
+      function selectTable(tableId) {
+        console.log('Selecting table:', tableId);
+        
+        // Remove previous selection
+        document.querySelectorAll(".table-item").forEach((item) => {
+          item.classList.remove("selected");
+        });
+
+        // Add selection to new table
+        const tableElement = document.querySelector(`[data-table-id="${tableId}"]`);
+        if (tableElement) {
+          tableElement.classList.add("selected");
+        }
+        
+        selectedTable = tableId;
+
+        // Update table info in cart
+        const tableInfo = document.getElementById("selected-table-info");
+        if (tableInfo) {
+          tableInfo.textContent = `Bàn số ${tableId}`;
+        }
+
+        updateSubmitButton();
+      }
+
       // Make functions globally available
       window.selectTable = selectTable;
       window.addToCart = addToCart;
+      window.increaseQuantity = increaseQuantity;
+      window.decreaseQuantity = decreaseQuantity;
+      window.loadMenuFromFirebase = loadMenuFromFirebase;
     </script>
   </body>
 </html>
