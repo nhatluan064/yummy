@@ -250,7 +250,7 @@
             </p>
             <!-- Filter toolbar -->
             <div class="flex flex-wrap items-end gap-4 mb-4">
-              <div class="flex-1 min-w-0">
+              <div class="basis-full">
                 <label class="block text-sm font-medium text-gray-700">Tìm món</label>
                 <input id="order-search-input" type="text" placeholder="Nhập tên món" class="border rounded px-3 py-2 w-full" />
               </div>
@@ -1116,14 +1116,15 @@
           const userSubs = document.getElementById("menu-subcategories");
           const orderSubs = document.getElementById("order-subcategories");
           const parent = categories.find((c) => c.id === selectedCategoryId);
+          // Always hide subcategory chips on the User Menu to avoid a duplicate filter row
+          if (userSubs) userSubs.innerHTML = "";
           if (!parent) {
-            userSubs.innerHTML = "";
-            orderSubs.innerHTML = "";
+            if (orderSubs) orderSubs.innerHTML = "";
             return;
           }
           // If parent has 0 or 1 subcategory, hide the Order subcategory row to avoid duplication
           if ((parent.subcategories || []).length <= 1) {
-            orderSubs.innerHTML = "";
+            if (orderSubs) orderSubs.innerHTML = "";
           }
           const subButton = (sub) =>
             `<button class="subcategory-btn ${
@@ -1133,9 +1134,9 @@
             }">${sub ? sub.name : "Tất Cả"}</button>`;
           let subsHTML = subButton(null);
           parent.subcategories.forEach((s) => (subsHTML += subButton(s)));
-          userSubs.innerHTML = subsHTML;
+          // Do not render subcategory chips on the Menu page
           // Show on Order only when there are at least 2 subcategories (avoid duplicate filters line under the main chips)
-          orderSubs.innerHTML = (parent.subcategories || []).length >= 2 ? subsHTML : "";
+          if (orderSubs) orderSubs.innerHTML = (parent.subcategories || []).length >= 2 ? subsHTML : "";
 
           document.querySelectorAll("#menu-subcategories .subcategory-btn, #order-subcategories .subcategory-btn").forEach((btn) => {
             btn.addEventListener("click", (e) => {
