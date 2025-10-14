@@ -2,10 +2,16 @@
 "use client";
 import Link from "next/link";
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const pathname = usePathname();
+
+  const isActive = (path: string) => {
+    if (path === '/') return pathname === '/';
+    return pathname.startsWith(path);
+  };
 
   return (
     <header className="bg-white/95 backdrop-blur-sm shadow-lg border-b border-neutral-200 sticky top-0 z-50">
@@ -23,73 +29,58 @@ export default function Header() {
           <nav className="hidden lg:flex items-center space-x-8">
             <Link
               href="/"
-              className="text-neutral-700 hover:text-primary-600 font-medium transition-all duration-300 relative group"
+              className={`font-medium transition-all duration-300 relative group ${
+                isActive('/') && pathname === '/' 
+                  ? 'text-primary-600' 
+                  : 'text-neutral-700 hover:text-primary-600'
+              }`}
             >
               Trang Chủ
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary-600 transition-all duration-300 group-hover:w-full"></span>
+              <span className={`absolute bottom-0 left-0 h-0.5 bg-primary-600 transition-all duration-300 ${
+                isActive('/') && pathname === '/' ? 'w-full' : 'w-0 group-hover:w-full'
+              }`}></span>
             </Link>
             
             <Link
               href="/dat-ban"
-              className="text-neutral-700 hover:text-primary-600 font-medium transition-all duration-300 relative group"
+              className={`font-medium transition-all duration-300 relative group ${
+                isActive('/dat-ban') 
+                  ? 'text-primary-600' 
+                  : 'text-neutral-700 hover:text-primary-600'
+              }`}
             >
               Đặt Bàn
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary-600 transition-all duration-300 group-hover:w-full"></span>
+              <span className={`absolute bottom-0 left-0 h-0.5 bg-primary-600 transition-all duration-300 ${
+                isActive('/dat-ban') ? 'w-full' : 'w-0 group-hover:w-full'
+              }`}></span>
             </Link>
 
-            {/* Dropdown Menu */}
-            <div 
-              className="relative group"
-              onMouseEnter={() => setIsDropdownOpen(true)}
-              onMouseLeave={() => setIsDropdownOpen(false)}
+            <Link
+              href="/thuc-don"
+              className={`font-medium transition-all duration-300 relative group ${
+                isActive('/thuc-don') 
+                  ? 'text-primary-600' 
+                  : 'text-neutral-700 hover:text-primary-600'
+              }`}
             >
-              <button className="text-neutral-700 hover:text-primary-600 font-medium transition-all duration-300 flex items-center gap-1 relative group">
-                Thực Đơn
-                <svg 
-                  className={`w-4 h-4 transition-transform duration-300 ${isDropdownOpen ? 'rotate-180' : ''}`}
-                  fill="none" 
-                  stroke="currentColor" 
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary-600 transition-all duration-300 group-hover:w-full"></span>
-              </button>
-              
-              <div className={`absolute top-full left-0 mt-2 w-56 bg-white rounded-xl shadow-2xl border border-neutral-200 overflow-hidden transition-all duration-300 ${isDropdownOpen ? 'opacity-100 visible transform translate-y-0' : 'opacity-0 invisible transform -translate-y-2'}`}>
-                <Link
-                  href="/thuc-don"
-                  className="flex items-center px-6 py-4 text-neutral-700 hover:bg-primary-50 hover:text-primary-600 transition-all duration-300 group"
-                >
-                  <span className="w-8 h-8 bg-primary-100 rounded-lg flex items-center justify-center mr-3 group-hover:bg-primary-200 transition-colors">
-                    🍜
-                  </span>
-                  <div>
-                    <div className="font-medium">Món Ăn</div>
-                    <div className="text-sm text-neutral-500">Khám phá thực đơn</div>
-                  </div>
-                </Link>
-                <Link
-                  href="/thuc-uong"
-                  className="flex items-center px-6 py-4 text-neutral-700 hover:bg-primary-50 hover:text-primary-600 transition-all duration-300 group"
-                >
-                  <span className="w-8 h-8 bg-primary-100 rounded-lg flex items-center justify-center mr-3 group-hover:bg-primary-200 transition-colors">
-                    🥤
-                  </span>
-                  <div>
-                    <div className="font-medium">Nước Uống</div>
-                    <div className="text-sm text-neutral-500">Đồ uống thơm ngon</div>
-                  </div>
-                </Link>
-              </div>
-            </div>
+              Thực Đơn
+              <span className={`absolute bottom-0 left-0 h-0.5 bg-primary-600 transition-all duration-300 ${
+                isActive('/thuc-don') ? 'w-full' : 'w-0 group-hover:w-full'
+              }`}></span>
+            </Link>
 
             <Link
               href="/lien-he"
-              className="text-neutral-700 hover:text-primary-600 font-medium transition-all duration-300 relative group"
+              className={`font-medium transition-all duration-300 relative group ${
+                isActive('/lien-he') 
+                  ? 'text-primary-600' 
+                  : 'text-neutral-700 hover:text-primary-600'
+              }`}
             >
               Liên Hệ
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary-600 transition-all duration-300 group-hover:w-full"></span>
+              <span className={`absolute bottom-0 left-0 h-0.5 bg-primary-600 transition-all duration-300 ${
+                isActive('/lien-he') ? 'w-full' : 'w-0 group-hover:w-full'
+              }`}></span>
             </Link>
           </nav>
 
@@ -132,35 +123,44 @@ export default function Header() {
           <nav className="flex flex-col space-y-4 pt-4 border-t border-neutral-200">
             <Link
               href="/"
-              className="text-neutral-700 hover:text-primary-600 font-medium transition-colors py-2"
+              className={`font-medium transition-colors py-2 ${
+                isActive('/') && pathname === '/' 
+                  ? 'text-primary-600' 
+                  : 'text-neutral-700 hover:text-primary-600'
+              }`}
               onClick={() => setIsMenuOpen(false)}
             >
               🏠 Trang Chủ
             </Link>
             <Link
               href="/dat-ban"
-              className="text-neutral-700 hover:text-primary-600 font-medium transition-colors py-2"
+              className={`font-medium transition-colors py-2 ${
+                isActive('/dat-ban') 
+                  ? 'text-primary-600' 
+                  : 'text-neutral-700 hover:text-primary-600'
+              }`}
               onClick={() => setIsMenuOpen(false)}
             >
               📅 Đặt Bàn
             </Link>
             <Link
               href="/thuc-don"
-              className="text-neutral-700 hover:text-primary-600 font-medium transition-colors py-2"
+              className={`font-medium transition-colors py-2 ${
+                isActive('/thuc-don') 
+                  ? 'text-primary-600' 
+                  : 'text-neutral-700 hover:text-primary-600'
+              }`}
               onClick={() => setIsMenuOpen(false)}
             >
-              🍜 Món Ăn
-            </Link>
-            <Link
-              href="/thuc-uong"
-              className="text-neutral-700 hover:text-primary-600 font-medium transition-colors py-2"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              🥤 Nước Uống
+              🍜 Thực Đơn
             </Link>
             <Link
               href="/lien-he"
-              className="text-neutral-700 hover:text-primary-600 font-medium transition-colors py-2"
+              className={`font-medium transition-colors py-2 ${
+                isActive('/lien-he') 
+                  ? 'text-primary-600' 
+                  : 'text-neutral-700 hover:text-primary-600'
+              }`}
               onClick={() => setIsMenuOpen(false)}
             >
               📞 Liên Hệ

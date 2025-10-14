@@ -1,52 +1,33 @@
-// src/app/thuc-uong/page.tsx
-import MenuItem from "@/app/components/MenuItem";
+'use client';
 
-const drinksData = [
-  {
-    id: 1,
-    name: "Cà Phê Sữa Đá",
-    description: "Cà phê Robusta đậm đà cùng sữa đặc, thức uống truyền thống của Việt Nam",
-    price: 25000,
-    imageUrl: "https://via.placeholder.com/400x256/8B4513/ffffff?text=C%C3%A0+Ph%C3%AA",
-  },
-  {
-    id: 2,
-    name: "Trà Đào Cam Sả",
-    description: "Thanh mát, giải nhiệt với miếng đào giòn, cam tươi và sả thơm",
-    price: 35000,
-    imageUrl: "https://via.placeholder.com/400x256/FF8C00/ffffff?text=Tr%C3%A0+%C4%90%C3%A0o",
-  },
-  {
-    id: 3,
-    name: "Nước Ép Dứa",
-    description: "Tươi ngon, nguyên chất từ dứa tươi, giàu vitamin C",
-    price: 30000,
-    imageUrl: "https://via.placeholder.com/400x256/FFD700/000000?text=N%C6%B0%E1%BB%9Bc+%C4%90%E1%BB%A9a",
-  },
-  {
-    id: 4,
-    name: "Sinh Tố Bơ",
-    description: "Béo ngậy, sánh mịn, tốt cho sức khỏe với bơ tươi nguyên chất",
-    price: 40000,
-    imageUrl: "https://via.placeholder.com/400x256/90EE90/000000?text=Sinh+T%E1%BB%91+B%C6%A1",
-  },
-  {
-    id: 5,
-    name: "Nước Chanh Dây",
-    description: "Chua ngọt tự nhiên, giải khát tuyệt vời cho ngày nắng nóng",
-    price: 28000,
-    imageUrl: "https://via.placeholder.com/400x256/32CD32/000000?text=Chanh+D%C3%A2y",
-  },
-  {
-    id: 6,
-    name: "Trà Sữa Trân Châu",
-    description: "Thơm ngon với trà sữa thơm béo và trân châu dai giòn",
-    price: 45000,
-    imageUrl: "https://via.placeholder.com/400x256/D2691E/ffffff?text=Tr%C3%A0+S%E1%BB%AFa",
-  }
-];
+import { useState, useEffect } from 'react';
+import MenuItem from "@/app/components/MenuItem";
+import { getAvailableMenuItemsByCategory } from '@/lib/menuData';
+
+interface DrinkItemData {
+  id: number;
+  name: string;
+  description: string;
+  price: number;
+  imageUrl: string;
+}
 
 export default function DrinksMenuPage() {
+  const [drinksData, setDrinksData] = useState<DrinkItemData[]>([]);
+
+  useEffect(() => {
+    // Load only drinks (nuoc-uong category) from shared data
+    const items = getAvailableMenuItemsByCategory('nuoc-uong');
+    // Transform to match MenuItem component props
+    const transformedItems = items.map(item => ({
+      id: item.id,
+      name: item.name,
+      description: item.description,
+      price: item.price,
+      imageUrl: item.image,
+    }));
+    setDrinksData(transformedItems);
+  }, []);
   return (
     <div className="min-h-screen bg-neutral-50">
       {/* Hero Section */}

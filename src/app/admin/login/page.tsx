@@ -1,6 +1,6 @@
 // src/app/admin/login/page.tsx
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
@@ -13,6 +13,15 @@ export default function AdminLoginPage() {
   const [error, setError] = useState('');
   const router = useRouter();
 
+  // Check if already logged in
+  useEffect(() => {
+    const adminToken = localStorage.getItem('adminToken');
+    if (adminToken) {
+      // Already logged in, redirect to dashboard
+      router.push('/admin/dashboard');
+    }
+  }, [router]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -21,7 +30,18 @@ export default function AdminLoginPage() {
     // Simulate login (replace with actual API call)
     setTimeout(() => {
       if (formData.username === 'admin' && formData.password === 'admin123') {
-        alert('Đăng nhập thành công!');
+        // Save authentication token
+        localStorage.setItem('adminToken', 'demo-admin-token-' + Date.now());
+        localStorage.setItem('adminUser', JSON.stringify({
+          username: 'admin',
+          email: 'admin@restaurant.com',
+          name: 'Admin User'
+        }));
+        
+        // Show success message
+        alert('✅ Đăng nhập thành công!');
+        
+        // Redirect to dashboard
         router.push('/admin/dashboard');
       } else {
         setError('Tên đăng nhập hoặc mật khẩu không đúng!');
@@ -39,7 +59,7 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-emerald-600 via-teal-600 to-cyan-600 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-secondary-600 via-primary-600 to-secondary-700 relative overflow-hidden">
       {/* Animated Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute w-96 h-96 bg-white/10 rounded-full blur-3xl -top-48 -left-48 animate-float" />
@@ -50,7 +70,7 @@ export default function AdminLoginPage() {
       <div className="relative w-full max-w-md mx-4 animate-fade-in-up">
         <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
           {/* Header Section */}
-          <div className="bg-gradient-accent text-white p-8 text-center relative">
+          <div className="bg-gradient-to-br from-secondary-600 to-primary-600 text-white p-8 text-center relative">
             <div className="absolute inset-0 bg-black/10" />
             <div className="relative">
               <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-4">
@@ -140,7 +160,7 @@ export default function AdminLoginPage() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full btn-accent text-lg py-4 disabled:opacity-50 disabled:cursor-not-allowed relative"
+                className="w-full btn-primary text-lg py-4 disabled:opacity-50 disabled:cursor-not-allowed relative"
               >
                 {isLoading ? (
                   <div className="flex items-center justify-center space-x-2">
@@ -162,11 +182,11 @@ export default function AdminLoginPage() {
             </form>
 
             {/* Demo Credentials Info */}
-            <div className="mt-6 p-4 bg-accent-50 border border-accent-300 rounded-lg">
+            <div className="mt-6 p-4 bg-primary-50 border border-primary-200 rounded-lg">
               <p className="text-sm text-secondary-700 font-medium mb-2">🔑 Demo Credentials:</p>
               <div className="text-xs text-secondary-600 space-y-1">
-                <p>Username: <span className="font-mono bg-accent-100 px-2 py-1 rounded">admin</span></p>
-                <p>Password: <span className="font-mono bg-accent-100 px-2 py-1 rounded">admin123</span></p>
+                <p>Username: <span className="font-mono bg-primary-100 px-2 py-1 rounded">admin</span></p>
+                <p>Password: <span className="font-mono bg-primary-100 px-2 py-1 rounded">admin123</span></p>
               </div>
             </div>
           </div>
