@@ -37,9 +37,9 @@ export default function DatBanPage() {
         "Cảm ơn bạn! Chúng tôi sẽ liên hệ xác nhận đặt bàn trong thời gian sớm nhất.",
         2500
       );
-    } catch (err: any) {
+    } catch (err) {
       toast.showToast(
-        "Đặt bàn thất bại: " + (err?.message || "Lỗi không xác định"),
+        "Đặt bàn thất bại: " + (err instanceof Error ? err.message : "Lỗi không xác định"),
         3000
       );
     }
