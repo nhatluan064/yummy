@@ -1,6 +1,9 @@
 // src/app/dat-ban/page.tsx
 "use client";
 import { useState } from "react";
+import { useToast } from "@/app/components/Toast";
+import { reservationService } from "@/lib/reservation.service";
+import { Timestamp } from "firebase/firestore";
 
 export default function DatBanPage() {
   const [formData, setFormData] = useState({
@@ -8,18 +11,38 @@ export default function DatBanPage() {
     phone: "",
     email: "",
     date: "",
-    time: "",
     guests: "",
     notes: "",
   });
+  const [timeData, setTimeData] = useState({
+    hour: "",
+    minute: "",
+    period: "SA",
+  });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const toast = useToast();
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission here
-    console.log("Booking data:", formData);
-    alert(
-      "Cảm ơn bạn! Chúng tôi sẽ liên hệ xác nhận đặt bàn trong thời gian sớm nhất."
-    );
+    try {
+      await reservationService.createReservation({
+        customerName: formData.name,
+        customerPhone: formData.phone,
+        numberOfGuests: Number(formData.guests) || 1,
+        reservationDate: Timestamp.fromDate(new Date(formData.date)),
+        reservationTime: getReservationTime(),
+        notes: formData.notes,
+      });
+      toast.showToast(
+        "Cảm ơn bạn! Chúng tôi sẽ liên hệ xác nhận đặt bàn trong thời gian sớm nhất.",
+        2500
+      );
+    } catch (err: any) {
+      toast.showToast(
+        "Đặt bàn thất bại: " + (err?.message || "Lỗi không xác định"),
+        3000
+      );
+    }
   };
 
   const handleChange = (
@@ -31,6 +54,18 @@ export default function DatBanPage() {
       ...formData,
       [e.target.name]: e.target.value,
     });
+  };
+
+  const handleTimeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setTimeData({ ...timeData, [e.target.name]: e.target.value });
+  };
+
+  // Khi submit, ghép lại thành giờ chuẩn 24h
+  const getReservationTime = () => {
+    let hour = parseInt(timeData.hour || "0", 10);
+    if (timeData.period === "CH" && hour < 12) hour += 12;
+    if (timeData.period === "SA" && hour === 12) hour = 0;
+    return `${hour.toString().padStart(2, "0")}:${timeData.minute || "00"}`;
   };
 
   return (
@@ -140,28 +175,68 @@ export default function DatBanPage() {
                       >
                         Giờ Đặt *
                       </label>
-                      <select
-                        id="time"
-                        name="time"
-                        value={formData.time}
-                        onChange={handleChange}
-                        className="w-full px-4 py-3 border border-neutral-300 rounded-lg bg-white text-neutral-900 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors"
-                        required
-                      >
-                        <option value="">Chọn giờ</option>
-                        <option value="11:00">11:00</option>
-                        <option value="11:30">11:30</option>
-                        <option value="12:00">12:00</option>
-                        <option value="12:30">12:30</option>
-                        <option value="13:00">13:00</option>
-                        <option value="17:30">17:30</option>
-                        <option value="18:00">18:00</option>
-                        <option value="18:30">18:30</option>
-                        <option value="19:00">19:00</option>
-                        <option value="19:30">19:30</option>
-                        <option value="20:00">20:00</option>
-                        <option value="20:30">20:30</option>
-                      </select>
+                      <div className="flex space-x-2">
+                        <select
+                          id="hour"
+                          name="hour"
+                          value={timeData.hour}
+                          onChange={handleTimeChange}
+                          className="w-1/3 px-4 py-3 border border-neutral-300 rounded-lg bg-white text-neutral-900 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors"
+                          required
+                        >
+                          <option value="">Giờ</option>
+                          {Array.from({ length: 12 }, (_, i) => {
+                            const h = i + 1;
+                            return (
+                              <option
+                                key={h}
+                                value={h.toString().padStart(2, "0")}
+                              >
+                                {h.toString().padStart(2, "0")}
+                              </option>
+                            );
+                          })}
+                        </select>
+                        <select
+                          id="minute"
+                          name="minute"
+                          value={timeData.minute}
+                          onChange={handleTimeChange}
+                          className="w-1/3 px-4 py-3 border border-neutral-300 rounded-lg bg-white text-neutral-900 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors"
+                          required
+                        >
+                          <option value="">Phút</option>
+                          {[
+                            "00",
+                            "05",
+                            "10",
+                            "15",
+                            "20",
+                            "25",
+                            "30",
+                            "35",
+                            "40",
+                            "45",
+                            "50",
+                            "55",
+                          ].map((m) => (
+                            <option key={m} value={m}>
+                              {m}
+                            </option>
+                          ))}
+                        </select>
+                        <select
+                          id="period"
+                          name="period"
+                          value={timeData.period}
+                          onChange={handleTimeChange}
+                          className="w-1/3 px-4 py-3 border border-neutral-300 rounded-lg bg-white text-neutral-900 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors"
+                          required
+                        >
+                          <option value="SA">SA</option>
+                          <option value="CH">CH</option>
+                        </select>
+                      </div>
                     </div>
                   </div>
 
@@ -236,16 +311,17 @@ export default function DatBanPage() {
 
             {/* Restaurant Info */}
             <div className="animate-fade-in-right space-y-8">
-              {/* Contact Info */}
-              <div className="card p-6">
-                <h3 className="text-xl font-bold text-neutral-800 mb-4">
+              {/* Contact Info - giống trang Liên hệ */}
+              <div className="card p-8">
+                <h2 className="text-2xl font-bold text-neutral-800 mb-6">
                   Thông Tin Liên Hệ
-                </h3>
-                <div className="space-y-4">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center">
+                </h2>
+                <div className="space-y-6">
+                  <div className="flex items-start space-x-4">
+                    <div className="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center flex-shrink-0">
+                      {/* icon địa chỉ */}
                       <svg
-                        className="w-5 h-5 text-primary-600"
+                        className="w-6 h-6 text-primary-600"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -265,17 +341,19 @@ export default function DatBanPage() {
                       </svg>
                     </div>
                     <div>
-                      <p className="font-medium text-neutral-800">Địa Chỉ</p>
-                      <p className="text-neutral-600 text-sm">
-                        123 Đường ABC, Phường XYZ, Quận 1, TP.HCM
+                      <h3 className="font-bold text-neutral-800 mb-1">
+                        Địa Chỉ
+                      </h3>
+                      <p className="text-neutral-600">
+                        588/6 Hà Huy Tập, Phường Bà Rịa, HCM
                       </p>
                     </div>
                   </div>
-
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center">
+                  <div className="flex items-start space-x-4">
+                    <div className="w-12 h-12 bg-accent-200 rounded-full flex items-center justify-center flex-shrink-0">
+                      {/* icon điện thoại */}
                       <svg
-                        className="w-5 h-5 text-primary-600"
+                        className="w-6 h-6 text-primary-600"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -289,20 +367,76 @@ export default function DatBanPage() {
                       </svg>
                     </div>
                     <div>
-                      <p className="font-medium text-neutral-800">Hotline</p>
+                      <h3 className="font-bold text-neutral-800 mb-1">
+                        Hotline
+                      </h3>
                       <a
-                        href="tel:+84123456789"
-                        className="text-primary-600 hover:text-primary-700 text-sm"
+                        href="tel:0988994799"
+                        className="text-primary-600 hover:text-primary-700"
                       >
-                        +84 123 456 789
+                        0988 994 799
                       </a>
                     </div>
                   </div>
-
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center">
+                  <div className="flex items-start space-x-4">
+                    <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                      {/* icon Facebook */}
                       <svg
-                        className="w-5 h-5 text-primary-600"
+                        className="w-6 h-6 text-blue-600"
+                        fill="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-neutral-800 mb-1">
+                        Facebook
+                      </h3>
+                      <a
+                        href="https://facebook.com/dieu.hien"
+                        className="text-primary-600 hover:text-primary-700"
+                      >
+                        Diệu Hiền
+                      </a>
+                    </div>
+                  </div>
+                  <div className="flex items-start space-x-4">
+                    <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                      {/* icon Zalo */}
+                      <svg
+                        className="w-6 h-6 text-green-600"
+                        fill="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle cx="12" cy="12" r="12" />
+                        <text
+                          x="12"
+                          y="16"
+                          textAnchor="middle"
+                          fontSize="10"
+                          fill="#fff"
+                          fontFamily="Arial"
+                        >
+                          Zalo
+                        </text>
+                      </svg>
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-neutral-800 mb-1">Zalo</h3>
+                      <a
+                        href="https://zalo.me/0988994799"
+                        className="text-primary-600 hover:text-primary-700"
+                      >
+                        0988 994 799
+                      </a>
+                    </div>
+                  </div>
+                  <div className="flex items-start space-x-4">
+                    <div className="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center flex-shrink-0">
+                      {/* icon giờ hoạt động */}
+                      <svg
+                        className="w-6 h-6 text-primary-600"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -316,21 +450,18 @@ export default function DatBanPage() {
                       </svg>
                     </div>
                     <div>
-                      <p className="font-medium text-neutral-800">
+                      <h3 className="font-bold text-neutral-800 mb-1">
                         Giờ Hoạt Động
-                      </p>
-                      <p className="text-neutral-600 text-sm">
-                        7:00 - 22:00 (Thứ 2 - Thứ 6)
-                      </p>
-                      <p className="text-neutral-600 text-sm">
-                        6:30 - 23:00 (Cuối tuần)
+                      </h3>
+                      <p className="text-neutral-600">
+                        Từ Thứ 2 tới Chủ nhật: 7h30 Sáng - 20h00 Tối
                       </p>
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* Special Notes */}
+              {/* Special Notes giữ nguyên */}
               <div className="card p-6 bg-accent-50 border-accent-300">
                 <h3 className="text-lg font-bold text-secondary-700 mb-3">
                   Lưu Ý Quan Trọng

@@ -13,7 +13,10 @@ export default function ProtectedAdminLayout({
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const pathname = usePathname();
   const router = useRouter();
-  const [adminUser, setAdminUser] = useState<{ name: string; email: string } | null>(null);
+  const [adminUser, setAdminUser] = useState<{
+    name: string;
+    email: string;
+  } | null>(null);
   const [clock, setClock] = useState<string>("");
 
   useEffect(() => {
@@ -30,21 +33,21 @@ export default function ProtectedAdminLayout({
             localStorage.setItem(
               "adminUser",
               JSON.stringify({
-                name: user.displayName || user.email?.split('@')[0] || "Admin",
+                name: user.displayName || user.email?.split("@")[0] || "Admin",
                 email: user.email || "admin@restaurant.com",
                 uid: user.uid,
               })
             );
             setAdminUser({
-              name: user.displayName || user.email?.split('@')[0] || "Admin",
-              email: user.email || "admin@restaurant.com"
+              name: user.displayName || user.email?.split("@")[0] || "Admin",
+              email: user.email || "admin@restaurant.com",
             });
           }
         });
 
         return unsubscribe;
       } catch (error) {
-        console.error('Auth check error:', error);
+        console.error("Auth check error:", error);
         router.replace("/admin/login");
       }
     };
@@ -54,19 +57,38 @@ export default function ProtectedAdminLayout({
     // Cleanup
     return () => {
       if (unsubscribe) {
-        unsubscribe.then(fn => fn?.());
+        unsubscribe.then((fn) => fn?.());
       }
     };
   }, [router]);
+
+  useEffect(() => {
+    // Khi mount, nếu đã có adminUser trong localStorage thì lấy ra luôn
+    const raw = localStorage.getItem("adminUser");
+    if (raw) {
+      try {
+        const user = JSON.parse(raw);
+        setAdminUser({ name: user.name, email: user.email });
+      } catch {}
+    }
+  }, []);
 
   useEffect(() => {
     // Real-time clock
     const updateClock = () => {
       const now = new Date();
       setClock(
-        now.toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit", second: "2-digit" }) +
-        " - " +
-        now.toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" })
+        now.toLocaleTimeString("vi-VN", {
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+        }) +
+          " - " +
+          now.toLocaleDateString("vi-VN", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+          })
       );
     };
     updateClock();
@@ -274,8 +296,12 @@ export default function ProtectedAdminLayout({
               </span>
             </div>
             <div className="flex-1">
-              <p className="text-white font-medium text-sm">{adminUser?.name || "Admin User"}</p>
-              <p className="text-accent-200 text-xs">{adminUser?.email || "admin@restaurant.com"}</p>
+              <p className="text-white font-medium text-sm">
+                {adminUser?.name || "Admin User"}
+              </p>
+              <p className="text-accent-200 text-xs">
+                {adminUser?.email || "admin@restaurant.com"}
+              </p>
             </div>
             <button
               onClick={() => {
@@ -393,7 +419,8 @@ export default function ProtectedAdminLayout({
               </Link>
             </div>
           </div>
-        </header>        {/* Page Content */}
+        </header>{" "}
+        {/* Page Content */}
         <main className="p-6">{children}</main>
       </div>
     </div>

@@ -4,8 +4,12 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { getAuthClient } from "@/lib/sdk";
-import { signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
+import {
+  signInWithEmailAndPassword,
+  sendPasswordResetEmail,
+} from "firebase/auth";
 import type { FirebaseError } from "firebase/app";
+import { useToast } from "@/app/components/Toast";
 
 export default function AdminLoginPage() {
   const [formData, setFormData] = useState({
@@ -15,6 +19,7 @@ export default function AdminLoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
+  const toast = useToast();
 
   // Check if already logged in
   useEffect(() => {
@@ -33,7 +38,11 @@ export default function AdminLoginPage() {
     try {
       const auth = await getAuthClient();
       const email = formData.email.trim();
-      const cred = await signInWithEmailAndPassword(auth, email, formData.password);
+      const cred = await signInWithEmailAndPassword(
+        auth,
+        email,
+        formData.password
+      );
       const user = cred.user;
       // Persist local admin token for existing guard
       localStorage.setItem("adminToken", `firebase-${user.uid}`);
@@ -46,8 +55,10 @@ export default function AdminLoginPage() {
           uid: user.uid,
         })
       );
-      alert("✅ Đăng nhập thành công!");
-      router.push("/admin/dashboard");
+      toast.showToast("✅ Đăng nhập thành công!", 1800);
+      setTimeout(() => {
+        router.push("/admin/dashboard");
+      }, 1800);
     } catch (err: unknown) {
       console.error(err);
       setError(formatSignInError(err as FirebaseError));
@@ -95,7 +106,9 @@ export default function AdminLoginPage() {
       alert("Đã gửi email đặt lại mật khẩu. Vui lòng kiểm tra hộp thư.");
     } catch (err) {
       console.error(err);
-      setError("Không thể gửi email đặt lại mật khẩu. Hãy kiểm tra email hoặc cấu hình Firebase.");
+      setError(
+        "Không thể gửi email đặt lại mật khẩu. Hãy kiểm tra email hoặc cấu hình Firebase."
+      );
     }
   };
 
@@ -114,20 +127,11 @@ export default function AdminLoginPage() {
           <div className="bg-gradient-to-br from-secondary-600 to-primary-600 text-white p-8 text-center relative">
             <div className="absolute inset-0 bg-black/10" />
             <div className="relative">
-              <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg
-                  className="w-10 h-10"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                  />
-                </svg>
+              {/* Logo Admin: Chữ cái đầu trong vòng tròn */}
+              <div className="w-20 aspect-square min-w-min flex-shrink-0 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-4xl font-bold text-white select-none">
+                  {formData.email?.trim()?.charAt(0)?.toUpperCase() || "A"}
+                </span>
               </div>
               <h1 className="text-3xl font-bold mb-2">🔐 Admin Login</h1>
               <p className="text-white/90">Đăng nhập để quản lý hệ thống</p>
@@ -238,7 +242,11 @@ export default function AdminLoginPage() {
                     Ghi nhớ đăng nhập
                   </span>
                 </label>
-                <button type="button" onClick={handleForgotPassword} className="text-sm text-primary-600 hover:text-primary-700 font-medium">
+                <button
+                  type="button"
+                  onClick={handleForgotPassword}
+                  className="text-sm text-primary-600 hover:text-primary-700 font-medium"
+                >
                   Quên mật khẩu?
                 </button>
               </div>
@@ -293,48 +301,43 @@ export default function AdminLoginPage() {
               </button>
             </form>
 
-            {/* Register Link */}
-            <div className="mt-6 p-4 bg-primary-50 border border-primary-200 rounded-lg">
-              <p className="text-sm text-secondary-700 font-medium mb-2">Chưa có tài khoản?</p>
-              <Link href="/admin/register" className="inline-flex items-center text-primary-600 hover:text-primary-700 font-medium">
-                Tạo tài khoản Admin
-                <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            {/* Back to Home Link */}
+            <div className="text-center mt-6">
+              <Link
+                href="/"
+                className="inline-flex items-center space-x-2 text-white hover:text-white/90 font-medium transition-colors"
+              >
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M10 19l-7-7m0 0l7-7m-7 7h18"
+                  />
                 </svg>
+                <span>Quay lại trang chủ</span>
               </Link>
             </div>
+
+            {/* Dev-only environment info to verify Firebase project */}
+            {process.env.NODE_ENV !== "production" && (
+              <div className="mt-4 text-center text-xs text-white/80">
+                Firebase project:{" "}
+                <strong>
+                  {process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || "N/A"}
+                </strong>{" "}
+                •{" "}
+                {process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN ||
+                  "no authDomain"}
+              </div>
+            )}
           </div>
         </div>
-
-        {/* Back to Home Link */}
-        <div className="text-center mt-6">
-          <Link
-            href="/"
-            className="inline-flex items-center space-x-2 text-white hover:text-white/90 font-medium transition-colors"
-          >
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M10 19l-7-7m0 0l7-7m-7 7h18"
-              />
-            </svg>
-            <span>Quay lại trang chủ</span>
-          </Link>
-        </div>
-
-        {/* Dev-only environment info to verify Firebase project */}
-        {process.env.NODE_ENV !== 'production' && (
-          <div className="mt-4 text-center text-xs text-white/80">
-            Firebase project: <strong>{process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || 'N/A'}</strong> • {process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || 'no authDomain'}
-          </div>
-        )}
       </div>
     </div>
   );

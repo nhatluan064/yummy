@@ -26,11 +26,11 @@ export function ToastProvider({ children }: { children?: React.ReactNode }) {
     <ToastContext.Provider value={{ showToast }}>
       {children}
       {/* Portal container */}
-      <div className="fixed z-[9999] bottom-4 right-4 flex flex-col gap-2">
+      <div className="fixed inset-0 z-[9999] flex items-center justify-center pointer-events-none">
         {toasts.map((t) => (
           <div
             key={t.id}
-            className="max-w-[360px] px-4 py-3 rounded-lg shadow-lg bg-primary-600 text-white text-sm animate-slide-in"
+            className="pointer-events-auto max-w-[90vw] w-full sm:w-[400px] px-6 py-5 rounded-2xl shadow-2xl bg-primary-600 text-white text-base font-semibold text-center animate-fade-in-up"
             role="status"
             aria-live="polite"
           >
