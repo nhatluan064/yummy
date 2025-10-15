@@ -14,6 +14,11 @@ class ReservationService extends FirestoreService<TableReservation> {
 
   async confirm(id: string) { return this.update(id, { status: 'confirmed' }); }
   async cancel(id: string) { return this.update(id, { status: 'cancelled' }); }
+
+  async getByTableId(tableId: string) {
+    const list = await this.getAll([this.by('tableNumber', '==', tableId)]);
+    return list[0] ?? null;
+  }
 }
 
 export const reservationService = new ReservationService();

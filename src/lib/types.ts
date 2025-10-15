@@ -4,6 +4,7 @@ export interface MenuItem {
   id?: string;
   name: string;
   category: 'food' | 'drink' | string; // keep string to be flexible with existing categories
+  categoryName?: string; // Display name for category
   price: number;
   description?: string;
   image?: string;
@@ -13,6 +14,7 @@ export interface MenuItem {
   prepTime?: string;
   rating?: number;
   reviewCount?: number;
+  reviews?: Review[];
   createdAt?: Timestamp;
   updatedAt?: Timestamp;
 }
@@ -67,6 +69,23 @@ export interface Feedback {
   comment: string;
   createdAt?: Timestamp;
   updatedAt?: Timestamp;
+}
+
+export interface Category {
+  id?: string;
+  name: string;
+  icon: string;
+  order?: number;
+  createdAt?: Timestamp;
+  updatedAt?: Timestamp;
+}
+
+export interface Review {
+  id?: string;
+  customerName: string;
+  rating: number;
+  comment: string;
+  createdAt?: Timestamp;
 }
 
 export interface TableReservation {

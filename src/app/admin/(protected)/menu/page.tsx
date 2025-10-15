@@ -2,48 +2,73 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import {
-  getMenuItems,
-  updateMenuItems,
-  getCategories,
-  addCategory,
-  updateCategory,
-  deleteCategory,
-  type MenuItem,
-  type Category,
-} from "@/lib/menuData";
+import { menuService } from "@/lib/menu.service";
+import { categoryService } from "@/lib/category.service";
+import { MenuItem, Category } from "@/lib/types";
+import { getAuthClient } from "@/lib/firebase";
 
 export default function MenuManagementPage() {
   // Tab state
-  const [activeTab, setActiveTab] = useState<"menu" | "category">("menu");
+  const [activeTab, setActiveTab] = useState("menu");
 
-  // Get menu items and categories from shared data
+  // Firestore-backed menu and category state
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
 
   useEffect(() => {
-    // Load menu items and categories on mount
-    setMenuItems(getMenuItems());
-    setCategories(getCategories());
-  }, []);
+    const checkAuthAndFetchData = async () => {
+      try {
+        const auth = await getAuthClient();
 
-  // Update shared data whenever menuItems change
-  useEffect(() => {
-    if (menuItems.length > 0) {
-      updateMenuItems(menuItems);
-    }
-  }, [menuItems]);
+        // Listen for auth state changes
+        const unsubscribe = auth.onAuthStateChanged(async (user) => {
+          if (!user) {
+            alert("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại!");
+            window.location.href = "/admin/login";
+            return;
+          }
+
+          // User is authenticated, fetch data
+          try {
+            const [menu, cats] = await Promise.all([
+              menuService.getAll(),
+              categoryService.getAll(),
+            ]);
+            setMenuItems(menu);
+            setCategories(cats);
+          } catch (error) {
+            console.error('Error fetching data:', error);
+            alert("Lỗi khi tải dữ liệu: " + String(error));
+          }
+        });
+
+        return unsubscribe;
+      } catch (error) {
+        console.error('Auth initialization error:', error);
+        alert("Lỗi khởi tạo xác thực. Vui lòng đăng nhập lại!");
+        window.location.href = "/admin/login";
+      }
+    };
+
+    const unsubscribe = checkAuthAndFetchData();
+
+    // Cleanup
+    return () => {
+      if (unsubscribe) {
+        unsubscribe.then(fn => fn?.());
+      }
+    };
+  }, []);
 
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedDish, setSelectedDish] = useState<MenuItem | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showCategoryModal, setShowCategoryModal] = useState(false);
-  const [selectedCategoryEdit, setSelectedCategoryEdit] =
-    useState<Category | null>(null);
+  const [selectedCategoryEdit, setSelectedCategoryEdit] = useState<Category | null>(null);
   const [formData, setFormData] = useState({
     name: "",
-    category: "mon-an",
+    category: "",
     price: "",
     description: "",
     image: "",
@@ -102,7 +127,7 @@ export default function MenuManagementPage() {
   const openAddModal = () => {
     setFormData({
       name: "",
-      category: "mon-an",
+      category: categories.length > 0 ? categories[0].id || "" : "",
       price: "",
       description: "",
       image: "",
@@ -121,11 +146,11 @@ export default function MenuManagementPage() {
       name: dish.name,
       category: dish.category,
       price: dish.price.toString(),
-      description: dish.description,
-      image: dish.image,
-      prepTime: dish.prepTime,
-      popular: dish.popular,
-      bestSeller: dish.bestSeller,
+      description: dish.description || "",
+      image: dish.image || "",
+      prepTime: dish.prepTime || "",
+      popular: dish.popular || false,
+      bestSeller: dish.bestSeller || false,
       available: dish.available,
     });
     setSelectedDish(dish);
@@ -139,98 +164,90 @@ export default function MenuManagementPage() {
   };
 
   // Save dish (Add or Update)
-  const saveDish = () => {
+  const saveDish = async () => {
     if (!formData.name || !formData.price || !formData.description) {
       alert("Vui lòng điền đầy đủ thông tin!");
       return;
     }
-
     if (categories.length === 0) {
       alert("Vui lòng tạo danh mục trước khi thêm món!");
       return;
     }
-
     const selectedCat = categories.find((cat) => cat.id === formData.category);
     const categoryName = selectedCat?.name || formData.category;
-
-    if (selectedDish) {
-      // Update existing dish
-      setMenuItems((prev) =>
-        prev.map((item) =>
-          item.id === selectedDish.id
-            ? {
-                ...item,
-                name: formData.name,
-                category: formData.category,
-                categoryName,
-                price: parseInt(formData.price),
-                description: formData.description,
-                image: formData.image || item.image,
-                prepTime: formData.prepTime,
-                popular: formData.popular,
-                bestSeller: formData.bestSeller,
-                available: formData.available,
-              }
-            : item
-        )
-      );
-      alert(`✅ Đã cập nhật món "${formData.name}"!`);
-    } else {
-      // Add new dish
-      const newDish: MenuItem = {
-        id:
-          menuItems.length > 0
-            ? Math.max(...menuItems.map((i) => i.id)) + 1
-            : 1,
-        name: formData.name,
-        category: formData.category,
-        categoryName,
-        price: parseInt(formData.price),
-        description: formData.description,
-        image:
-          formData.image ||
-          "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400",
-        prepTime: formData.prepTime,
-        popular: formData.popular,
-        bestSeller: formData.bestSeller,
-        available: formData.available,
-        rating: 0,
-        reviewCount: 0,
-        reviews: [],
-      };
-      setMenuItems((prev) => [...prev, newDish]);
-      alert(`✅ Đã thêm món "${formData.name}"!`);
+    try {
+      if (selectedDish) {
+        // Update Firestore
+        await menuService.update(selectedDish!.id!, {
+          ...selectedDish,
+          name: formData.name,
+          category: formData.category,
+          categoryName,
+          price: parseInt(formData.price),
+          description: formData.description,
+          image: formData.image || selectedDish.image,
+          prepTime: formData.prepTime,
+          popular: formData.popular,
+          bestSeller: formData.bestSeller,
+          available: formData.available,
+        });
+        alert(`✅ Đã cập nhật món "${formData.name}"!`);
+      } else {
+        // Add new dish to Firestore
+        await menuService.createMenuItem({
+          name: formData.name,
+          category: formData.category,
+          categoryName,
+          price: parseInt(formData.price),
+          description: formData.description,
+          image:
+            formData.image ||
+            "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400",
+          prepTime: formData.prepTime,
+          popular: formData.popular,
+          bestSeller: formData.bestSeller,
+          available: formData.available,
+          rating: 0,
+          reviewCount: 0,
+          reviews: [],
+        });
+        alert(`✅ Đã thêm món "${formData.name}"!`);
+      }
+      // Refresh menu items
+      setMenuItems(await menuService.getAll());
+      closeModal();
+    } catch (err) {
+      alert("Lỗi khi lưu món ăn: " + String(err));
     }
-
-    closeModal();
   };
 
   // Toggle availability
-  const toggleAvailability = (itemId: number) => {
-    setMenuItems((prev) =>
-      prev.map((item) =>
-        item.id === itemId ? { ...item, available: !item.available } : item
-      )
-    );
-
+  const toggleAvailability = async (itemId: string | undefined) => {
+    if (!itemId) return;
     const item = menuItems.find((i) => i.id === itemId);
-    if (item) {
-      alert(
-        `✅ Đã ${!item.available ? "bật" : "tắt"} trạng thái món "${
-          item.name
-        }"!`
-      );
+    if (!item) return;
+    try {
+      await menuService.update(itemId, { available: !item.available });
+      setMenuItems(await menuService.getAll());
+      alert(`✅ Đã ${!item.available ? "bật" : "tắt"} trạng thái món "${item.name}"!`);
+    } catch (err) {
+      alert("Lỗi khi cập nhật trạng thái: " + String(err));
     }
   };
 
   // Delete dish
-  const deleteDish = (itemId: number) => {
+  const deleteDish = async (itemId: string | undefined) => {
+    if (!itemId) return;
     const item = menuItems.find((i) => i.id === itemId);
     if (!item) return;
-
     if (confirm(`Bạn có chắc muốn xóa món "${item.name}"?`)) {
-      setMenuItems((prev) => prev.filter((i) => i.id !== itemId));
-      alert(`✅ Đã xóa món "${item.name}"!`);
+      try {
+        await menuService.delete(itemId);
+        setMenuItems(await menuService.getAll());
+        alert(`✅ Đã xóa món "${item.name}"!`);
+      } catch (err) {
+        alert("Lỗi khi xóa món ăn: " + String(err));
+      }
     }
   };
 
@@ -247,7 +264,7 @@ export default function MenuManagementPage() {
 
   const openEditCategoryModal = (category: Category) => {
     setCategoryFormData({
-      id: category.id,
+      id: category.id || "",
       name: category.name,
       icon: category.icon,
     });
@@ -260,12 +277,25 @@ export default function MenuManagementPage() {
     setSelectedCategoryEdit(null);
   };
 
-  const saveCategory = () => {
+  const handleDeleteCategory = async (categoryId: string) => {
+    const category = categories.find((c) => c.id === categoryId);
+    if (!category) return;
+    if (confirm(`Bạn có chắc muốn xóa danh mục "${category.name}"?`)) {
+      try {
+        await categoryService.delete(categoryId);
+        setCategories(await categoryService.getAll());
+        alert(`✅ Đã xóa danh mục "${category.name}"!`);
+      } catch (err) {
+        alert("Lỗi khi xóa danh mục: " + String(err));
+      }
+    }
+  };
+
+  const saveCategory = async () => {
     if (!categoryFormData.name || !categoryFormData.id) {
       alert("Vui lòng điền đầy đủ thông tin!");
       return;
     }
-
     // Check if ID already exists (for new category)
     if (
       !selectedCategoryEdit &&
@@ -274,84 +304,40 @@ export default function MenuManagementPage() {
       alert("Mã danh mục đã tồn tại! Vui lòng chọn mã khác.");
       return;
     }
-
-    if (selectedCategoryEdit) {
-      // Update existing category
-      updateCategory(selectedCategoryEdit.id, {
-        name: categoryFormData.name,
-        icon: categoryFormData.icon,
-      });
-
-      // Update local state
-      setCategories((prev) =>
-        prev.map((cat) =>
-          cat.id === selectedCategoryEdit.id
-            ? {
-                ...cat,
-                name: categoryFormData.name,
-                icon: categoryFormData.icon,
-              }
-            : cat
-        )
-      );
-
-      // Update menu items with new category name
-      setMenuItems((prev) =>
-        prev.map((item) =>
-          item.category === selectedCategoryEdit.id
-            ? { ...item, categoryName: categoryFormData.name }
-            : item
-        )
-      );
-
-      alert(`✅ Đã cập nhật danh mục "${categoryFormData.name}"!`);
-    } else {
-      // Add new category
-      const newCategory: Category = {
-        id: categoryFormData.id,
+    try {
+      console.log('Creating category with ID:', categoryFormData.id);
+      console.log('Category data:', {
         name: categoryFormData.name,
         icon: categoryFormData.icon,
         order: categories.length + 1,
-      };
-      addCategory(newCategory);
-      setCategories((prev) => [...prev, newCategory]);
-      alert(`✅ Đã thêm danh mục "${categoryFormData.name}"!`);
-    }
+      });
 
-    closeCategoryModal();
-  };
-
-  const handleDeleteCategory = (categoryId: string) => {
-    const category = categories.find((cat) => cat.id === categoryId);
-    if (!category) return;
-
-    const itemsInCategory = menuItems.filter(
-      (item) => item.category === categoryId
-    ).length;
-
-    if (itemsInCategory > 0) {
-      if (
-        !confirm(
-          `Danh mục "${category.name}" có ${itemsInCategory} món ăn. Xóa danh mục sẽ xóa tất cả món ăn trong đó. Bạn có chắc chắn?`
-        )
-      ) {
-        return;
+      if (selectedCategoryEdit) {
+        // Update Firestore
+        await categoryService.update(selectedCategoryEdit!.id!, {
+          name: categoryFormData.name,
+          icon: categoryFormData.icon,
+        });
+        alert(`✅ Đã cập nhật danh mục "${categoryFormData.name}"!`);
+      } else {
+        // Add new category to Firestore
+        await categoryService.createWithId(categoryFormData.id, {
+          name: categoryFormData.name,
+          icon: categoryFormData.icon,
+          order: categories.length + 1,
+        });
+        alert(`✅ Đã thêm danh mục "${categoryFormData.name}"!`);
       }
-    } else {
-      if (!confirm(`Bạn có chắc muốn xóa danh mục "${category.name}"?`)) {
-        return;
+      setCategories(await categoryService.getAll());
+      closeCategoryModal();
+    } catch (err) {
+      console.error('Error creating category:', err);
+      if (String(err).includes('permission-denied')) {
+        alert("❌ Không có quyền chỉnh sửa! Chỉ tài khoản Admin mới có thể thực hiện thao tác này.");
+      } else {
+        alert("Lỗi khi lưu danh mục: " + String(err));
       }
     }
-
-    deleteCategory(categoryId);
-    setCategories((prev) => prev.filter((cat) => cat.id !== categoryId));
-    setMenuItems((prev) => prev.filter((item) => item.category !== categoryId));
-
-    if (selectedCategory === categoryId) {
-      setSelectedCategory("all");
-    }
-
-    alert(`✅ Đã xóa danh mục "${category.name}"!`);
   };
 
   const handleCategoryFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -431,7 +417,7 @@ export default function MenuManagementPage() {
                 {displayCategories.map((cat) => (
                   <button
                     key={cat.id}
-                    onClick={() => setSelectedCategory(cat.id)}
+                    onClick={() => setSelectedCategory(cat.id || "all")}
                     className={`px-4 py-2 rounded-lg font-medium text-sm transition-all ${
                       selectedCategory === cat.id
                         ? "bg-primary-500 text-white shadow-lg shadow-primary-500/30"
@@ -489,7 +475,7 @@ export default function MenuManagementPage() {
                 {/* Image */}
                 <div className="relative h-48 overflow-hidden bg-neutral-200">
                   <Image
-                    src={item.image}
+                    src={item.image || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400"}
                     alt={item.name}
                     fill
                     className="object-cover group-hover:scale-110 transition-transform duration-300"
@@ -505,6 +491,18 @@ export default function MenuManagementPage() {
                         <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                       </svg>
                       <span>Phổ biến</span>
+                    </div>
+                  )}
+                  {item.bestSeller && (
+                    <div className="absolute top-12 left-3 bg-yellow-500 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center space-x-1">
+                      <svg
+                        className="w-3 h-3"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                      </svg>
+                      <span>Best Seller</span>
                     </div>
                   )}
                   <div
@@ -526,13 +524,13 @@ export default function MenuManagementPage() {
                         {item.name}
                       </h3>
                       <span className="text-xs text-neutral-500 bg-neutral-100 px-2 py-1 rounded">
-                        {item.categoryName}
+                        {item.categoryName || item.category}
                       </span>
                     </div>
                   </div>
 
                   <p className="text-sm text-neutral-600 mb-3 line-clamp-2">
-                    {item.description}
+                    {item.description || ""}
                   </p>
 
                   <div className="flex items-center justify-between mb-3 text-sm text-neutral-500">
@@ -550,7 +548,7 @@ export default function MenuManagementPage() {
                           d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
                         />
                       </svg>
-                      {item.prepTime}
+                      {item.prepTime || ""}
                     </span>
                   </div>
 
@@ -718,7 +716,7 @@ export default function MenuManagementPage() {
                       </svg>
                     </button>
                     <button
-                      onClick={() => handleDeleteCategory(category.id)}
+                      onClick={() => category.id && handleDeleteCategory(category.id)}
                       className="p-2 hover:bg-red-50 text-red-600 rounded-lg transition-colors"
                       title="Xóa"
                     >

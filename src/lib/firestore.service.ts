@@ -9,6 +9,7 @@ import {
   query,
   limit,
   serverTimestamp,
+  setDoc,
   updateDoc,
   where,
   type DocumentData,
@@ -46,6 +47,17 @@ export class FirestoreService<T extends DocumentData> {
       updatedAt: serverTimestamp(),
     } as DocumentData);
     return ref.id;
+  }
+
+  async createWithId(id: string, data: Omit<T, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> {
+    this.assertConfigured();
+    const docRef = doc(this.colRef(), id);
+    await setDoc(docRef, {
+      ...data,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    } as DocumentData);
+    return id;
   }
 
   async getAll(constraints: QueryConstraint[] = []): Promise<WithId<T>[]> {

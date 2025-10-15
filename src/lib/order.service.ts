@@ -40,6 +40,10 @@ class OrderService extends FirestoreService<Order> {
     const list = await this.getAll([this.by('orderCode', '==', code)]);
     return list[0] ?? null;
   }
+
+  async getByTableId(tableId: string) {
+    return this.getAll([this.by('tableNumber', '==', tableId)]);
+  }
 }
 
 export const orderService = new OrderService();

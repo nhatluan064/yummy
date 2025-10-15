@@ -1,0 +1,15 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Define admin UID - thay thế bằng UID thực tế của bạn
+    function isAdmin() {
+      return request.auth != null && request.auth.uid == "ADMIN_UID_HERE";
+    }
+
+    // Allow read for authenticated users, write only for admin
+    match /{document=**} {
+      allow read: if request.auth != null;
+      allow write: if isAdmin();
+    }
+  }
+}

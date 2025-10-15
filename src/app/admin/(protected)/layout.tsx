@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
@@ -12,13 +12,66 @@ export default function ProtectedAdminLayout({
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const pathname = usePathname();
   const router = useRouter();
+  const [adminUser, setAdminUser] = useState<{ name: string; email: string } | null>(null);
+  const [clock, setClock] = useState<string>("");
 
   useEffect(() => {
-    const adminToken = localStorage.getItem("adminToken");
-    if (!adminToken) {
-      router.replace("/admin/login");
-    }
+    const checkAuth = async () => {
+      try {
+        const auth = await getAuthClient();
+        const unsubscribe = auth.onAuthStateChanged((user) => {
+          if (!user) {
+            // Không có user authenticated, redirect to login
+            router.replace("/admin/login");
+          } else {
+            // Có user authenticated, lưu thông tin
+            localStorage.setItem("adminToken", `firebase-${user.uid}`);
+            localStorage.setItem(
+              "adminUser",
+              JSON.stringify({
+                name: user.displayName || user.email?.split('@')[0] || "Admin",
+                email: user.email || "admin@restaurant.com",
+                uid: user.uid,
+              })
+            );
+            setAdminUser({
+              name: user.displayName || user.email?.split('@')[0] || "Admin",
+              email: user.email || "admin@restaurant.com"
+            });
+          }
+        });
+
+        return unsubscribe;
+      } catch (error) {
+        console.error('Auth check error:', error);
+        router.replace("/admin/login");
+      }
+    };
+
+    const unsubscribe = checkAuth();
+
+    // Cleanup
+    return () => {
+      if (unsubscribe) {
+        unsubscribe.then(fn => fn?.());
+      }
+    };
   }, [router]);
+
+  useEffect(() => {
+    // Real-time clock
+    const updateClock = () => {
+      const now = new Date();
+      setClock(
+        now.toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit", second: "2-digit" }) +
+        " - " +
+        now.toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" })
+      );
+    };
+    updateClock();
+    const interval = setInterval(updateClock, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   const navigation = [
     {
@@ -160,7 +213,6 @@ export default function ProtectedAdminLayout({
         </svg>
       ),
     },
-    
   ];
 
   const isActive = (href: string) => pathname?.startsWith(href);
@@ -212,15 +264,17 @@ export default function ProtectedAdminLayout({
           ))}
         </nav>
 
-        {/* User Info */}
+        {/* User Info + Clock */}
         <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-secondary-500">
           <div className="flex items-center space-x-3 px-4 py-3">
             <div className="w-10 h-10 bg-primary-400 rounded-full flex items-center justify-center">
-              <span className="text-white font-bold">A</span>
+              <span className="text-white font-bold">
+                {adminUser?.name?.[0]?.toUpperCase() || "A"}
+              </span>
             </div>
             <div className="flex-1">
-              <p className="text-white font-medium text-sm">Admin User</p>
-              <p className="text-accent-200 text-xs">admin@restaurant.com</p>
+              <p className="text-white font-medium text-sm">{adminUser?.name || "Admin User"}</p>
+              <p className="text-accent-200 text-xs">{adminUser?.email || "admin@restaurant.com"}</p>
             </div>
             <button
               onClick={() => {
@@ -248,6 +302,9 @@ export default function ProtectedAdminLayout({
                 />
               </svg>
             </button>
+          </div>
+          <div className="text-accent-200 text-xs text-right px-4 pt-2">
+            {clock}
           </div>
         </div>
       </aside>
@@ -335,9 +392,7 @@ export default function ProtectedAdminLayout({
               </Link>
             </div>
           </div>
-        </header>
-
-        {/* Page Content */}
+        </header>        {/* Page Content */}
         <main className="p-6">{children}</main>
       </div>
     </div>
