@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { getAuthClient } from "@/lib/sdk";
 
 export default function ProtectedAdminLayout({
   children,
