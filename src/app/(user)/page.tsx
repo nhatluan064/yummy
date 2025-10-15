@@ -4,7 +4,7 @@ import Image from "next/image";
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen">
+    <div>
       {/* Hero Section */}
       <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
         {/* Background */}
@@ -80,7 +80,7 @@ export default function HomePage() {
       </section>
 
       {/* Features Section */}
-  <section className="section-padding bg-white">
+      <section className="section-padding bg-white">
         <div className="container-custom">
           <div className="text-center mb-16 animate-fade-in-up">
             <h2 className="text-4xl font-bold text-neutral-800 mb-4">
@@ -177,7 +177,7 @@ export default function HomePage() {
       </section>
 
       {/* Featured Menu Section */}
-  <section className="section-padding bg-neutral-50">
+      <section className="section-padding bg-neutral-50">
         <div className="container-custom">
           <div className="text-center mb-16 animate-fade-in-up">
             <h2 className="text-4xl font-bold text-neutral-800 mb-4">
@@ -192,19 +192,22 @@ export default function HomePage() {
             {[
               {
                 name: "Phở Bò Đặc Biệt",
-                image: "https://via.placeholder.com/400x256/DC2626/ffffff?text=Ph%E1%BB%9F+B%C3%B2",
+                image:
+                  "https://via.placeholder.com/400x256/DC2626/ffffff?text=Ph%E1%BB%9F+B%C3%B2",
                 description: "Nước dùng đậm đà, thịt bò tươi ngon",
                 price: "65,000",
               },
               {
                 name: "Bánh Mì Thịt Nướng",
-                image: "https://via.placeholder.com/400x256/F59E0B/ffffff?text=B%C3%A1nh+M%C3%AC",
+                image:
+                  "https://via.placeholder.com/400x256/F59E0B/ffffff?text=B%C3%A1nh+M%C3%AC",
                 description: "Bánh mì giòn tan, thịt nướng thơm lừng",
                 price: "35,000",
               },
               {
                 name: "Cơm Tấm Sườn Nướng",
-                image: "https://via.placeholder.com/400x256/10B981/ffffff?text=C%C6%A1m+T%E1%BA%A5m",
+                image:
+                  "https://via.placeholder.com/400x256/10B981/ffffff?text=C%C6%A1m+T%E1%BA%A5m",
                 description: "Sườn nướng mềm ngọt, cơm tấm dẻo thơm",
                 price: "55,000",
               },
