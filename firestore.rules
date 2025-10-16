@@ -1,15 +1,9 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Define admin UID - thay thế bằng UID thực tế của bạn
-    // Determine whether the authenticated user is an admin.
-    // Two supported methods (choose one or keep both):
-    // 1) UID check: replace "ADMIN_UID_HERE" with your admin user's UID (copy from Firebase Console)
-    // 2) Custom claim: set a custom claim `admin: true` on the admin user's token (recommended for flexibility)
-    // The rule below grants admin if either condition is true.
     function isAdmin() {
       return request.auth != null && (
-        request.auth.uid == "4fN6s8Sg0vNIZ5WJOiebUWUjV0X2" ||
+        request.auth.uid == "3mqf3WlNCnZ3yff162QwLVy1Yt33" ||
         // If you set a custom claim `admin: true` on the user, this will be true
         request.auth.token.admin == true
       );
@@ -17,7 +11,8 @@ service cloud.firestore {
 
     // Allow read for authenticated users, write only for admin
     match /{document=**} {
-      allow read: if request.auth != null;
+      // allow read: if request.auth != null;
+      allow read: if true;
       allow write: if isAdmin();
     }
   }

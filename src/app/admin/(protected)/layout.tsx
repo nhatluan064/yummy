@@ -251,7 +251,7 @@ export default function ProtectedAdminLayout({
         {/* Logo */}
         <div className="flex items-center justify-between p-6 border-b border-secondary-500">
           <Link href="/admin/dashboard" className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-primary-500 rounded-lg flex items-center justify-center shadow-glow-primary">
+            <div className="w-10 h-10 aspect-square bg-primary-500 rounded-full flex items-center justify-center overflow-hidden">
               <span className="text-white font-bold text-xl">🍜</span>
             </div>
             <div>
@@ -289,29 +289,29 @@ export default function ProtectedAdminLayout({
 
         {/* User Info + Clock */}
         <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-secondary-500">
-          <div className="flex items-center space-x-3 px-4 py-3">
-            <div className="w-10 h-10 bg-primary-400 rounded-full flex items-center justify-center">
-              <span className="text-white font-bold">
+          <div className="flex flex-col items-center space-y-2 px-4 py-3">
+            <div className="w-10 h-10 aspect-square bg-primary-400 rounded-full flex items-center justify-center overflow-hidden border-2 border-white shadow mb-1">
+              <span className="text-white font-bold text-lg">
                 {adminUser?.name?.[0]?.toUpperCase() || "A"}
               </span>
             </div>
-            <div className="flex-1">
-              <p className="text-white font-medium text-sm">
-                {adminUser?.name || "Admin User"}
-              </p>
-              <p className="text-accent-200 text-xs">
-                {adminUser?.email || "admin@restaurant.com"}
-              </p>
-            </div>
+            <p className="text-white font-medium text-sm text-center">
+              {adminUser?.name || "Admin User"}
+            </p>
+            <p className="text-accent-200 text-xs text-center">
+              {adminUser?.email || "admin@restaurant.com"}
+            </p>
             <button
-              onClick={() => {
+              onClick={async () => {
                 if (confirm("Bạn có chắc muốn đăng xuất?")) {
+                  const auth = await getAuthClient();
+                  await (await import('firebase/auth')).signOut(auth);
                   localStorage.removeItem("adminToken");
                   localStorage.removeItem("adminUser");
                   router.push("/admin/login");
                 }
               }}
-              className="text-accent-200 hover:text-white transition-colors"
+              className="text-accent-200 hover:text-white transition-colors mt-2"
               title="Đăng xuất"
               aria-label="Đăng xuất"
             >
@@ -330,7 +330,7 @@ export default function ProtectedAdminLayout({
               </svg>
             </button>
           </div>
-          <div className="text-accent-200 text-xs text-right px-4 pt-2">
+          <div className="text-accent-200 text-xs text-center px-4 pt-2">
             {clock}
           </div>
         </div>

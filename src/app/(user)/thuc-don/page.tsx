@@ -4,31 +4,31 @@ import { useState, useEffect, useRef } from "react";
 import MenuItem from "@/app/components/MenuItem";
 import Image from "next/image";
 import {
-  getAvailableMenuItemsByCategory,
-  getMenuItems,
-  getCategories,
-  type Category,
-  type Review,
-} from "@/lib/menuData";
+  getCategoriesFromFirestore,
+  getMenuItemsFromFirestore
+} from "@/lib/firestoreMenu";
+import { type Category, type Review } from "@/lib/menuData";
 
 interface MenuItemData {
-  id: number;
+  id: string;
   name: string;
   description: string;
   price: number;
-  imageUrl: string;
+  image: string;
+  available: boolean;
+  popular?: boolean;
+  bestSeller?: boolean;
+  category: string;
+  categoryName?: string;
   rating?: number;
   reviewCount?: number;
   reviews?: Review[];
-  popular?: boolean;
-  bestSeller?: boolean;
 }
 
 export default function MenuPage() {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [categories, setCategories] = useState<Category[]>([]);
   const [menuData, setMenuData] = useState<MenuItemData[]>([]);
-  const [bestSellerItems, setBestSellerItems] = useState<MenuItemData[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredMenuData, setFilteredMenuData] = useState<MenuItemData[]>([]);
   const [sortBy, setSortBy] = useState<
@@ -46,8 +46,65 @@ export default function MenuPage() {
     rating: 5,
     comment: "",
   });
-  // Track backdrop interactions to avoid accidental close during text selection
   const mouseDownOnBackdropRef = useRef(false);
+
+  // Load categories from Firestore
+  useEffect(() => {
+    async function fetchCategories() {
+      const cats = await getCategoriesFromFirestore();
+      setCategories(cats as Category[]);
+    }
+    fetchCategories();
+  }, []);
+
+  // Load menu from Firestore
+  useEffect(() => {
+    async function fetchMenu() {
+      const items = await getMenuItemsFromFirestore();
+      console.log("[DEBUG] Firestore menu items:", items); // Log dữ liệu thực tế
+      setMenuData(items as MenuItemData[]);
+    }
+    fetchMenu();
+  }, []);
+
+  // Filter, search, sort menuData
+  useEffect(() => {
+    let filtered = menuData.filter(item => item.available);
+    if (selectedCategory !== "all") {
+      filtered = filtered.filter(item => item.category === selectedCategory);
+    }
+    if (filterType === "popular") {
+      filtered = filtered.filter(item => item.popular);
+    } else if (filterType === "bestSeller") {
+      filtered = filtered.filter(item => item.bestSeller);
+    }
+    if (searchQuery.trim() !== "") {
+      filtered = filtered.filter(
+        (item) =>
+          item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          item.description.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+    // Sort
+    const sorted = [...filtered];
+    switch (sortBy) {
+      case "price-asc":
+        sorted.sort((a, b) => a.price - b.price);
+        break;
+      case "price-desc":
+        sorted.sort((a, b) => b.price - a.price);
+        break;
+      case "name-asc":
+        sorted.sort((a, b) => a.name.localeCompare(b.name, "vi"));
+        break;
+      case "name-desc":
+        sorted.sort((a, b) => b.name.localeCompare(a.name, "vi"));
+        break;
+      default:
+        break;
+    }
+    setFilteredMenuData(sorted);
+  }, [searchQuery, menuData, sortBy, filterType, selectedCategory]);
 
   // Save review to localStorage and update state
   const saveReview = () => {
@@ -87,157 +144,6 @@ export default function MenuPage() {
     window.location.reload();
   };
 
-  // Load categories on mount
-  useEffect(() => {
-    setCategories(getCategories());
-  }, []);
-
-  useEffect(() => {
-    // Load customer reviews from localStorage
-    const storedReviews = localStorage.getItem("customerReviews");
-    const customerReviews = storedReviews ? JSON.parse(storedReviews) : {};
-
-    // Load menu items from shared data (only available items)
-    const items = getAvailableMenuItemsByCategory(selectedCategory);
-
-    // Transform and merge with customer reviews (filter out hidden reviews)
-    const transformedItems = items.map((item) => {
-      const baseReviews = item.reviews || [];
-      const newReviews = (customerReviews[item.id] || []).filter(
-        (r: Review) => !r.hidden
-      );
-      const allReviews = [...newReviews, ...baseReviews];
-
-      // Calculate new average rating (only from visible reviews)
-      let avgRating = item.rating || 0;
-      if (allReviews.length > 0) {
-        const totalRating = allReviews.reduce((sum, r) => sum + r.rating, 0);
-        avgRating = totalRating / allReviews.length;
-      }
-
-      return {
-        id: item.id,
-        name: item.name,
-        description: item.description,
-        price: item.price,
-        imageUrl: item.image,
-        rating: avgRating,
-        reviewCount: allReviews.length,
-        reviews: allReviews,
-        popular: item.popular,
-        bestSeller: item.bestSeller,
-      };
-    });
-    setMenuData(transformedItems);
-
-    // Load top-rated items (only available items with ratings, sorted by rating)
-    const allItems = getMenuItems();
-    const topRatedAvailable = allItems
-      .filter((item) => item.available && item.rating)
-      .map((item) => {
-        const baseReviews = item.reviews || [];
-        const newReviews = (customerReviews[item.id] || []).filter(
-          (r: Review) => !r.hidden
-        );
-        const allReviews = [...newReviews, ...baseReviews];
-
-        let avgRating = item.rating || 0;
-        if (allReviews.length > 0) {
-          const totalRating = allReviews.reduce((sum, r) => sum + r.rating, 0);
-          avgRating = totalRating / allReviews.length;
-        }
-
-        return {
-          id: item.id,
-          name: item.name,
-          description: item.description,
-          price: item.price,
-          imageUrl: item.image,
-          rating: avgRating,
-          reviewCount: allReviews.length,
-          reviews: allReviews,
-          popular: item.popular,
-          bestSeller: item.bestSeller,
-        };
-      })
-      .sort((a, b) => (b.rating || 0) - (a.rating || 0))
-      .slice(0, 6); // Top 6 highest rated items
-
-    setBestSellerItems(topRatedAvailable);
-  }, [selectedCategory]);
-
-  // Filter and sort menu data
-  useEffect(() => {
-    let filtered = menuData;
-
-    // Apply filter type (popular or bestSeller)
-    if (filterType === "popular") {
-      const allItems = getMenuItems();
-      const popularAvailable = allItems.filter(
-        (item) =>
-          item.popular &&
-          item.available &&
-          (selectedCategory === "all" || item.category === selectedCategory)
-      );
-      filtered = popularAvailable.map((item) => ({
-        id: item.id,
-        name: item.name,
-        description: item.description,
-        price: item.price,
-        imageUrl: item.image,
-        popular: item.popular,
-        bestSeller: item.bestSeller,
-      }));
-    } else if (filterType === "bestSeller") {
-      const allItems = getMenuItems();
-      const bestSellerAvailable = allItems.filter(
-        (item) =>
-          item.bestSeller &&
-          item.available &&
-          (selectedCategory === "all" || item.category === selectedCategory)
-      );
-      filtered = bestSellerAvailable.map((item) => ({
-        id: item.id,
-        name: item.name,
-        description: item.description,
-        price: item.price,
-        imageUrl: item.image,
-        popular: item.popular,
-        bestSeller: item.bestSeller,
-      }));
-    }
-
-    // Apply search filter
-    if (searchQuery.trim() !== "") {
-      filtered = filtered.filter(
-        (item) =>
-          item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          item.description.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-    }
-
-    // Apply sorting
-    const sorted = [...filtered];
-    switch (sortBy) {
-      case "price-asc":
-        sorted.sort((a, b) => a.price - b.price);
-        break;
-      case "price-desc":
-        sorted.sort((a, b) => b.price - a.price);
-        break;
-      case "name-asc":
-        sorted.sort((a, b) => a.name.localeCompare(b.name, "vi"));
-        break;
-      case "name-desc":
-        sorted.sort((a, b) => b.name.localeCompare(a.name, "vi"));
-        break;
-      default:
-        // Keep original order
-        break;
-    }
-
-    setFilteredMenuData(sorted);
-  }, [searchQuery, menuData, sortBy, filterType, selectedCategory]);
   return (
     <div className="bg-neutral-50">
       {/* Hero Section */}
@@ -441,7 +347,12 @@ export default function MenuPage() {
                 return (
                   <div key={item.id} className={delayClass}>
                     <MenuItem
-                      item={item}
+                      key={item.id}
+                      item={{
+                        ...item,
+                        id: Number(item.id) || undefined, // ép kiểu id về number hoặc undefined nếu không hợp lệ
+                        imageUrl: item.image // Đảm bảo prop imageUrl được truyền vào nếu MenuItem yêu cầu
+                      }}
                       onReviewClick={() => {
                         setSelectedDish(item);
                         setShowReviewModal(true);
@@ -476,181 +387,6 @@ export default function MenuPage() {
           )}
         </div>
       </section>
-
-      {/* Best Seller Suggestions */}
-      {bestSellerItems.length > 0 && (
-        <section className="section-padding bg-white">
-          <div className="container-custom">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-neutral-800 mb-4 animate-fade-in-up">
-                ⭐ Món Ngon Được Feedback Từ Khách Hàng
-              </h2>
-              <p className="text-lg text-neutral-600 animate-fade-in-up-delay-1">
-                Những món ăn được khách hàng đánh giá và yêu thích nhất
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {bestSellerItems.map((item, index) => {
-                const delayClass =
-                  index % 3 === 0
-                    ? "animate-fade-in-up"
-                    : index % 3 === 1
-                    ? "animate-fade-in-up-delay-1"
-                    : "animate-fade-in-up-delay-2";
-                return (
-                  <div key={item.id} className={delayClass}>
-                    <div className="card overflow-hidden hover:shadow-2xl transition-all duration-300 group">
-                      <div className="relative h-56 overflow-hidden">
-                        <Image
-                          src={item.imageUrl}
-                          alt={item.name}
-                          fill
-                          className="object-cover group-hover:scale-110 transition-transform duration-500"
-                          unoptimized
-                        />
-                        <div className="absolute top-3 left-3 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center space-x-1">
-                          <svg
-                            className="w-3 h-3"
-                            fill="currentColor"
-                            viewBox="0 0 20 20"
-                          >
-                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                          </svg>
-                          <span>Phổ biến</span>
-                        </div>
-                      </div>
-                      <div className="p-6">
-                        <h3 className="text-xl font-bold text-neutral-800 mb-2 group-hover:text-primary-600 transition-colors">
-                          {item.name}
-                        </h3>
-                        <p className="text-neutral-600 text-sm mb-3 line-clamp-2">
-                          {item.description}
-                        </p>
-
-                        {/* Rating Section */}
-                        {item.rating && (
-                          <div className="flex items-center justify-between mb-3 pb-3 border-b border-neutral-100">
-                            <div className="flex items-center space-x-2">
-                              <div className="flex items-center">
-                                {[1, 2, 3, 4, 5].map((star) => (
-                                  <svg
-                                    key={star}
-                                    className={`w-4 h-4 ${
-                                      star <= Math.round(item.rating!)
-                                        ? "text-yellow-400 fill-current"
-                                        : "text-neutral-300 fill-current"
-                                    }`}
-                                    viewBox="0 0 20 20"
-                                  >
-                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                  </svg>
-                                ))}
-                              </div>
-                              <span className="text-sm font-semibold text-neutral-700">
-                                {item.rating.toFixed(1)}
-                              </span>
-                              <span className="text-xs text-neutral-500">
-                                ({item.reviewCount})
-                              </span>
-                            </div>
-                            <button
-                              onClick={() => {
-                                setSelectedDish(item);
-                                setShowReviewModal(true);
-                              }}
-                              className="text-xs bg-primary-50 text-primary-600 hover:bg-primary-100 font-medium px-3 py-1.5 rounded-lg flex items-center space-x-1 transition-colors"
-                            >
-                              <svg
-                                className="w-4 h-4"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
-                                />
-                              </svg>
-                              <span>Feedback</span>
-                            </button>
-                          </div>
-                        )}
-
-                        <div className="flex items-center justify-between mb-4">
-                          <span className="text-2xl font-bold text-primary-600">
-                            {item.price.toLocaleString()}₫
-                          </span>
-                          <button className="btn-primary text-sm">
-                            Đặt món
-                          </button>
-                        </div>
-
-                        {/* Latest Feedback Preview */}
-                        {item.reviews && item.reviews.length > 0 && (
-                          <div className="pt-4 border-t border-neutral-100">
-                            <h4 className="text-xs font-semibold text-neutral-600 mb-2">
-                              💬 Feedback gần đây:
-                            </h4>
-                            <div className="bg-neutral-50 rounded-lg p-3">
-                              <div className="flex items-start space-x-2">
-                                <div className="w-7 h-7 bg-primary-100 rounded-full flex items-center justify-center flex-shrink-0">
-                                  <span className="text-primary-600 font-bold text-xs">
-                                    {item.reviews[0].userName.charAt(0)}
-                                  </span>
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                  <div className="flex items-center space-x-2 mb-1">
-                                    <p className="text-xs font-semibold text-neutral-800">
-                                      {item.reviews[0].userName}
-                                    </p>
-                                    <div className="flex items-center">
-                                      {[1, 2, 3, 4, 5].map((star) => (
-                                        <svg
-                                          key={star}
-                                          className={`w-3 h-3 ${
-                                            star <= item.reviews![0].rating
-                                              ? "text-yellow-400 fill-current"
-                                              : "text-neutral-300 fill-current"
-                                          }`}
-                                          viewBox="0 0 20 20"
-                                        >
-                                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                        </svg>
-                                      ))}
-                                    </div>
-                                  </div>
-                                  <p className="text-xs text-neutral-600 line-clamp-2 leading-relaxed">
-                                    &ldquo;{item.reviews[0].comment}&rdquo;
-                                  </p>
-                                  {item.reviewCount && item.reviewCount > 1 && (
-                                    <button
-                                      onClick={() => {
-                                        setSelectedDish(item);
-                                        setShowReviewModal(true);
-                                      }}
-                                      className="text-xs text-primary-600 hover:text-primary-700 font-medium mt-1"
-                                    >
-                                      Xem thêm {item.reviewCount - 1} feedback
-                                      khác →
-                                    </button>
-                                  )}
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </section>
-      )}
 
       {/* Nutritional Info */}
       <section className="section-padding bg-neutral-100">
