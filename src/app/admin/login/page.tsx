@@ -22,12 +22,38 @@ export default function AdminLoginPage() {
   const toast = useToast();
 
   // Check if already logged in
+  // Check if already logged in by inspecting Firebase auth state (not just localStorage).
+  // This avoids a redirect loop when localStorage contains an old token but Firebase
+  // hasn't initialized or the user is not actually authenticated.
   useEffect(() => {
-    const adminToken = localStorage.getItem("adminToken");
-    if (adminToken) {
-      // Already logged in, redirect to dashboard
-      router.push("/admin/dashboard");
-    }
+    let unsub: (() => void) | null = null;
+    const checkAuth = async () => {
+      try {
+        const auth = await getAuthClient();
+        // If a user is already signed in, redirect to dashboard
+        if (auth.currentUser) {
+          router.push('/admin/dashboard');
+          return;
+        }
+
+        // Otherwise, listen once for auth state change for a short period
+        unsub = auth.onAuthStateChanged((user) => {
+          if (user) {
+            router.push('/admin/dashboard');
+          }
+        });
+      } catch (err) {
+        // If getAuthClient fails (e.g. Firebase not configured), don't redirect.
+        // Keep the login page interactive so the developer can see the error.
+        console.warn('Auth check skipped:', err);
+      }
+    };
+
+    checkAuth();
+
+    return () => {
+      if (unsub) unsub();
+    };
   }, [router]);
 
   const handleSubmit = async (e: React.FormEvent) => {

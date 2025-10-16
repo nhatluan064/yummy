@@ -8,183 +8,85 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Company Info */}
           <div className="space-y-4">
-            <h3 className="text-2xl font-bold text-gradient mb-4">
-              🍽️ Quán Ăn Ngon
+            <h3 className="text-3xl font-bold text-gradient mb-4">
+              🍜 Mì cay yummy
             </h3>
             <p className="text-neutral-300 leading-relaxed">
-              Nơi quy tụ tinh hoa ẩm thực Việt Nam với không gian ấm cúng và
-              dịch vụ tận tâm.
+              Thưởng thức tô mì cay chuẩn vị Hàn Quốc, sợi mì dai ngon, nước dùng đậm đà, topping đa dạng. Không gian quán ấm cúng, phục vụ tận tâm, là điểm đến lý tưởng cho những ai yêu thích vị cay nồng và trải nghiệm ẩm thực đặc sắc.
             </p>
-            <div className="flex space-x-4">
-              <a
-                href="#"
-                className="w-10 h-10 bg-neutral-700 rounded-full flex items-center justify-center hover:bg-primary-600 transition-colors"
-                aria-label="Facebook"
-              >
-                <svg
-                  className="w-5 h-5"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-                </svg>
-              </a>
-              <a
-                href="#"
-                className="w-10 h-10 bg-neutral-700 rounded-full flex items-center justify-center hover:bg-primary-600 transition-colors"
-                aria-label="Instagram"
-              >
-                <svg
-                  className="w-5 h-5"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 6.62 5.367 11.987 11.988 11.987c6.62 0 11.987-5.367 11.987-11.987C24.014 5.367 18.637.001 12.017.001zM8.449 16.988c-1.297 0-2.448-.49-3.323-1.291C3.85 14.437 3.446 12.767 3.446 11c0-1.767.404-3.437 1.68-4.697C5.951 5.512 7.102 5.022 8.449 5.022s2.498.49 3.374 1.281c1.276 1.26 1.68 2.93 1.68 4.697 0 1.767-.404 3.437-1.68 4.697C10.947 16.498 9.796 16.988 8.449 16.988z" />
-                </svg>
-              </a>
-              <a
-                href="#"
-                className="w-10 h-10 bg-neutral-700 rounded-full flex items-center justify-center hover:bg-primary-600 transition-colors"
-                aria-label="YouTube"
-              >
-                <svg
-                  className="w-5 h-5"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
-                </svg>
-              </a>
-            </div>
           </div>
 
-          {/* Quick Links */}
+          {/* Quick Links (the same as Navbar) */}
           <div className="space-y-4">
             <h4 className="text-lg font-semibold mb-4">Liên Kết Nhanh</h4>
             <nav className="space-y-2">
-              <Link
-                href="/"
-                className="block text-neutral-300 hover:text-white transition-colors"
-              >
-                Trang Chủ
-              </Link>
-              <Link
-                href="/thuc-don"
-                className="block text-neutral-300 hover:text-white transition-colors"
-              >
-                Thực Đơn
-              </Link>
-              <Link
-                href="/thuc-uong"
-                className="block text-neutral-300 hover:text-white transition-colors"
-              >
-                Nước Uống
-              </Link>
-              <Link
-                href="/dat-ban"
-                className="block text-neutral-300 hover:text-white transition-colors"
-              >
-                Đặt Bàn
-              </Link>
-              <Link
-                href="/lien-he"
-                className="block text-neutral-300 hover:text-white transition-colors"
-              >
-                Liên Hệ
-              </Link>
+              <Link href="/" className="block text-neutral-300 hover:text-white transition-colors">Trang Chủ</Link>
+              <Link href="/dat-ban" className="block text-neutral-300 hover:text-white transition-colors">Đặt Bàn</Link>
+              <Link href="/thuc-don" className="block text-neutral-300 hover:text-white transition-colors">Thực Đơn</Link>
+              <Link href="/lien-he" className="block text-neutral-300 hover:text-white transition-colors">Liên Hệ</Link>
             </nav>
           </div>
 
-          {/* Contact Info */}
+          {/* Contact Info mới với icon màu nền */}
           <div className="space-y-4">
             <h4 className="text-lg font-semibold mb-4">Thông Tin Liên Hệ</h4>
             <div className="space-y-3">
-              <div className="flex items-start space-x-3">
-                <svg
-                  className="w-5 h-5 text-primary-500 mt-0.5 flex-shrink-0"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                  />
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                  />
-                </svg>
-                <p className="text-neutral-300 text-sm">
-                  123 Đường ABC, Phường XYZ
-                  <br />
-                  Quận 1, TP. Hồ Chí Minh
-                </p>
+              <div className="flex items-center space-x-3">
+                <span className="w-8 h-8 rounded-full flex items-center justify-center bg-[#8B7CF6]">
+                    <svg className="w-5 h-5" fill="white" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z" />
+                    </svg>
+                  </span>
+                <div>
+                  <div className="font-semibold text-white">Địa Chỉ</div>
+                  <div className="text-neutral-300 text-sm">588/6 Hà Huy Tập, Phường Bà Rịa, HCM</div>
+                </div>
               </div>
               <div className="flex items-center space-x-3">
-                <svg
-                  className="w-5 h-5 text-primary-500 flex-shrink-0"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
-                  />
-                </svg>
-                <a
-                  href="tel:+84123456789"
-                  className="text-neutral-300 hover:text-white transition-colors text-sm"
-                >
-                  +84 123 456 789
-                </a>
+                <span className="w-8 h-8 rounded-full flex items-center justify-center bg-[#8B7CF6]">
+                  <svg className="w-5 h-5" fill="white" viewBox="0 0 24 24"><path d="M6.62 10.79a15.053 15.053 0 006.59 6.59l2.2-2.2a1 1 0 011.11-.21c1.21.49 2.53.76 3.88.76a1 1 0 011 1v3.5a1 1 0 01-1 1C7.61 22 2 16.39 2 9.5a1 1 0 011-1H6.5a1 1 0 011 1c0 1.35.27 2.67.76 3.88a1 1 0 01-.21 1.11l-2.2 2.2z"/></svg>
+                </span>
+                <div>
+                  <div className="font-semibold text-white">Hotline</div>
+                  <a href="tel:0988994799" className="text-[#8B7CF6] text-sm">0988 994 799</a>
+                </div>
               </div>
               <div className="flex items-center space-x-3">
-                <svg
-                  className="w-5 h-5 text-primary-500 flex-shrink-0"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                  />
-                </svg>
-                <a
-                  href="mailto:info@quananngon.com"
-                  className="text-neutral-300 hover:text-white transition-colors text-sm"
-                >
-                  info@quananngon.com
-                </a>
+                <span className="w-8 h-8 rounded-full flex items-center justify-center bg-[#1877F2]">
+                  <svg className="w-5 h-5" fill="white" viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#1877F2"/><path d="M21.5 16H18V26H14V16H11V12H14V10.5C14 8.57 15.57 7 17.5 7H21V11H18.5C18.22 11 18 11.22 18 11.5V12H21.5L21 16Z" fill="white"/></svg>
+                </span>
+                <div>
+                  <div className="font-semibold text-white">Facebook</div>
+                  <a href="https://facebook.com/dieuhien" className="text-[#1877F2] text-sm" target="_blank" rel="noopener noreferrer">Diệu Hiền</a>
+                </div>
+              </div>
+              <div className="flex items-center space-x-3">
+                <span className="w-8 h-8 rounded-full flex items-center justify-center bg-[#19B447]">
+                  <svg className="w-5 h-5" fill="white" viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#19B447"/><text x="16" y="22" textAnchor="middle" fontSize="13" fill="#fff" fontFamily="Arial" dominantBaseline="middle">Zalo</text></svg>
+                </span>
+                <div>
+                  <div className="font-semibold text-white">Zalo</div>
+                  <a href="https://zalo.me/0988994799" className="text-[#19B447] text-sm" target="_blank" rel="noopener noreferrer">0988 994 799</a>
+                </div>
               </div>
             </div>
           </div>
 
           {/* Opening Hours */}
           <div className="space-y-4">
-            <h4 className="text-lg font-semibold mb-4">Giờ Mở Cửa</h4>
+            <h4 className="text-lg font-semibold mb-4">Giờ Hoạt Động</h4>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
                 <span className="text-neutral-300">Thứ 2 - Thứ 6:</span>
-                <span className="text-white font-medium">7:00 - 22:00</span>
+                <span className="text-white font-medium">8:00 - 20:30</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-neutral-300">Thứ 7 - Chủ Nhật:</span>
-                <span className="text-white font-medium">6:30 - 23:00</span>
+                <span className="text-white font-medium">7:30 - 20:30</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-neutral-300">Ngày lễ:</span>
-                <span className="text-white font-medium">8:00 - 22:00</span>
+                <span className="text-white font-medium">7:30 - 21:00</span>
               </div>
             </div>
 
@@ -226,7 +128,7 @@ export default function Footer() {
         <div className="container-custom py-8">
           <div className="flex flex-col md:flex-row justify-between items-center text-sm text-neutral-400 gap-4">
             <p className="text-center md:text-left">
-              &copy; 2024 Quán Ăn Ngon. Tất cả quyền được bảo lưu.
+              &copy; 2024 Mì cay yummy. Tất cả quyền được bảo lưu.
             </p>
             <div className="flex flex-wrap justify-center gap-6">
               <Link

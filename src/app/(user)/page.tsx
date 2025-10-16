@@ -1,8 +1,18 @@
 // src/app/page.tsx
 import Link from "next/link";
-import Image from "next/image";
+// Image import removed (using simple <img> for dynamic cards)
+import { getCategories, getAvailableMenuItems, MenuItem } from "@/lib/menuData";
 
 export default function HomePage() {
+  const categories = getCategories();
+  const availableItems = getAvailableMenuItems();
+
+  let featured: MenuItem[] = [];
+  if (categories.length > 0) {
+    featured = availableItems.filter((i) => i.bestSeller).slice(0, 3);
+    if (featured.length === 0) featured = availableItems.slice(0, 3);
+  }
+
   return (
     <div>
       {/* Hero Section */}
@@ -14,7 +24,7 @@ export default function HomePage() {
         {/* Content */}
         <div className="relative z-20 text-center text-white px-4 animate-fade-in-up">
           <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
-            Quán Ăn Ngon
+            Mì cay yummy
             <br />
             <span className="text-accent-200">Kính Chào Quý Khách</span>
           </h1>
@@ -189,29 +199,7 @@ export default function HomePage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              {
-                name: "Phở Bò Đặc Biệt",
-                image:
-                  "https://via.placeholder.com/400x256/DC2626/ffffff?text=Ph%E1%BB%9F+B%C3%B2",
-                description: "Nước dùng đậm đà, thịt bò tươi ngon",
-                price: "65,000",
-              },
-              {
-                name: "Bánh Mì Thịt Nướng",
-                image:
-                  "https://via.placeholder.com/400x256/F59E0B/ffffff?text=B%C3%A1nh+M%C3%AC",
-                description: "Bánh mì giòn tan, thịt nướng thơm lừng",
-                price: "35,000",
-              },
-              {
-                name: "Cơm Tấm Sườn Nướng",
-                image:
-                  "https://via.placeholder.com/400x256/10B981/ffffff?text=C%C6%A1m+T%E1%BA%A5m",
-                description: "Sườn nướng mềm ngọt, cơm tấm dẻo thơm",
-                price: "55,000",
-              },
-            ].map((item, index) => {
+            {categories.length === 0 ? null : featured.map((item, index) => {
               const delayClass =
                 index === 0
                   ? "animate-fade-in-up"
@@ -219,33 +207,23 @@ export default function HomePage() {
                   ? "animate-fade-in-up-delay-1"
                   : "animate-fade-in-up-delay-2";
               return (
-                <div key={index} className={`card ${delayClass}`}>
-                  <div className="relative overflow-hidden rounded-t-lg bg-neutral-200">
-                    <Image
-                      src={item.image}
-                      alt={item.name}
-                      width={400}
-                      height={256}
-                      className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
-                      placeholder="blur"
-                      blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
-                    />
+                <article key={item.id} className={`rounded-xl overflow-hidden bg-white shadow-md p-0 ${delayClass}`}>
+                  <div className="h-44 bg-neutral-200">
+                    {item.image ? (
+                      <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full bg-neutral-100" />
+                    )}
                   </div>
                   <div className="p-6">
-                    <h3 className="text-xl font-bold text-neutral-800 mb-2">
-                      {item.name}
-                    </h3>
+                    <h3 className="text-lg font-bold text-neutral-800 mb-2">{item.name}</h3>
                     <p className="text-neutral-600 mb-4">{item.description}</p>
-                    <div className="flex justify-between items-center">
-                      <span className="text-lg font-bold text-primary-600">
-                        {item.price}₫
-                      </span>
-                      <Link href="/thuc-don" className="btn-primary">
-                        Xem Chi Tiết
-                      </Link>
+                    <div className="flex items-center justify-between">
+                      <div className="text-primary-600 font-bold">{item.price.toLocaleString()}đ</div>
+                      <Link href={`/thuc-don/${item.id}`} className="btn-primary">Xem Chi Tiết</Link>
                     </div>
                   </div>
-                </div>
+                </article>
               );
             })}
           </div>
