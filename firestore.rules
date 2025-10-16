@@ -9,7 +9,7 @@ service cloud.firestore {
     // The rule below grants admin if either condition is true.
     function isAdmin() {
       return request.auth != null && (
-        request.auth.uid == "ADMIN_UID_HERE" ||
+        request.auth.uid == "4fN6s8Sg0vNIZ5WJOiebUWUjV0X2" ||
         // If you set a custom claim `admin: true` on the user, this will be true
         request.auth.token.admin == true
       );
@@ -22,3 +22,4 @@ service cloud.firestore {
     }
   }
 }
+
