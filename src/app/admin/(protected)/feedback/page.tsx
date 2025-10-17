@@ -7,6 +7,7 @@ interface ReviewWithDish extends Review {
   dishId: number;
   dishName: string;
   hidden?: boolean;
+  customerName?: string;
 }
 
 export default function FeedbackManagementPage() {
@@ -14,72 +15,76 @@ export default function FeedbackManagementPage() {
   const [filterStatus, setFilterStatus] = useState<'all' | 'visible' | 'hidden'>('all');
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Load all reviews from localStorage
+
+  // Load all reviews from Firestore
   useEffect(() => {
-    loadReviews();
+    async function fetchFeedbacks() {
+      const { feedbackService } = await import('@/lib/feedback.service');
+      const feedbacks = await feedbackService.getAll();
+      // Map feedbacks to ReviewWithDish
+      const allItems = getMenuItems();
+      const reviewsList: ReviewWithDish[] = feedbacks.map((fb: any) => {
+        let dish = allItems.find(item => item.name === fb.dishName || item.id === fb.dishId);
+        return {
+          ...fb,
+          dishId: dish?.id ?? '',
+          dishName: dish?.name ?? (fb.dishName || ''),
+          hidden: fb.hidden || false,
+          customerName: fb.customerName ?? fb.userName ?? '',
+        };
+      });
+      // Sort by date (newest first)
+      reviewsList.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+      setAllReviews(reviewsList);
+    }
+    fetchFeedbacks();
   }, []);
 
-  const loadReviews = () => {
-    const storedReviews = localStorage.getItem('customerReviews');
-    const customerReviews = storedReviews ? JSON.parse(storedReviews) : {};
-    
+
+  // Toggle hide feedback (Firestore)
+  const toggleHideReview = async (reviewId: number) => {
+    const { feedbackService } = await import('@/lib/feedback.service');
+    // Tìm feedback theo id
+    const feedbacks = await feedbackService.getAll();
+    const fb = feedbacks.find((f: any) => f.id === reviewId);
+    if (fb) {
+      await feedbackService.update(fb.id, { ...fb, hidden: !fb.hidden });
+      // Reload
+      const updated = await feedbackService.getAll();
+      const allItems = getMenuItems();
+      const reviewsList: ReviewWithDish[] = updated.map((fb: any) => {
+        let dish = allItems.find(item => item.name === fb.dishName || item.id === fb.dishId);
+        return {
+          ...fb,
+          dishId: dish?.id ?? '',
+          dishName: dish?.name ?? (fb.dishName || ''),
+          hidden: fb.hidden || false,
+        };
+      });
+      reviewsList.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+      setAllReviews(reviewsList);
+    }
+  };
+
+
+  const deleteReview = async (reviewId: number | string, dishId: number) => {
+    if (!confirm('Bạn có chắc muốn xóa feedback này?')) return;
+    const { feedbackService } = await import('@/lib/feedback.service');
+    await feedbackService.delete(String(reviewId));
+    // Reload
+    const updated = await feedbackService.getAll();
     const allItems = getMenuItems();
-    const reviewsList: ReviewWithDish[] = [];
-
-    // Collect all reviews with dish info
-    Object.keys(customerReviews).forEach(dishId => {
-      const dish = allItems.find(item => item.id === parseInt(dishId));
-      if (dish) {
-        customerReviews[dishId].forEach((review: Review) => {
-          reviewsList.push({
-            ...review,
-            dishId: dish.id,
-            dishName: dish.name,
-            hidden: review.hidden || false,
-          });
-        });
-      }
+    const reviewsList: ReviewWithDish[] = updated.map((fb: any) => {
+      let dish = allItems.find(item => item.name === fb.dishName || item.id === fb.dishId);
+      return {
+        ...fb,
+        dishId: dish?.id ?? '',
+        dishName: dish?.name ?? (fb.dishName || ''),
+        hidden: fb.hidden || false,
+      };
     });
-
-    // Sort by date (newest first)
     reviewsList.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
     setAllReviews(reviewsList);
-  };
-
-  const toggleHideReview = (reviewId: number) => {
-    const storedReviews = localStorage.getItem('customerReviews');
-    const customerReviews = storedReviews ? JSON.parse(storedReviews) : {};
-
-    // Find and toggle hidden status
-    Object.keys(customerReviews).forEach(dishId => {
-      customerReviews[dishId] = customerReviews[dishId].map((review: Review) => {
-        if (review.id === reviewId) {
-          return { ...review, hidden: !review.hidden };
-        }
-        return review;
-      });
-    });
-
-    localStorage.setItem('customerReviews', JSON.stringify(customerReviews));
-    loadReviews();
-  };
-
-  const deleteReview = (reviewId: number, dishId: number) => {
-    if (!confirm('Bạn có chắc muốn xóa feedback này?')) return;
-
-    const storedReviews = localStorage.getItem('customerReviews');
-    const customerReviews = storedReviews ? JSON.parse(storedReviews) : {};
-
-    // Remove review
-    customerReviews[dishId] = customerReviews[dishId].filter((review: Review) => review.id !== reviewId);
-    
-    // Remove dish entry if no reviews left
-    if (customerReviews[dishId].length === 0) {
-      delete customerReviews[dishId];
-    }
-
-    localStorage.setItem('customerReviews', JSON.stringify(customerReviews));
-    loadReviews();
   };
 
   // Filter reviews
@@ -249,14 +254,14 @@ export default function FeedbackManagementPage() {
                   {/* Avatar */}
                   <div className="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center flex-shrink-0">
                     <span className="text-primary-600 font-bold text-lg">
-                      {review.userName.charAt(0)}
+                      {review.customerName ? review.customerName.charAt(0) : "?"}
                     </span>
                   </div>
 
                   {/* Content */}
                   <div className="flex-1">
                     <div className="flex items-center space-x-3 mb-2">
-                      <h3 className="font-bold text-neutral-800">{review.userName}</h3>
+                      <h3 className="font-bold text-neutral-800">{review.customerName}</h3>
                       <div className="flex items-center">
                         {[1, 2, 3, 4, 5].map((star) => (
                           <svg

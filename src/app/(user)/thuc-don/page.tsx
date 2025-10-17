@@ -41,6 +41,7 @@ export default function MenuPage() {
   // Review Modal State
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [selectedDish, setSelectedDish] = useState<MenuItemData | null>(null);
+  const [dishReviews, setDishReviews] = useState<any[]>([]); // Feedback từ Firestore
   const [newReview, setNewReview] = useState({
     userName: "",
     rating: 5,
@@ -57,14 +58,26 @@ export default function MenuPage() {
     fetchCategories();
   }, []);
 
-  // Load menu from Firestore
+  // Load menu và feedback từ Firestore
   useEffect(() => {
-    async function fetchMenu() {
+    async function fetchMenuAndFeedback() {
       const items = await getMenuItemsFromFirestore();
-      console.log("[DEBUG] Firestore menu items:", items); // Log dữ liệu thực tế
-      setMenuData(items as MenuItemData[]);
+      const { feedbackService } = await import("@/lib/feedback.service");
+      const allFeedback = await feedbackService.getAll();
+      // Tính reviewCount và rating cho từng món ăn
+      const menuWithReviews = (items as MenuItemData[]).map(item => {
+        const reviews = allFeedback.filter((fb: any) => fb.dishName === item.name || fb.dishId === item.id);
+        const reviewCount = reviews.length;
+        const rating = reviewCount > 0 ? (reviews.reduce((sum, r) => sum + (r.rating || 0), 0) / reviewCount) : 0;
+        return {
+          ...item,
+          reviewCount,
+          rating,
+        };
+      });
+      setMenuData(menuWithReviews);
     }
-    fetchMenu();
+    fetchMenuAndFeedback();
   }, []);
 
   // Filter, search, sort menuData
@@ -357,8 +370,14 @@ export default function MenuPage() {
                         id: Number(item.id) || undefined, // ép kiểu id về number hoặc undefined nếu không hợp lệ
                         imageUrl: item.image // Đảm bảo prop imageUrl được truyền vào nếu MenuItem yêu cầu
                       }}
-                      onReviewClick={() => {
+                      onReviewClick={async () => {
                         setSelectedDish(item);
+                        // Lấy feedback từ Firestore cho món này
+                        const { feedbackService } = await import("@/lib/feedback.service");
+                        const allFeedback = await feedbackService.getAll();
+                        // Lọc feedback theo dishName hoặc dishId
+                        const reviews = allFeedback.filter((fb: any) => fb.dishName === item.name || fb.dishId === item.id);
+                        setDishReviews(reviews);
                         setShowReviewModal(true);
                       }}
                     />
@@ -564,9 +583,9 @@ export default function MenuPage() {
                 📝 Đánh giá từ khách hàng
               </h4>
 
-              {selectedDish.reviews && selectedDish.reviews.length > 0 ? (
+              {dishReviews && dishReviews.length > 0 ? (
                 <div className="space-y-4">
-                  {selectedDish.reviews.map((review) => (
+                  {dishReviews.map((review) => (
                     <div
                       key={review.id}
                       className="bg-neutral-50 rounded-xl p-5 hover:bg-neutral-100 transition-colors"
@@ -575,15 +594,15 @@ export default function MenuPage() {
                         <div className="flex items-center space-x-3">
                           <div className="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center">
                             <span className="text-primary-600 font-bold text-sm">
-                              {review.userName.charAt(0)}
+                              {(review.customerName || "?").charAt(0)}
                             </span>
                           </div>
                           <div>
                             <p className="font-semibold text-neutral-800">
-                              {review.userName}
+                              {review.customerName || "Ẩn danh"}
                             </p>
                             <p className="text-xs text-neutral-500">
-                              {review.date}
+                              {review.createdAt?.toDate?.() ? review.createdAt.toDate().toLocaleDateString() : ""}
                             </p>
                           </div>
                         </div>

@@ -69,6 +69,7 @@ export interface Feedback {
   comment: string;
   createdAt?: Timestamp;
   updatedAt?: Timestamp;
+  hidden?: boolean;
 }
 
 export interface Category {
