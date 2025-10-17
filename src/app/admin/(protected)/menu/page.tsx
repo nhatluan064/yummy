@@ -192,6 +192,7 @@ export default function MenuManagementPage() {
           available: formData.available,
         });
         alert(`✅ Đã cập nhật món "${formData.name}"!`);
+        closeModal();
       } else {
         // Add new dish to Firestore
         await menuService.createMenuItem({
@@ -212,10 +213,11 @@ export default function MenuManagementPage() {
           reviews: [],
         });
         alert(`✅ Đã thêm món "${formData.name}"!`);
+        // KHÔNG gọi closeModal() để giữ lại popup và giá trị form
       }
       // Refresh menu items
       setMenuItems(await menuService.getAll());
-      closeModal();
+      // closeModal();
     } catch (err) {
       alert("Lỗi khi lưu món ăn: " + String(err));
     }

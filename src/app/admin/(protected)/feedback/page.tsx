@@ -1,13 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { getMenuItems, type Review } from '@/lib/menuData';
+import { getMenuItems } from '@/lib/menuData';
+import { type Feedback } from '@/lib/types';
 
-interface ReviewWithDish extends Review {
-  dishId: number;
+interface ReviewWithDish extends Feedback {
+  dishId?: string | number;
   dishName: string;
-  hidden?: boolean;
-  customerName?: string;
 }
 
 export default function FeedbackManagementPage() {
@@ -23,18 +22,20 @@ export default function FeedbackManagementPage() {
       const feedbacks = await feedbackService.getAll();
       // Map feedbacks to ReviewWithDish
       const allItems = getMenuItems();
-      const reviewsList: ReviewWithDish[] = feedbacks.map((fb: any) => {
-        let dish = allItems.find(item => item.name === fb.dishName || item.id === fb.dishId);
+      const reviewsList: ReviewWithDish[] = feedbacks.map((fb: Feedback) => {
+        const dish = allItems.find(item => item.name === fb.dishName);
         return {
           ...fb,
           dishId: dish?.id ?? '',
           dishName: dish?.name ?? (fb.dishName || ''),
-          hidden: fb.hidden || false,
-          customerName: fb.customerName ?? fb.userName ?? '',
         };
       });
-      // Sort by date (newest first)
-      reviewsList.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+      // Sort by createdAt (newest first)
+      reviewsList.sort((a, b) => {
+        const aTime = a.createdAt?.toDate ? a.createdAt.toDate().getTime() : 0;
+        const bTime = b.createdAt?.toDate ? b.createdAt.toDate().getTime() : 0;
+        return bTime - aTime;
+      });
       setAllReviews(reviewsList);
     }
     fetchFeedbacks();
@@ -42,48 +43,54 @@ export default function FeedbackManagementPage() {
 
 
   // Toggle hide feedback (Firestore)
-  const toggleHideReview = async (reviewId: number) => {
+  const toggleHideReview = async (reviewId: string) => {
     const { feedbackService } = await import('@/lib/feedback.service');
     // Tìm feedback theo id
     const feedbacks = await feedbackService.getAll();
-    const fb = feedbacks.find((f: any) => f.id === reviewId);
+    const fb = feedbacks.find((f: Feedback) => f.id === reviewId);
     if (fb) {
-      await feedbackService.update(fb.id, { ...fb, hidden: !fb.hidden });
+      await feedbackService.update(fb.id!, { ...fb, hidden: !fb.hidden });
       // Reload
       const updated = await feedbackService.getAll();
       const allItems = getMenuItems();
-      const reviewsList: ReviewWithDish[] = updated.map((fb: any) => {
-        let dish = allItems.find(item => item.name === fb.dishName || item.id === fb.dishId);
+      const reviewsList: ReviewWithDish[] = updated.map((fb: Feedback) => {
+        const dish = allItems.find(item => item.name === fb.dishName);
         return {
           ...fb,
           dishId: dish?.id ?? '',
           dishName: dish?.name ?? (fb.dishName || ''),
-          hidden: fb.hidden || false,
         };
       });
-      reviewsList.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+      reviewsList.sort((a, b) => {
+        const aTime = a.createdAt?.toDate ? a.createdAt.toDate().getTime() : 0;
+        const bTime = b.createdAt?.toDate ? b.createdAt.toDate().getTime() : 0;
+        return bTime - aTime;
+      });
       setAllReviews(reviewsList);
     }
   };
 
 
-  const deleteReview = async (reviewId: number | string, dishId: number) => {
+  const deleteReview = async (reviewId: string) => {
     if (!confirm('Bạn có chắc muốn xóa feedback này?')) return;
     const { feedbackService } = await import('@/lib/feedback.service');
     await feedbackService.delete(String(reviewId));
     // Reload
     const updated = await feedbackService.getAll();
     const allItems = getMenuItems();
-    const reviewsList: ReviewWithDish[] = updated.map((fb: any) => {
-      let dish = allItems.find(item => item.name === fb.dishName || item.id === fb.dishId);
+    const reviewsList: ReviewWithDish[] = updated.map((fb: Feedback) => {
+      const dish = allItems.find(item => item.name === fb.dishName);
       return {
         ...fb,
         dishId: dish?.id ?? '',
         dishName: dish?.name ?? (fb.dishName || ''),
-        hidden: fb.hidden || false,
       };
     });
-    reviewsList.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    reviewsList.sort((a, b) => {
+      const aTime = a.createdAt?.toDate ? a.createdAt.toDate().getTime() : 0;
+      const bTime = b.createdAt?.toDate ? b.createdAt.toDate().getTime() : 0;
+      return bTime - aTime;
+    });
     setAllReviews(reviewsList);
   };
 
@@ -98,7 +105,7 @@ export default function FeedbackManagementPage() {
       const query = searchQuery.toLowerCase();
       return (
         review.dishName.toLowerCase().includes(query) ||
-        review.userName.toLowerCase().includes(query) ||
+        review.customerName.toLowerCase().includes(query) ||
         review.comment.toLowerCase().includes(query)
       );
     }
@@ -277,7 +284,7 @@ export default function FeedbackManagementPage() {
                           </svg>
                         ))}
                       </div>
-                      <span className="text-sm text-neutral-500">{review.date}</span>
+                      <span className="text-sm text-neutral-500">{review.createdAt?.toDate()?.toLocaleDateString() ?? ''}</span>
                       {review.hidden && (
                         <span className="px-2 py-1 bg-yellow-100 text-yellow-700 text-xs rounded-full font-medium">
                           Đã ẩn
@@ -296,7 +303,7 @@ export default function FeedbackManagementPage() {
                 {/* Actions */}
                 <div className="flex items-center space-x-2 ml-4">
                   <button
-                    onClick={() => toggleHideReview(review.id)}
+                    onClick={() => review.id && toggleHideReview(review.id)}
                     className={`p-2 rounded-lg transition-colors ${
                       review.hidden
                         ? 'bg-green-100 text-green-600 hover:bg-green-200'
@@ -316,7 +323,7 @@ export default function FeedbackManagementPage() {
                     )}
                   </button>
                   <button
-                    onClick={() => deleteReview(review.id, review.dishId)}
+                    onClick={() => review.id && deleteReview(review.id)}
                     className="p-2 bg-red-100 text-red-600 hover:bg-red-200 rounded-lg transition-colors"
                     title="Xóa feedback"
                   >

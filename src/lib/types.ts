@@ -70,6 +70,7 @@ export interface Feedback {
   createdAt?: Timestamp;
   updatedAt?: Timestamp;
   hidden?: boolean;
+  dishName?: string;
 }
 
 export interface Category {

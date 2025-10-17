@@ -2,12 +2,12 @@
 
 import { useState, useEffect, useRef } from "react";
 import MenuItem from "@/app/components/MenuItem";
-import Image from "next/image";
 import {
   getCategoriesFromFirestore,
   getMenuItemsFromFirestore
 } from "@/lib/firestoreMenu";
-import { type Category, type Review } from "@/lib/menuData";
+import { type Category } from "@/lib/menuData";
+import { type Feedback } from "@/lib/types";
 
 interface MenuItemData {
   id: string;
@@ -22,7 +22,7 @@ interface MenuItemData {
   categoryName?: string;
   rating?: number;
   reviewCount?: number;
-  reviews?: Review[];
+  reviews?: Feedback[];
 }
 
 export default function MenuPage() {
@@ -41,7 +41,7 @@ export default function MenuPage() {
   // Review Modal State
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [selectedDish, setSelectedDish] = useState<MenuItemData | null>(null);
-  const [dishReviews, setDishReviews] = useState<any[]>([]); // Feedback từ Firestore
+  const [dishReviews, setDishReviews] = useState<Feedback[]>([]); // Feedback từ Firestore
   const [newReview, setNewReview] = useState({
     userName: "",
     rating: 5,
@@ -66,13 +66,14 @@ export default function MenuPage() {
       const allFeedback = await feedbackService.getAll();
       // Tính reviewCount và rating cho từng món ăn
       const menuWithReviews = (items as MenuItemData[]).map(item => {
-        const reviews = allFeedback.filter((fb: any) => fb.dishName === item.name || fb.dishId === item.id);
+        const reviews = allFeedback.filter((fb: Feedback) => fb.dishName === item.name);
         const reviewCount = reviews.length;
         const rating = reviewCount > 0 ? (reviews.reduce((sum, r) => sum + (r.rating || 0), 0) / reviewCount) : 0;
         return {
           ...item,
           reviewCount,
           rating,
+          reviews,
         };
       });
       setMenuData(menuWithReviews);
@@ -129,7 +130,7 @@ export default function MenuPage() {
     // Lưu vào localStorage như cũ
     const storedReviews = localStorage.getItem("customerReviews");
     const allReviews = storedReviews ? JSON.parse(storedReviews) : {};
-    const review: Review = {
+    const review = {
       id: Date.now(),
       userName: newReview.userName,
       rating: newReview.rating,
@@ -376,7 +377,7 @@ export default function MenuPage() {
                         const { feedbackService } = await import("@/lib/feedback.service");
                         const allFeedback = await feedbackService.getAll();
                         // Lọc feedback theo dishName hoặc dishId
-                        const reviews = allFeedback.filter((fb: any) => fb.dishName === item.name || fb.dishId === item.id);
+                        const reviews = allFeedback.filter((fb: Feedback) => fb.dishName === item.name);
                         setDishReviews(reviews);
                         setShowReviewModal(true);
                       }}
