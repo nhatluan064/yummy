@@ -1,6 +1,7 @@
 ﻿"use client";
 
 import { useState, useEffect } from "react";
+import { ToastContainer, useToastSystem } from "@/app/components/ToastSystem";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { getAuthClient } from "@/lib/sdk";
@@ -241,188 +242,208 @@ export default function ProtectedAdminLayout({
   const isActive = (href: string) => pathname?.startsWith(href);
 
   return (
-    <div className="min-h-screen bg-neutral-100">
-      {/* Sidebar */}
-      <aside
-        className={`fixed top-0 left-0 z-40 h-screen transition-transform ${
-          sidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } w-64 bg-gradient-to-b from-secondary-600 to-secondary-700 shadow-2xl`}
-      >
-        {/* Logo */}
-        <div className="flex items-center justify-between p-6 border-b border-secondary-500">
-          <Link href="/admin/dashboard" className="flex items-center space-x-3">
-            <div className="w-10 h-10 aspect-square bg-primary-500 rounded-full flex items-center justify-center overflow-hidden">
-              <span className="text-white font-bold text-xl">🍜</span>
-            </div>
-            <div>
-              <h1 className="text-white font-bold text-lg">Admin Panel</h1>
-              <p className="text-accent-200 text-xs">Quản lý nhà hàng</p>
-            </div>
-          </Link>
-        </div>
-
-        {/* Navigation */}
-        <nav className="p-4 space-y-2">
-          {navigation.map((item) => (
+    <ToastContainer>
+      <div className="min-h-screen bg-neutral-100">
+        {/* Sidebar */}
+        <aside
+          className={`fixed top-0 left-0 z-40 h-screen transition-transform ${
+            sidebarOpen ? "translate-x-0" : "-translate-x-full"
+          } w-64 bg-gradient-to-b from-secondary-600 to-secondary-700 shadow-2xl`}
+        >
+          {/* Logo */}
+          <div className="flex items-center justify-between p-6 border-b border-secondary-500">
             <Link
-              key={item.name}
-              href={item.href}
-              className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 group ${
-                isActive(item.href)
-                  ? "bg-primary-500 text-white shadow-lg shadow-primary-500/50"
-                  : "text-accent-100 hover:bg-secondary-500 hover:text-white"
-              }`}
+              href="/admin/dashboard"
+              className="flex items-center space-x-3"
             >
-              <span
-                className={`${
+              <div className="w-10 h-10 aspect-square bg-primary-500 rounded-full flex items-center justify-center overflow-hidden">
+                <span className="text-white font-bold text-xl">🍜</span>
+              </div>
+              <div>
+                <h1 className="text-white font-bold text-lg">Admin Panel</h1>
+                <p className="text-accent-200 text-xs">Quản lý nhà hàng</p>
+              </div>
+            </Link>
+          </div>
+
+          {/* Navigation */}
+          <nav className="p-4 space-y-2">
+            {navigation.map((item) => (
+              <Link
+                key={item.name}
+                href={item.href}
+                className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 group ${
                   isActive(item.href)
-                    ? "text-white"
-                    : "text-accent-200 group-hover:text-white"
+                    ? "bg-primary-500 text-white shadow-lg shadow-primary-500/50"
+                    : "text-accent-100 hover:bg-secondary-500 hover:text-white"
                 }`}
               >
-                {item.icon}
-              </span>
-              <span className="font-medium">{item.name}</span>
-            </Link>
-          ))}
-        </nav>
-
-        {/* User Info + Clock */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-secondary-500">
-          <div className="flex flex-col items-center space-y-2 px-4 py-3">
-            <div className="w-10 h-10 aspect-square bg-primary-400 rounded-full flex items-center justify-center overflow-hidden border-2 border-white shadow mb-1">
-              <span className="text-white font-bold text-lg">
-                {adminUser?.name?.[0]?.toUpperCase() || "A"}
-              </span>
-            </div>
-            <p className="text-white font-medium text-sm text-center">
-              {adminUser?.name || "Admin User"}
-            </p>
-            <p className="text-accent-200 text-xs text-center">
-              {adminUser?.email || "admin@restaurant.com"}
-            </p>
-            <button
-              onClick={async () => {
-                if (confirm("Bạn có chắc muốn đăng xuất?")) {
-                  const auth = await getAuthClient();
-                  await (await import('firebase/auth')).signOut(auth);
-                  localStorage.removeItem("adminToken");
-                  localStorage.removeItem("adminUser");
-                  router.push("/admin/login");
-                }
-              }}
-              className="text-accent-200 hover:text-white transition-colors mt-2"
-              title="Đăng xuất"
-              aria-label="Đăng xuất"
-            >
-              <svg
-                className="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                />
-              </svg>
-            </button>
-          </div>
-          <div className="text-accent-200 text-xs text-center px-4 pt-2">
-            {clock}
-          </div>
-        </div>
-      </aside>
-
-      {/* Main Content */}
-      <div
-        className={`transition-all duration-300 ${
-          sidebarOpen ? "ml-64" : "ml-0"
-        }`}
-      >
-        {/* Top Header */}
-        <header className="bg-white shadow-sm sticky top-0 z-30">
-          <div className="flex items-center justify-between px-6 py-4">
-            <div className="flex items-center space-x-4">
-              <button
-                onClick={() => setSidebarOpen(!sidebarOpen)}
-                className="p-2 rounded-lg hover:bg-neutral-100 transition-colors"
-                title="Toggle Sidebar"
-                aria-label="Toggle Sidebar"
-              >
-                <svg
-                  className="w-6 h-6 text-neutral-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
+                <span
+                  className={`${
+                    isActive(item.href)
+                      ? "text-white"
+                      : "text-accent-200 group-hover:text-white"
+                  }`}
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 6h16M4 12h16M4 18h16"
-                  />
-                </svg>
-              </button>
-              <div>
-                <h2 className="text-xl font-bold text-neutral-800">
-                  {navigation.find((item) => isActive(item.href))?.name ||
-                    "Dashboard"}
-                </h2>
-                <p className="text-sm text-neutral-500">
-                  Chào mừng trở lại, Admin!
-                </p>
+                  {item.icon}
+                </span>
+                <span className="font-medium">{item.name}</span>
+              </Link>
+            ))}
+          </nav>
+
+          {/* User Info + Clock */}
+          <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-secondary-500">
+            <div className="flex flex-col items-center space-y-2 px-4 py-3">
+              <div className="w-10 h-10 aspect-square bg-primary-400 rounded-full flex items-center justify-center overflow-hidden border-2 border-white shadow mb-1">
+                <span className="text-white font-bold text-lg">
+                  {adminUser?.name?.[0]?.toUpperCase() || "A"}
+                </span>
+              </div>
+              <p className="text-white font-medium text-sm text-center">
+                {adminUser?.name || "Admin User"}
+              </p>
+              <p className="text-accent-200 text-xs text-center">
+                {adminUser?.email || "admin@restaurant.com"}
+              </p>
+              <LogoutButton />
+            </div>
+            <div className="text-accent-200 text-xs text-center px-4 pt-2">
+              {clock}
+            </div>
+          </div>
+        </aside>
+
+        {/* Main Content */}
+        <div
+          className={`transition-all duration-300 ${
+            sidebarOpen ? "ml-64" : "ml-0"
+          }`}
+        >
+          {/* Top Header */}
+          <header className="bg-white shadow-sm sticky top-0 z-30">
+            <div className="flex items-center justify-between px-6 py-4">
+              <div className="flex items-center space-x-4">
+                <button
+                  onClick={() => setSidebarOpen(!sidebarOpen)}
+                  className="p-2 rounded-lg hover:bg-neutral-100 transition-colors"
+                  title="Toggle Sidebar"
+                  aria-label="Toggle Sidebar"
+                >
+                  <svg
+                    className="w-6 h-6 text-neutral-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M4 6h16M4 12h16M4 18h16"
+                    />
+                  </svg>
+                </button>
+                <div>
+                  <h2 className="text-xl font-bold text-neutral-800">
+                    {navigation.find((item) => isActive(item.href))?.name ||
+                      "Dashboard"}
+                  </h2>
+                  <p className="text-sm text-neutral-500">
+                    Chào mừng trở lại, Admin!
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center space-x-4">
+                {/* Notifications */}
+                <button
+                  className="relative p-2 rounded-lg hover:bg-neutral-100 transition-colors"
+                  title="Thông báo"
+                  aria-label="Thông báo"
+                >
+                  <svg
+                    className="w-6 h-6 text-neutral-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+                    />
+                  </svg>
+                  <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                </button>
+
+                {/* Quick Actions */}
+                <Link href="/" className="btn-secondary text-sm">
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                    />
+                  </svg>
+                  Xem Website
+                </Link>
               </div>
             </div>
-
-            <div className="flex items-center space-x-4">
-              {/* Notifications */}
-              <button
-                className="relative p-2 rounded-lg hover:bg-neutral-100 transition-colors"
-                title="Thông báo"
-                aria-label="Thông báo"
-              >
-                <svg
-                  className="w-6 h-6 text-neutral-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
-                  />
-                </svg>
-                <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-              </button>
-
-              {/* Quick Actions */}
-              <Link href="/" className="btn-secondary text-sm">
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                  />
-                </svg>
-                Xem Website
-              </Link>
-            </div>
-          </div>
-        </header>{" "}
-        {/* Page Content */}
-        <main className="p-6">{children}</main>
+          </header>{" "}
+          {/* Page Content */}
+          <main className="p-6">{children}</main>
+        </div>
       </div>
-    </div>
+    </ToastContainer>
   );
+
+  function LogoutButton() {
+    const { addToast } = useToastSystem();
+    return (
+      <button
+        onClick={async () => {
+          if (confirm("Bạn có chắc muốn đăng xuất?")) {
+            const auth = await getAuthClient();
+            await (await import("firebase/auth")).signOut(auth);
+            localStorage.removeItem("adminToken");
+            localStorage.removeItem("adminUser");
+            addToast(
+              "logout",
+              "Đăng xuất thành công!",
+              "Hẹn gặp lại bạn lần sau.",
+              1800
+            );
+            setTimeout(() => {
+              router.push("/admin/login");
+            }, 1800);
+          }
+        }}
+        className="text-accent-200 hover:text-white transition-colors mt-2"
+        title="Đăng xuất"
+        aria-label="Đăng xuất"
+      >
+        <svg
+          className="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+          />
+        </svg>
+      </button>
+    );
+  }
 }

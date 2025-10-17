@@ -107,17 +107,15 @@ export default function MenuPage() {
   }, [searchQuery, menuData, sortBy, filterType, selectedCategory]);
 
   // Save review to localStorage and update state
-  const saveReview = () => {
+  const saveReview = async () => {
     if (!selectedDish || !newReview.userName || !newReview.comment) {
       alert("Vui lòng điền đầy đủ tên và nhận xét!");
       return;
     }
 
-    // Get existing reviews from localStorage
+    // Lưu vào localStorage như cũ
     const storedReviews = localStorage.getItem("customerReviews");
     const allReviews = storedReviews ? JSON.parse(storedReviews) : {};
-
-    // Create new review
     const review: Review = {
       id: Date.now(),
       userName: newReview.userName,
@@ -125,22 +123,28 @@ export default function MenuPage() {
       comment: newReview.comment,
       date: new Date().toISOString().split("T")[0],
     };
-
-    // Add review to dish
     if (!allReviews[selectedDish.id]) {
       allReviews[selectedDish.id] = [];
     }
-    allReviews[selectedDish.id].unshift(review); // Add to beginning
-
-    // Save to localStorage
+    allReviews[selectedDish.id].unshift(review);
     localStorage.setItem("customerReviews", JSON.stringify(allReviews));
 
-    // Update UI - reload menu data
-    alert("✅ Cảm ơn bạn đã đánh giá! Feedback của bạn đã được lưu.");
+    // Lưu lên Firestore qua feedbackService
+    try {
+      const { feedbackService } = await import("@/lib/feedback.service");
+      await feedbackService.createFeedback({
+        customerName: newReview.userName,
+        rating: newReview.rating,
+        comment: newReview.comment,
+        // Có thể bổ sung customerEmail nếu muốn
+      });
+      alert("✅ Cảm ơn bạn đã đánh giá! Feedback của bạn đã được lưu và gửi đến admin.");
+    } catch (err) {
+      alert("❌ Gửi feedback lên hệ thống thất bại. Vui lòng thử lại!");
+      console.error("Feedback error:", err);
+    }
     setNewReview({ userName: "", rating: 5, comment: "" });
     setShowReviewModal(false);
-
-    // Reload page to show new review
     window.location.reload();
   };
 

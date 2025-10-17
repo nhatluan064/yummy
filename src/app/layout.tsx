@@ -2,7 +2,7 @@
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
-import { ToastProvider } from "@/app/components/Toast";
+import { ToastContainer } from "@/app/components/ToastSystem";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -25,7 +25,7 @@ export default function RootLayout({
   return (
     <html lang="vi">
       <body className={`${poppins.variable} ${poppins.className}`}>
-        <ToastProvider>{children}</ToastProvider>
+        <ToastContainer>{children}</ToastContainer>
       </body>
     </html>
   );

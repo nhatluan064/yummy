@@ -1,6 +1,9 @@
 // src/app/lien-he/page.tsx
 "use client";
 import { useState } from "react";
+import { useToast } from "@/app/components/Toast";
+import { collection, addDoc } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 
 export default function LienHePage() {
   const [formData, setFormData] = useState({
@@ -11,12 +14,22 @@ export default function LienHePage() {
     message: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const toast = useToast();
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Contact form submitted:", formData);
-    alert(
-      "Cảm ơn bạn đã liên hệ! Chúng tôi sẽ phản hồi trong thời gian sớm nhất."
-    );
+    try {
+      await addDoc(collection(db, "feedback"), formData);
+      toast.showToast(
+        "🎉 Cảm ơn bạn đã liên hệ! Chúng tôi sẽ phản hồi trong thời gian sớm nhất.",
+        3500
+      );
+    } catch (err) {
+      toast.showToast(
+        "❌ Gửi liên hệ thất bại: " +
+          (err instanceof Error ? err.message : "Lỗi không xác định"),
+        3500
+      );
+    }
   };
 
   const handleChange = (
@@ -190,44 +203,111 @@ export default function LienHePage() {
                   {/* Address */}
                   <div className="flex items-start space-x-4">
                     <div className="w-12 h-12 bg-[#8B7CF6] rounded-full flex items-center justify-center flex-shrink-0">
-                      <svg className="w-6 h-6 text-white" fill="white" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg>
+                      <svg
+                        className="w-6 h-6 text-white"
+                        fill="white"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z" />
+                      </svg>
                     </div>
                     <div>
-                      <h3 className="font-bold text-neutral-800 mb-1">Địa Chỉ</h3>
-                      <p className="text-neutral-600">588/6 Hà Huy Tập, Phường Bà Rịa, HCM</p>
+                      <h3 className="font-bold text-neutral-800 mb-1">
+                        Địa Chỉ
+                      </h3>
+                      <p className="text-neutral-600">
+                        588/6 Hà Huy Tập, Phường Bà Rịa, HCM
+                      </p>
                     </div>
                   </div>
 
                   {/* Phone */}
                   <div className="flex items-start space-x-4">
                     <div className="w-12 h-12 bg-[#8B7CF6] rounded-full flex items-center justify-center flex-shrink-0">
-                      <svg className="w-6 h-6 text-white" fill="white" viewBox="0 0 24 24"><path d="M6.62 10.79a15.053 15.053 0 006.59 6.59l2.2-2.2a1 1 0 011.11-.21c1.21.49 2.53.76 3.88.76a1 1 0 011 1v3.5a1 1 0 01-1 1C7.61 22 2 16.39 2 9.5a1 1 0 011-1H6.5a1 1 0 011 1c0 1.35.27 2.67.76 3.88a1 1 0 01-.21 1.11l-2.2 2.2z"/></svg>
+                      <svg
+                        className="w-6 h-6 text-white"
+                        fill="white"
+                        viewBox="0 0 24 24"
+                      >
+                        <path d="M6.62 10.79a15.053 15.053 0 006.59 6.59l2.2-2.2a1 1 0 011.11-.21c1.21.49 2.53.76 3.88.76a1 1 0 011 1v3.5a1 1 0 01-1 1C7.61 22 2 16.39 2 9.5a1 1 0 011-1H6.5a1 1 0 011 1c0 1.35.27 2.67.76 3.88a1 1 0 01-.21 1.11l-2.2 2.2z" />
+                      </svg>
                     </div>
                     <div>
-                      <h3 className="font-bold text-neutral-800 mb-1">Hotline</h3>
-                      <a href="tel:0988994799" className="text-[#8B7CF6] hover:underline">0988 994 799</a>
+                      <h3 className="font-bold text-neutral-800 mb-1">
+                        Hotline
+                      </h3>
+                      <a
+                        href="tel:0988994799"
+                        className="text-[#8B7CF6] hover:underline"
+                      >
+                        0988 994 799
+                      </a>
                     </div>
                   </div>
 
                   {/* Facebook */}
                   <div className="flex items-start space-x-4">
                     <div className="w-12 h-12 bg-[#1877F2] rounded-full flex items-center justify-center flex-shrink-0">
-                      <svg className="w-6 h-6 text-white" fill="white" viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#1877F2"/><path d="M21.5 16H18V26H14V16H11V12H14V10.5C14 8.57 15.57 7 17.5 7H21V11H18.5C18.22 11 18 11.22 18 11.5V12H21.5L21 16Z" fill="white"/></svg>
+                      <svg
+                        className="w-6 h-6 text-white"
+                        fill="white"
+                        viewBox="0 0 32 32"
+                      >
+                        <circle cx="16" cy="16" r="16" fill="#1877F2" />
+                        <path
+                          d="M21.5 16H18V26H14V16H11V12H14V10.5C14 8.57 15.57 7 17.5 7H21V11H18.5C18.22 11 18 11.22 18 11.5V12H21.5L21 16Z"
+                          fill="white"
+                        />
+                      </svg>
                     </div>
                     <div>
-                      <h3 className="font-bold text-neutral-800 mb-1">Facebook</h3>
-                      <a href="https://facebook.com/dieuhien" target="_blank" rel="noopener noreferrer" className="text-[#1877F2] hover:underline">Diệu Hiền</a>
+                      <h3 className="font-bold text-neutral-800 mb-1">
+                        Facebook
+                      </h3>
+                      <a
+                        href="https://facebook.com/dieuhien"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[#1877F2] hover:underline"
+                      >
+                        Diệu Hiền
+                      </a>
                     </div>
                   </div>
 
                   {/* Zalo */}
                   <div className="flex items-start space-x-4">
                     <div className="w-12 h-12 bg-[#19B447] rounded-full flex items-center justify-center flex-shrink-0">
-                      <svg className="w-6 h-6 text-white" fill="white" viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#19B447"/><text x="16" y="22" textAnchor="middle" fontSize="13" fill="#fff" fontFamily="Arial" dominantBaseline="middle">Zalo</text></svg>
+                      <svg
+                        className="w-6 h-6 text-white"
+                        fill="white"
+                        viewBox="0 0 32 32"
+                      >
+                        <circle cx="16" cy="16" r="16" fill="#19B447" />
+                        <text
+                          x="16"
+                          y="22"
+                          textAnchor="middle"
+                          fontSize="13"
+                          fill="#fff"
+                          fontFamily="Arial"
+                          dominantBaseline="middle"
+                        >
+                          Zalo
+                        </text>
+                      </svg>
                     </div>
                     <div>
                       <h3 className="font-bold text-neutral-800 mb-1">Zalo</h3>
-                      <a href="https://zalo.me/0988994799" target="_blank" rel="noopener noreferrer" className="text-[#19B447] hover:underline">0988 994 799</a>
+                      <a
+                        href="https://zalo.me/0988994799"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[#19B447] hover:underline"
+                      >
+                        0988 994 799
+                      </a>
                     </div>
                   </div>
 
@@ -252,8 +332,12 @@ export default function LienHePage() {
                       <h3 className="font-bold text-neutral-800 mb-1">
                         Giờ Hoạt Động
                       </h3>
-                      <p className="text-neutral-600">Thứ 2 - Thứ 6: 8:00 - 20:30</p>
-                      <p className="text-neutral-600">Thứ 7 - Chủ Nhật: 7:30 - 20:30</p>
+                      <p className="text-neutral-600">
+                        Thứ 2 - Thứ 6: 8:00 - 20:30
+                      </p>
+                      <p className="text-neutral-600">
+                        Thứ 7 - Chủ Nhật: 7:30 - 20:30
+                      </p>
                       <p className="text-neutral-600">Ngày lễ: 7:30 - 21:00</p>
                     </div>
                   </div>
@@ -292,7 +376,13 @@ export default function LienHePage() {
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                    <svg
+                      className="w-6 h-6"
+                      fill="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                    </svg>
                   </a>
 
                   <a
@@ -302,9 +392,23 @@ export default function LienHePage() {
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    <svg className="w-6 h-6 text-white" fill="white" viewBox="0 0 32 32">
+                    <svg
+                      className="w-6 h-6 text-white"
+                      fill="white"
+                      viewBox="0 0 32 32"
+                    >
                       <circle cx="16" cy="16" r="16" fill="#19B447" />
-                      <text x="16" y="22" textAnchor="middle" fontSize="13" fill="#fff" fontFamily="Arial" dominantBaseline="middle">Zalo</text>
+                      <text
+                        x="16"
+                        y="22"
+                        textAnchor="middle"
+                        fontSize="13"
+                        fill="#fff"
+                        fontFamily="Arial"
+                        dominantBaseline="middle"
+                      >
+                        Zalo
+                      </text>
                     </svg>
                   </a>
 
@@ -313,7 +417,9 @@ export default function LienHePage() {
                     className="w-12 h-12 bg-[#8B7CF6] rounded-full flex items-center justify-center text-white hover:bg-[#7868e6] transition-colors"
                     aria-label="Phone"
                   >
-                    <svg className="w-6 h-6" fill="white" viewBox="0 0 24 24"><path d="M6.62 10.79a15.053 15.053 0 006.59 6.59l2.2-2.2a1 1 0 011.11-.21c1.21.49 2.53.76 3.88.76a1 1 0 011 1v3.5a1 1 0 01-1 1C7.61 22 2 16.39 2 9.5a1 1 0 011-1H6.5a1 1 0 011 1c0 1.35.27 2.67.76 3.88a1 1 0 01-.21 1.11l-2.2 2.2z"/></svg>
+                    <svg className="w-6 h-6" fill="white" viewBox="0 0 24 24">
+                      <path d="M6.62 10.79a15.053 15.053 0 006.59 6.59l2.2-2.2a1 1 0 011.11-.21c1.21.49 2.53.76 3.88.76a1 1 0 011 1v3.5a1 1 0 01-1 1C7.61 22 2 16.39 2 9.5a1 1 0 011-1H6.5a1 1 0 011 1c0 1.35.27 2.67.76 3.88a1 1 0 01-.21 1.11l-2.2 2.2z" />
+                    </svg>
                   </a>
                 </div>
               </div>

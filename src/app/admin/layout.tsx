@@ -1,9 +1,10 @@
-import { ToastProvider } from "@/app/components/Toast";
+import React from "react";
+import { ToastContainer } from "@/app/components/ToastSystem";
 
 export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return <ToastProvider>{children}</ToastProvider>;
+  return <ToastContainer>{children}</ToastContainer>;
 }

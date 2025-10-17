@@ -9,7 +9,7 @@ import {
   sendPasswordResetEmail,
 } from "firebase/auth";
 import type { FirebaseError } from "firebase/app";
-import { useToast } from "@/app/components/Toast";
+import { useToastSystem } from "@/app/components/ToastSystem";
 
 export default function AdminLoginPage() {
   const [formData, setFormData] = useState({
@@ -19,7 +19,7 @@ export default function AdminLoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
-  const toast = useToast();
+  const { addToast } = useToastSystem();
 
   // Check if already logged in
   // Check if already logged in by inspecting Firebase auth state (not just localStorage).
@@ -32,20 +32,20 @@ export default function AdminLoginPage() {
         const auth = await getAuthClient();
         // If a user is already signed in, redirect to dashboard
         if (auth.currentUser) {
-          router.push('/admin/dashboard');
+          router.push("/admin/dashboard");
           return;
         }
 
         // Otherwise, listen once for auth state change for a short period
         unsub = auth.onAuthStateChanged((user) => {
           if (user) {
-            router.push('/admin/dashboard');
+            router.push("/admin/dashboard");
           }
         });
       } catch (err) {
         // If getAuthClient fails (e.g. Firebase not configured), don't redirect.
         // Keep the login page interactive so the developer can see the error.
-        console.warn('Auth check skipped:', err);
+        console.warn("Auth check skipped:", err);
       }
     };
 
@@ -81,7 +81,12 @@ export default function AdminLoginPage() {
           uid: user.uid,
         })
       );
-      toast.showToast("✅ Đăng nhập thành công!", 1800);
+      addToast(
+        "login",
+        "Đăng nhập thành công!",
+        "Chào mừng bạn quay lại hệ thống quản trị.",
+        1800
+      );
       setTimeout(() => {
         router.push("/admin/dashboard");
       }, 1800);
@@ -129,7 +134,12 @@ export default function AdminLoginPage() {
     try {
       const auth = await getAuthClient();
       await sendPasswordResetEmail(auth, formData.email);
-      alert("Đã gửi email đặt lại mật khẩu. Vui lòng kiểm tra hộp thư.");
+      addToast(
+        "info",
+        "Đã gửi email đặt lại mật khẩu",
+        "Vui lòng kiểm tra hộp thư để đặt lại mật khẩu.",
+        3500
+      );
     } catch (err) {
       console.error(err);
       setError(

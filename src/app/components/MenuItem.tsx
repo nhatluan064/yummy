@@ -141,11 +141,19 @@ export default function MenuItem({ item, onReviewClick }: MenuItemProps) {
           <div className="flex-1">
             <button
               onClick={handleOrder}
-              className="btn-accent w-full py-3 rounded-md flex items-center justify-center gap-2"
+              className="btn-accent w-full py-3 rounded-md flex items-center justify-center gap-2 animate-order-btn"
               aria-label={`Oder ${item.name}`}
+              style={{
+                transition: "transform 0.15s cubic-bezier(.4,2,.6,1)",
+              }}
+              onMouseDown={(e) =>
+                (e.currentTarget.style.transform = "scale(0.96)")
+              }
+              onMouseUp={(e) => (e.currentTarget.style.transform = "")}
+              onMouseLeave={(e) => (e.currentTarget.style.transform = "")}
             >
               <svg
-                className="w-4 h-4 transform transition-transform duration-300"
+                className="w-4 h-4 transform transition-transform duration-300 group-hover:animate-wiggle"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"

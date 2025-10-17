@@ -1,3 +1,43 @@
+/* Oder Button Animation */
+.animate-order-btn {
+  animation: orderPulse 1.6s infinite cubic-bezier(0.4, 0, 0.6, 1);
+}
+@keyframes orderPulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(135, 135, 244, 0.18);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(135, 135, 244, 0.1);
+  }
+}
+
+@keyframes wiggle {
+  0% {
+    transform: rotate(0deg);
+  }
+  15% {
+    transform: rotate(-12deg);
+  }
+  30% {
+    transform: rotate(10deg);
+  }
+  45% {
+    transform: rotate(-8deg);
+  }
+  60% {
+    transform: rotate(6deg);
+  }
+  75% {
+    transform: rotate(-4deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+.animate-wiggle {
+  animation: wiggle 0.6s;
+}
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
