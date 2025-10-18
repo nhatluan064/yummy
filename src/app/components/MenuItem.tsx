@@ -32,23 +32,23 @@ export default function MenuItem({ item, onReviewClick }: MenuItemProps) {
     order = null;
   }
 
-  const handleOrder = () => {
+  const handleAddToCart = () => {
     if (!order) return;
     order.addItem({ name: item.name, price: item.price, quantity });
-    order.open();
+    // Không mở drawer ở đây, để user có thể tiếp tục thêm món khác
   };
 
   return (
-    <div className="card group overflow-hidden animate-fade-in-up">
+    <div className="card group overflow-hidden animate-fade-in-up h-[700px] flex flex-col">
       {/* Image Container */}
       <div className="relative overflow-hidden">
-        {!imageLoaded && <div className="skeleton w-full h-64"></div>}
+        {!imageLoaded && <div className="skeleton w-full h-80"></div>}
         <Image
           src={item.imageUrl}
           alt={item.name}
           width={400}
-          height={256}
-          className={`w-full h-64 object-cover transition-transform duration-500 group-hover:scale-105 rounded-t-md ${
+          height={320}
+          className={`w-full h-80 object-cover transition-transform duration-400 group-hover:scale-105 rounded-t-md ${
             imageLoaded ? "opacity-100" : "opacity-0"
           }`}
           onLoad={() => setImageLoaded(true)}
@@ -87,10 +87,12 @@ export default function MenuItem({ item, onReviewClick }: MenuItemProps) {
       </div>
 
       {/* Content */}
-      <div className="p-6 bg-white">
-        <h3 className="text-xl font-bold text-neutral-900 mb-2 group-hover:text-primary-600 transition-colors duration-300">
-          {item.name}
-        </h3>
+      <div className="p-6 bg-white flex-1 flex flex-col">
+        <div className="min-h-[90px] mb-2">
+          <h3 className="text-xl font-bold text-neutral-900 group-hover:text-primary-600 transition-colors duration-300 line-clamp-3 leading-relaxed">
+            {item.name}
+          </h3>
+        </div>
         <p className="text-neutral-600 mb-4 line-clamp-2 leading-relaxed">
           {item.description}
         </p>
@@ -147,9 +149,9 @@ export default function MenuItem({ item, onReviewClick }: MenuItemProps) {
 
           <div className="flex-1">
             <button
-              onClick={handleOrder}
-              className="btn-accent w-full py-3 rounded-md flex items-center justify-center gap-2 animate-order-btn"
-              aria-label={`Oder ${item.name}`}
+              onClick={handleAddToCart}
+              className="btn-accent w-full py-2 rounded-md flex items-center justify-center gap-1 animate-order-btn text-sm"
+              aria-label={`Thêm ${item.name} vào giỏ hàng`}
               style={{
                 transition: "transform 0.15s cubic-bezier(.4,2,.6,1)",
               }}
@@ -160,7 +162,7 @@ export default function MenuItem({ item, onReviewClick }: MenuItemProps) {
               onMouseLeave={(e) => (e.currentTarget.style.transform = "")}
             >
               <svg
-                className="w-4 h-4 transform transition-transform duration-300 group-hover:animate-wiggle"
+                className="w-3 h-3 transform transition-transform duration-300 group-hover:animate-wiggle"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -172,16 +174,19 @@ export default function MenuItem({ item, onReviewClick }: MenuItemProps) {
                   d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m0 0L12 21m0 0l2.5-3M12 21l2.5-3"
                 />
               </svg>
-              Oder
+              Thêm vào giỏ
             </button>
           </div>
         </div>
+
+        {/* Spacer */}
+        <div className="flex-1" />
 
         {/* Review Button */}
         {onReviewClick && (
           <button
             onClick={onReviewClick}
-            className="mt-3 w-full py-2 px-4 bg-white border-2 border-primary-500 text-primary-600 rounded-md font-semibold hover:bg-primary-50 transition-colors flex items-center justify-center gap-2"
+            className="w-full py-4 my-4 px-4 bg-white border-2 border-primary-500 text-primary-600 rounded-md font-semibold hover:bg-primary-50 transition-colors flex items-center justify-center gap-4"
             aria-label={`Viết đánh giá cho ${item.name}`}
           >
             <svg

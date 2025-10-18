@@ -26,142 +26,157 @@ export default function Header() {
   return (
     <header className="bg-white/95 backdrop-blur-sm shadow-lg border-b border-neutral-200 sticky top-0 z-50">
       <div className="container-custom">
-          <div className="flex justify-between items-center py-4">
-            {/* Logo */}
+        <div className="flex justify-between items-center py-4">
+          {/* Logo */}
+          <Link
+            href="/"
+            className="text-3xl font-bold text-gradient hover:scale-105 transition-transform duration-300"
+          >
+            🍜 Mì cay yummy
+          </Link>
+          {/* Desktop Navigation */}
+          <nav className="hidden lg:flex items-center space-x-8">
             <Link
               href="/"
-              className="text-3xl font-bold text-gradient hover:scale-105 transition-transform duration-300"
-            >
-              🍜 Mì cay yummy
-            </Link>
-            {/* Desktop Navigation */}
-            <nav className="hidden lg:flex items-center space-x-8">
-              <Link
-                href="/"
-                className={`font-medium transition-all duration-300 relative group ${
-                  isActive("/") && pathname === "/"
-                    ? "text-primary-600"
-                    : "text-neutral-700 hover:text-primary-600"
-                }`}
-              >
-                Trang Chủ
-                <span
-                  className={`absolute bottom-0 left-0 h-0.5 bg-primary-600 transition-all duration-300 ${
-                    isActive("/") && pathname === "/"
-                      ? "w-full"
-                      : "w-0 group-hover:w-full"
-                  }`}
-                ></span>
-              </Link>
-              <Link
-                href="/dat-ban"
-                className={`font-medium transition-all duration-300 relative group ${
-                  isActive("/dat-ban")
-                    ? "text-primary-600"
-                    : "text-neutral-700 hover:text-primary-600"
-                }`}
-              >
-                Đặt Bàn
-                <span
-                  className={`absolute bottom-0 left-0 h-0.5 bg-primary-600 transition-all duration-300 ${
-                    isActive("/dat-ban") ? "w-full" : "w-0 group-hover:w-full"
-                  }`}
-                ></span>
-              </Link>
-              <Link
-                href="/thuc-don"
-                className={`font-medium transition-all duration-300 relative group ${
-                  isActive("/thuc-don")
-                    ? "text-primary-600"
-                    : "text-neutral-700 hover:text-primary-600"
-                }`}
-              >
-                Thực Đơn
-                <span
-                  className={`absolute bottom-0 left-0 h-0.5 bg-primary-600 transition-all duration-300 ${
-                    isActive("/thuc-don") ? "w-full" : "w-0 group-hover:w-full"
-                  }`}
-                ></span>
-              </Link>
-              <Link
-                href="/lien-he"
-                className={`font-medium transition-all duration-300 relative group ${
-                  isActive("/lien-he")
-                    ? "text-primary-600"
-                    : "text-neutral-700 hover:text-primary-600"
-                }`}
-              >
-                Liên Hệ
-                <span
-                  className={`absolute bottom-0 left-0 h-0.5 bg-primary-600 transition-all duration-300 ${
-                    isActive("/lien-he") ? "w-full" : "w-0 group-hover:w-full"
-                  }`}
-                ></span>
-              </Link>
-            </nav>
-        {/* Admin Login & Mobile Menu Button */}
-        <div className="flex items-center gap-4">
-          {/* Order Drawer trigger */}
-          <button
-            onClick={() => order?.open()}
-            className="btn-primary hidden sm:inline-flex p-2 rounded-full"
-            aria-label="Open order drawer"
-          >
-            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m0 0L12 21m0 0l2.5-3M12 21l2.5-3" />
-            </svg>
-          </button>
-          <Link
-            href="/admin/login"
-            className="btn-secondary hidden sm:inline-flex p-2 rounded-full"
-            aria-label="Admin login"
-          >
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-              />
-            </svg>
-          </Link>
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="lg:hidden p-2 text-neutral-700 hover:text-primary-600 transition-colors"
-            aria-label="Toggle mobile menu"
-          >
-            <svg
-              className={`w-6 h-6 transition-transform duration-300 ${
-                isMenuOpen ? "rotate-45" : ""
+              className={`font-medium transition-all duration-300 relative group ${
+                isActive("/") && pathname === "/"
+                  ? "text-primary-600"
+                  : "text-neutral-700 hover:text-primary-600"
               }`}
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
             >
-              {isMenuOpen ? (
+              Trang Chủ
+              <span
+                className={`absolute bottom-0 left-0 h-0.5 bg-primary-600 transition-all duration-300 ${
+                  isActive("/") && pathname === "/"
+                    ? "w-full"
+                    : "w-0 group-hover:w-full"
+                }`}
+              ></span>
+            </Link>
+            <Link
+              href="/dat-ban"
+              className={`font-medium transition-all duration-300 relative group ${
+                isActive("/dat-ban")
+                  ? "text-primary-600"
+                  : "text-neutral-700 hover:text-primary-600"
+              }`}
+            >
+              Đặt Bàn
+              <span
+                className={`absolute bottom-0 left-0 h-0.5 bg-primary-600 transition-all duration-300 ${
+                  isActive("/dat-ban") ? "w-full" : "w-0 group-hover:w-full"
+                }`}
+              ></span>
+            </Link>
+            <Link
+              href="/thuc-don"
+              className={`font-medium transition-all duration-300 relative group ${
+                isActive("/thuc-don")
+                  ? "text-primary-600"
+                  : "text-neutral-700 hover:text-primary-600"
+              }`}
+            >
+              Thực Đơn
+              <span
+                className={`absolute bottom-0 left-0 h-0.5 bg-primary-600 transition-all duration-300 ${
+                  isActive("/thuc-don") ? "w-full" : "w-0 group-hover:w-full"
+                }`}
+              ></span>
+            </Link>
+            <Link
+              href="/lien-he"
+              className={`font-medium transition-all duration-300 relative group ${
+                isActive("/lien-he")
+                  ? "text-primary-600"
+                  : "text-neutral-700 hover:text-primary-600"
+              }`}
+            >
+              Liên Hệ
+              <span
+                className={`absolute bottom-0 left-0 h-0.5 bg-primary-600 transition-all duration-300 ${
+                  isActive("/lien-he") ? "w-full" : "w-0 group-hover:w-full"
+                }`}
+              ></span>
+            </Link>
+          </nav>
+          {/* Admin Login & Mobile Menu Button */}
+          <div className="flex items-center gap-4">
+            {/* Order Drawer trigger */}
+            <button
+              onClick={() => order?.open()}
+              className="btn-primary hidden sm:inline-flex p-2 rounded-full relative"
+              aria-label="Xem giỏ hàng"
+            >
+              <svg
+                className="w-5 h-5"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+              >
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
+                  d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m0 0L12 21m0 0l2.5-3M12 21l2.5-3"
                 />
-              ) : (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 6h16M4 12h16M4 18h16"
-                />
+              </svg>
+              {order && order.items.length > 0 && (
+                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                  {order.items.length}
+                </span>
               )}
-            </svg>
-          </button>
-        </div>
+            </button>
+            <Link
+              href="/admin/login"
+              className="btn-secondary hidden sm:inline-flex p-2 rounded-full"
+              aria-label="Admin login"
+            >
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                />
+              </svg>
+            </Link>
+            {/* Mobile Menu Button */}
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="lg:hidden p-2 text-neutral-700 hover:text-primary-600 transition-colors"
+              aria-label="Toggle mobile menu"
+            >
+              <svg
+                className={`w-6 h-6 transition-transform duration-300 ${
+                  isMenuOpen ? "rotate-45" : ""
+                }`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                {isMenuOpen ? (
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                ) : (
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 6h16M4 12h16M4 18h16"
+                  />
+                )}
+              </svg>
+            </button>
+          </div>
 
           {/* end of header controls */}
         </div>
@@ -216,26 +231,6 @@ export default function Header() {
               onClick={() => setIsMenuOpen(false)}
             >
               📞 Liên Hệ
-            </Link>
-            <Link
-              href="/admin/login"
-              className="btn-primary mt-4"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              <svg
-                className="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                />
-              </svg>
-              Admin Login
             </Link>
           </nav>
         </div>

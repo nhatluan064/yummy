@@ -85,13 +85,13 @@ export function NotificationBell() {
   return (
     <div className="relative" ref={bellRef}>
       <button
-        className="relative p-2 rounded-lg hover:bg-neutral-100 transition-colors"
+        className="relative p-2 md:p-3 rounded-lg hover:bg-neutral-100 transition-colors"
         title="Thông báo"
         aria-label="Thông báo"
         onClick={() => setOpen((v) => !v)}
       >
         <svg
-          className="w-6 h-6 text-neutral-600"
+          className="w-5 h-5 md:w-6 md:h-6 text-neutral-600"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -106,40 +106,42 @@ export function NotificationBell() {
         <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
       </button>
       {open && (
-        <div className="absolute right-0 mt-2 w-96 max-w-[90vw] bg-white rounded-xl shadow-2xl border border-neutral-200 z-50 animate-fade-in-up">
-          <div className="p-4 border-b font-bold text-neutral-800 flex items-center justify-between">
-            <span>Thông báo mới</span>
+        <div className="absolute right-0 mt-2 w-80 md:w-96 max-w-[95vw] bg-white rounded-xl shadow-2xl border border-neutral-200 z-50 animate-fade-in-up">
+          <div className="p-3 md:p-4 border-b font-bold text-neutral-800 flex items-center justify-between">
+            <span className="text-sm md:text-base">Thông báo mới</span>
             {loading && (
               <span className="text-xs text-neutral-400">Đang tải...</span>
             )}
           </div>
-          <ul className="max-h-96 overflow-y-auto divide-y divide-neutral-100">
-            {notifications.slice(0, 10).map((n, idx) => (
+          <ul className="max-h-80 md:max-h-96 overflow-y-auto divide-y divide-neutral-100">
+            {notifications.slice(0, 10).map((n) => (
               <li
                 key={n.type + n.id}
-                className="flex items-center gap-3 px-4 py-3 hover:bg-neutral-50 transition-colors"
+                className="flex items-center gap-2 md:gap-3 px-3 md:px-4 py-2 md:py-3 hover:bg-neutral-50 transition-colors"
               >
-                <span>{getIcon(n.type)}</span>
-                <div className="flex-1">
-                  <div className="font-medium text-sm text-neutral-800">
+                <span className="text-lg md:text-xl">{getIcon(n.type)}</span>
+                <div className="flex-1 min-w-0">
+                  <div className="font-medium text-xs md:text-sm text-neutral-800 truncate">
                     {n.title}
                   </div>
                   <div className="text-xs text-neutral-500">
                     {n.time ? n.time.toLocaleString("vi-VN") : ""}
                   </div>
                 </div>
-                <span className="text-xs text-neutral-400">{n.status}</span>
+                <span className="text-xs text-neutral-400 whitespace-nowrap">
+                  {n.status}
+                </span>
               </li>
             ))}
             {notifications.length === 0 && !loading && (
-              <li className="px-4 py-8 text-center text-neutral-400">
+              <li className="px-3 md:px-4 py-6 md:py-8 text-center text-neutral-400 text-sm">
                 Không có thông báo mới
               </li>
             )}
           </ul>
           {notifications.length > 10 && (
             <button
-              className="w-full py-3 text-primary-600 font-semibold hover:underline border-t border-neutral-100 bg-neutral-50 rounded-b-xl"
+              className="w-full py-2 md:py-3 text-primary-600 font-semibold hover:underline border-t border-neutral-100 bg-neutral-50 rounded-b-xl text-sm md:text-base"
               onClick={() => {
                 setOpen(false);
                 router.push("/admin/data-management");

@@ -161,6 +161,7 @@ export default function MenuPage() {
         customerName: newReview.userName,
         rating: newReview.rating,
         comment: newReview.comment,
+        dishName: selectedDish.name,
         // Có thể bổ sung customerEmail nếu muốn
       });
       alert(

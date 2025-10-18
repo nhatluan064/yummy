@@ -1,6 +1,6 @@
 // src/app/page.tsx
 import Link from "next/link";
-// Image import removed (using simple <img> for dynamic cards)
+import Image from "next/image";
 import { getCategories, getAvailableMenuItems, MenuItem } from "@/lib/menuData";
 
 export default function HomePage() {
@@ -199,33 +199,55 @@ export default function HomePage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {categories.length === 0 ? null : featured.map((item, index) => {
-              const delayClass =
-                index === 0
-                  ? "animate-fade-in-up"
-                  : index === 1
-                  ? "animate-fade-in-up-delay-1"
-                  : "animate-fade-in-up-delay-2";
-              return (
-                <article key={item.id} className={`rounded-xl overflow-hidden bg-white shadow-md p-0 ${delayClass}`}>
-                  <div className="h-44 bg-neutral-200">
-                    {item.image ? (
-                      <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
-                    ) : (
-                      <div className="w-full h-full bg-neutral-100" />
-                    )}
-                  </div>
-                  <div className="p-6">
-                    <h3 className="text-lg font-bold text-neutral-800 mb-2">{item.name}</h3>
-                    <p className="text-neutral-600 mb-4">{item.description}</p>
-                    <div className="flex items-center justify-between">
-                      <div className="text-primary-600 font-bold">{item.price.toLocaleString()}đ</div>
-                      <Link href={`/thuc-don/${item.id}`} className="btn-primary">Xem Chi Tiết</Link>
-                    </div>
-                  </div>
-                </article>
-              );
-            })}
+            {categories.length === 0
+              ? null
+              : featured.map((item, index) => {
+                  const delayClass =
+                    index === 0
+                      ? "animate-fade-in-up"
+                      : index === 1
+                      ? "animate-fade-in-up-delay-1"
+                      : "animate-fade-in-up-delay-2";
+                  return (
+                    <article
+                      key={item.id}
+                      className={`rounded-xl overflow-hidden bg-white shadow-md p-0 ${delayClass}`}
+                    >
+                      <div className="h-44 bg-neutral-200">
+                        {item.image ? (
+                          <Image
+                            src={item.image}
+                            alt={item.name}
+                            width={400}
+                            height={176}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-neutral-100" />
+                        )}
+                      </div>
+                      <div className="p-6">
+                        <h3 className="text-lg font-bold text-neutral-800 mb-2">
+                          {item.name}
+                        </h3>
+                        <p className="text-neutral-600 mb-4">
+                          {item.description}
+                        </p>
+                        <div className="flex items-center justify-between">
+                          <div className="text-primary-600 font-bold">
+                            {item.price.toLocaleString()}đ
+                          </div>
+                          <Link
+                            href={`/thuc-don/${item.id}`}
+                            className="btn-primary"
+                          >
+                            Xem Chi Tiết
+                          </Link>
+                        </div>
+                      </div>
+                    </article>
+                  );
+                })}
           </div>
 
           <div className="text-center mt-12">

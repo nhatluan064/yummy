@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useOrder } from "./OrderContext";
-import { orderService } from "@/lib/sdk";
+import { orderService } from "@/lib/order.service";
 import type { Order } from "@/lib/types";
 import { useToast } from "@/app/components/Toast";
 
@@ -16,7 +16,6 @@ export default function OrderDrawer() {
     tableNumber,
     setTableNumber,
     customerName,
-    setCustomerName,
     clear,
   } = useOrder();
   const [submitting, setSubmitting] = useState(false);

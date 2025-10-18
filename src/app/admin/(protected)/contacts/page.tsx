@@ -2,9 +2,15 @@
 
 import { useState, useEffect } from "react";
 import { type Contact } from "@/lib/types";
+import { type Timestamp } from "firebase/firestore"; // Import Timestamp nếu cần
+
+// Định nghĩa lại kiểu Contact để createdAt rõ ràng hơn (nếu cần)
+interface ContactWithTimestamp extends Omit<Contact, "createdAt"> {
+  createdAt: Timestamp;
+}
 
 export default function ContactManagementPage() {
-  const [allContacts, setAllContacts] = useState<Contact[]>([]);
+  const [allContacts, setAllContacts] = useState<ContactWithTimestamp[]>([]);
   const [filterStatus, setFilterStatus] = useState<
     "all" | "pending" | "responded" | "closed"
   >("all");
@@ -17,7 +23,17 @@ export default function ContactManagementPage() {
     const setupSubscription = async () => {
       const { contactService } = await import("@/lib/contact.service");
       unsubscribe = contactService.subscribeToContacts((contacts) => {
-        setAllContacts(contacts);
+        // Sắp xếp contacts mới nhất lên đầu
+        const sortedContacts = contacts.sort((a, b) => {
+          const aTime = a.createdAt?.toDate
+            ? a.createdAt.toDate().getTime()
+            : 0;
+          const bTime = b.createdAt?.toDate
+            ? b.createdAt.toDate().getTime()
+            : 0;
+          return bTime - aTime;
+        });
+        setAllContacts(sortedContacts as ContactWithTimestamp[]);
       });
     };
 
@@ -91,18 +107,18 @@ export default function ContactManagementPage() {
   };
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
+    <div className="space-y-4 md:space-y-6">
+      {/* Header (Giữ nguyên) */}
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-neutral-800">
+          <h1 className="text-xl md:text-3xl font-bold text-neutral-800">
             📞 Quản Lý Liên Hệ
           </h1>
-          <p className="text-neutral-600 mt-2">
+          <p className="text-neutral-600 mt-1 md:mt-2 text-sm md:text-base">
             Xem và quản lý các tin nhắn liên hệ từ khách hàng
           </p>
         </div>
-        <div className="flex items-center space-x-2 bg-white rounded-lg px-4 py-2 shadow-sm border border-neutral-200">
+        <div className="flex w-full items-center space-x-3 rounded-lg border border-neutral-200 bg-white p-4 shadow-sm md:w-auto md:space-x-2 md:px-4 md:py-2">
           <svg
             className="w-5 h-5 text-primary-600"
             fill="none"
@@ -116,26 +132,29 @@ export default function ContactManagementPage() {
               d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
             />
           </svg>
-          <span className="text-2xl font-bold text-primary-600">
+          <span className="text-xl md:text-2xl font-bold text-primary-600">
             {allContacts.length}
           </span>
           <span className="text-sm text-neutral-600">Tổng liên hệ</span>
         </div>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="card p-6 bg-gradient-to-br from-yellow-50 to-white border-l-4 border-yellow-500">
+      {/* Stats (Giữ nguyên) */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
+        {/* Chờ xử lý */}
+        <div className="card p-4 md:p-6 bg-gradient-to-br from-yellow-50 to-white border-l-4 border-yellow-500">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-neutral-600 mb-1">Chờ xử lý</p>
-              <p className="text-3xl font-bold text-yellow-600">
+              <p className="text-xs md:text-sm text-neutral-600 mb-1">
+                Chờ xử lý
+              </p>
+              <p className="text-xl md:text-3xl font-bold text-yellow-600">
                 {allContacts.filter((c) => c.status === "pending").length}
               </p>
             </div>
-            <div className="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
+            <div className="w-10 h-10 md:w-12 md:h-12 bg-yellow-100 rounded-full flex items-center justify-center">
               <svg
-                className="w-6 h-6 text-yellow-600"
+                className="w-5 h-5 md:w-6 md:h-6 text-yellow-600"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -150,18 +169,20 @@ export default function ContactManagementPage() {
             </div>
           </div>
         </div>
-
-        <div className="card p-6 bg-gradient-to-br from-blue-50 to-white border-l-4 border-blue-500">
+        {/* Đã phản hồi */}
+        <div className="card p-4 md:p-6 bg-gradient-to-br from-blue-50 to-white border-l-4 border-blue-500">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-neutral-600 mb-1">Đã phản hồi</p>
-              <p className="text-3xl font-bold text-blue-600">
+              <p className="text-xs md:text-sm text-neutral-600 mb-1">
+                Đã phản hồi
+              </p>
+              <p className="text-xl md:text-3xl font-bold text-blue-600">
                 {allContacts.filter((c) => c.status === "responded").length}
               </p>
             </div>
-            <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+            <div className="w-10 h-10 md:w-12 md:h-12 bg-blue-100 rounded-full flex items-center justify-center">
               <svg
-                className="w-6 h-6 text-blue-600"
+                className="w-5 h-5 md:w-6 md:h-6 text-blue-600"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -176,18 +197,20 @@ export default function ContactManagementPage() {
             </div>
           </div>
         </div>
-
-        <div className="card p-6 bg-gradient-to-br from-green-50 to-white border-l-4 border-green-500">
+        {/* Đã đóng */}
+        <div className="card p-4 md:p-6 bg-gradient-to-br from-green-50 to-white border-l-4 border-green-500">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-neutral-600 mb-1">Đã đóng</p>
-              <p className="text-3xl font-bold text-green-600">
+              <p className="text-xs md:text-sm text-neutral-600 mb-1">
+                Đã đóng
+              </p>
+              <p className="text-xl md:text-3xl font-bold text-green-600">
                 {allContacts.filter((c) => c.status === "closed").length}
               </p>
             </div>
-            <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+            <div className="w-10 h-10 md:w-12 md:h-12 bg-green-100 rounded-full flex items-center justify-center">
               <svg
-                className="w-6 h-6 text-green-600"
+                className="w-5 h-5 md:w-6 md:h-6 text-green-600"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -202,18 +225,20 @@ export default function ContactManagementPage() {
             </div>
           </div>
         </div>
-
-        <div className="card p-6 bg-gradient-to-br from-purple-50 to-white border-l-4 border-purple-500">
+        {/* Tổng số */}
+        <div className="card p-4 md:p-6 bg-gradient-to-br from-purple-50 to-white border-l-4 border-purple-500">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-neutral-600 mb-1">Tổng số</p>
-              <p className="text-3xl font-bold text-purple-600">
+              <p className="text-xs md:text-sm text-neutral-600 mb-1">
+                Tổng số
+              </p>
+              <p className="text-xl md:text-3xl font-bold text-purple-600">
                 {allContacts.length}
               </p>
             </div>
-            <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+            <div className="w-10 h-10 md:w-12 md:h-12 bg-purple-100 rounded-full flex items-center justify-center">
               <svg
-                className="w-6 h-6 text-purple-600"
+                className="w-5 h-5 md:w-6 md:h-6 text-purple-600"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -231,7 +256,7 @@ export default function ContactManagementPage() {
       </div>
 
       {/* Filters */}
-      <div className="card p-6">
+      <div className="card p-4 md:p-6">
         <div className="flex flex-col md:flex-row md:items-center gap-4">
           {/* Search */}
           <div className="flex-1">
@@ -259,11 +284,11 @@ export default function ContactManagementPage() {
             </div>
           </div>
 
-          {/* Status Filter */}
-          <div className="flex space-x-2">
+          {/* Status Filter - TỐI ƯU: grid-cols-2 cho mobile */}
+          <div className="grid grid-cols-2 gap-2 md:flex md:flex-wrap">
             <button
               onClick={() => setFilterStatus("all")}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+              className={`px-3 py-2 text-sm rounded-lg font-medium transition-colors ${
                 filterStatus === "all"
                   ? "bg-primary-600 text-white"
                   : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200"
@@ -273,7 +298,7 @@ export default function ContactManagementPage() {
             </button>
             <button
               onClick={() => setFilterStatus("pending")}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+              className={`px-3 py-2 text-sm rounded-lg font-medium transition-colors ${
                 filterStatus === "pending"
                   ? "bg-yellow-600 text-white"
                   : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200"
@@ -283,7 +308,7 @@ export default function ContactManagementPage() {
             </button>
             <button
               onClick={() => setFilterStatus("responded")}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+              className={`px-3 py-2 text-sm rounded-lg font-medium transition-colors ${
                 filterStatus === "responded"
                   ? "bg-blue-600 text-white"
                   : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200"
@@ -293,7 +318,7 @@ export default function ContactManagementPage() {
             </button>
             <button
               onClick={() => setFilterStatus("closed")}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+              className={`px-3 py-2 text-sm rounded-lg font-medium transition-colors ${
                 filterStatus === "closed"
                   ? "bg-green-600 text-white"
                   : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200"
@@ -308,7 +333,7 @@ export default function ContactManagementPage() {
       {/* Contacts List */}
       <div className="space-y-4">
         {filteredContacts.length === 0 ? (
-          <div className="card p-12 text-center">
+          <div className="card p-6 md:p-12 text-center">
             <svg
               className="w-16 h-16 text-neutral-300 mx-auto mb-4"
               fill="none"
@@ -328,99 +353,96 @@ export default function ContactManagementPage() {
           filteredContacts.map((contact) => (
             <div
               key={contact.id}
-              className="card p-4 md:p-6 bg-white rounded-xl shadow-sm"
+              className="card p-4 bg-white rounded-xl shadow-sm space-y-4"
             >
-              <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-3">
-                <div className="flex flex-row md:flex-row items-start gap-3 flex-1 w-full">
-                  {/* Avatar */}
-                  <div className="w-10 h-10 md:w-12 md:h-12 bg-primary-100 rounded-full flex items-center justify-center flex-shrink-0">
-                    <span className="text-primary-600 font-bold text-base md:text-lg">
-                      {contact.name
-                        ? contact.name.charAt(0).toUpperCase()
-                        : "?"}
+              {/* === KHỐI 1: THÔNG TIN CHÍNH (AVATAR + CHI TIẾT) === */}
+              <div className="flex flex-row items-start gap-3 w-full">
+                {/* Avatar */}
+                <div className="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  <span className="text-primary-600 font-bold text-base">
+                    {contact.name ? contact.name.charAt(0).toUpperCase() : "?"}
+                  </span>
+                </div>
+
+                {/* Khối Chi tiết (xếp dọc) */}
+                <div className="flex-1 min-w-0">
+                  {/* Tên */}
+                  <h3 className="font-bold text-neutral-800 text-base truncate break-words">
+                    {contact.name}
+                  </h3>
+                  {/* Trạng thái + Ngày */}
+                  <div className="flex flex-row flex-wrap items-center gap-x-2 gap-y-1 mt-0.5">
+                    <span
+                      className={`px-2 py-0.5 text-xs rounded-full font-medium ${getStatusColor(
+                        contact.status
+                      )}`}
+                    >
+                      {getStatusText(contact.status)}
+                    </span>
+                    <span className="text-xs text-neutral-500">
+                      {contact.createdAt?.toDate()?.toLocaleDateString("vi-VN")}
                     </span>
                   </div>
-                  {/* Content */}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex flex-col md:flex-row md:items-center md:space-x-3 mb-1 md:mb-2 w-full">
-                      <h3 className="font-bold text-neutral-800 text-base md:text-lg truncate break-words">
-                        {contact.name}
-                      </h3>
-                      <div className="flex flex-row items-center gap-2 mt-1 md:mt-0">
-                        <span
-                          className={`px-2 py-0.5 text-xs rounded-full font-medium ${getStatusColor(
-                            contact.status
-                          )}`}
-                        >
-                          {getStatusText(contact.status)}
-                        </span>
-                        <span className="text-xs text-neutral-500">
-                          {contact.createdAt?.toDate()?.toLocaleDateString()}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="flex flex-col gap-1 md:gap-2">
-                      <div className="flex flex-col md:flex-row md:items-center md:space-x-4 text-xs md:text-sm text-neutral-600 break-words">
-                        <span className="truncate">
-                          <span className="hidden md:inline">📧 </span>
-                          {contact.email}
-                        </span>
-                        <span className="truncate">
-                          <span className="hidden md:inline">📱 </span>
-                          {contact.phone}
-                        </span>
-                      </div>
-                      <div className="flex flex-row items-center gap-2 flex-wrap">
-                        <span className="text-xs md:text-sm font-medium text-neutral-600">
-                          Chủ đề:
-                        </span>
-                        <span className="text-xs md:text-sm font-medium text-primary-600 bg-primary-50 px-2 py-1 rounded">
-                          {contact.subjectLabel || contact.subject}
-                        </span>
-                      </div>
-                      <p className="text-neutral-700 leading-relaxed bg-neutral-50 p-2 md:p-3 rounded-lg text-xs md:text-sm break-words">
-                        {contact.message}
-                      </p>
-                    </div>
+                  {/* Email */}
+                  <span className="text-xs text-neutral-600 truncate block mt-2">
+                    {contact.email}
+                  </span>
+                  {/* Phone */}
+                  <span className="text-xs text-neutral-600 truncate block mt-0.5">
+                    {contact.phone}
+                  </span>
+                  {/* Chủ đề */}
+                  <div className="flex flex-row items-center gap-2 flex-wrap mt-2">
+                    <span className="text-xs font-medium text-neutral-600">
+                      Chủ đề:
+                    </span>
+                    <span className="text-xs font-medium text-primary-600 bg-primary-50 px-2 py-1 rounded">
+                      {contact.subjectLabel || contact.subject}
+                    </span>
                   </div>
+                  {/* Tin nhắn (Ghi chú / abc) */}
+                  <p className="text-neutral-700 leading-relaxed bg-neutral-50 p-2 rounded-lg text-xs break-words mt-2">
+                    {contact.message}
+                  </p>
                 </div>
-                {/* Actions */}
-                <div className="flex flex-row items-center gap-2 mt-2 md:mt-0 ml-0 md:ml-4">
-                  <select
-                    value={contact.status}
-                    onChange={(e) =>
-                      contact.id &&
-                      updateStatus(
-                        contact.id,
-                        e.target.value as Contact["status"]
-                      )
-                    }
-                    className="px-2 py-1 border border-neutral-300 rounded-lg text-xs md:text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              </div>
+
+              {/* === KHỐI 2: HÀNH ĐỘNG (DROPDOWN + XÓA) === */}
+              <div className="flex flex-row items-center justify-between gap-2 pt-3 border-t border-neutral-100">
+                <select
+                  value={contact.status}
+                  onChange={(e) =>
+                    contact.id &&
+                    updateStatus(
+                      contact.id,
+                      e.target.value as Contact["status"]
+                    )
+                  }
+                  className="px-2 py-1.5 border border-neutral-300 rounded-lg text-xs md:text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                >
+                  <option value="pending">Chờ xử lý</option>
+                  <option value="responded">Đã phản hồi</option>
+                  <option value="closed">Đã đóng</option>
+                </select>
+                <button
+                  onClick={() => contact.id && deleteContact(contact.id)}
+                  className="p-2 bg-red-100 text-red-600 hover:bg-red-200 rounded-lg transition-colors"
+                  title="Xóa liên hệ"
+                >
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
                   >
-                    <option value="pending">Chờ xử lý</option>
-                    <option value="responded">Đã phản hồi</option>
-                    <option value="closed">Đã đóng</option>
-                  </select>
-                  <button
-                    onClick={() => contact.id && deleteContact(contact.id)}
-                    className="p-2 bg-red-100 text-red-600 hover:bg-red-200 rounded-lg transition-colors"
-                    title="Xóa liên hệ"
-                  >
-                    <svg
-                      className="w-4 h-4 md:w-5 md:h-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                      />
-                    </svg>
-                  </button>
-                </div>
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                    />
+                  </svg>
+                </button>
               </div>
             </div>
           ))

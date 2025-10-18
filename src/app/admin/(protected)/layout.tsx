@@ -385,9 +385,6 @@ export default function ProtectedAdminLayout({
               </div>
 
               <div className="flex items-center space-x-2 md:space-x-4">
-                {/* Notifications */}
-                <NotificationBell />
-
                 {/* Quick Actions */}
                 <Link
                   href="/"
@@ -409,6 +406,9 @@ export default function ProtectedAdminLayout({
                   <span className="hidden md:inline">Xem Website</span>
                   <span className="md:hidden">Website</span>
                 </Link>
+
+                {/* Notifications */}
+                <NotificationBell />
               </div>
             </div>
           </header>{" "}
