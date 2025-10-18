@@ -12,7 +12,7 @@ export default function ProtectedAdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
   const [adminUser, setAdminUser] = useState<{
@@ -263,12 +263,20 @@ export default function ProtectedAdminLayout({
 
   return (
     <ToastContainer>
-      <div className="min-h-screen bg-neutral-100">
+      <div className="min-h-screen bg-neutral-100 overflow-x-hidden">
+        {/* Overlay for mobile sidebar */}
+        {sidebarOpen && (
+          <div
+            className="fixed inset-0 z-30 bg-black bg-opacity-40 md:hidden transition-opacity duration-300"
+            onClick={() => setSidebarOpen(false)}
+            aria-label="Đóng menu"
+          />
+        )}
         {/* Sidebar */}
         <aside
-          className={`fixed top-0 left-0 z-40 h-screen transition-transform ${
-            sidebarOpen ? "translate-x-0" : "-translate-x-full"
-          } w-64 bg-gradient-to-b from-secondary-600 to-secondary-700 shadow-2xl`}
+          className={`fixed top-0 left-0 z-40 h-screen transition-transform w-64 bg-gradient-to-b from-secondary-600 to-secondary-700 shadow-2xl md:translate-x-0 ${
+            sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+          }`}
         >
           {/* Logo */}
           <div className="flex items-center justify-between p-6 border-b border-secondary-500">
@@ -297,9 +305,10 @@ export default function ProtectedAdminLayout({
                     ? "bg-primary-500 text-white shadow-lg shadow-primary-500/50"
                     : "text-accent-100 hover:bg-secondary-500 hover:text-white"
                 }`}
+                onClick={() => setSidebarOpen(false)}
               >
                 <span
-                  className={`${
+                  className={`$${
                     isActive(item.href)
                       ? "text-white"
                       : "text-accent-200 group-hover:text-white"
@@ -336,17 +345,17 @@ export default function ProtectedAdminLayout({
 
         {/* Main Content */}
         <div
-          className={`transition-all duration-300 ${
-            sidebarOpen ? "ml-64" : "ml-0"
-          }`}
+          className={`transition-all duration-300 md:ml-64 ${
+            sidebarOpen ? "overflow-hidden" : ""
+          } h-screen overflow-y-auto`}
         >
           {/* Top Header */}
           <header className="bg-white shadow-sm sticky top-0 z-30">
-            <div className="flex items-center justify-between px-6 py-4">
+            <div className="flex items-center justify-between px-4 md:px-6 py-4">
               <div className="flex items-center space-x-4">
                 <button
                   onClick={() => setSidebarOpen(!sidebarOpen)}
-                  className="p-2 rounded-lg hover:bg-neutral-100 transition-colors"
+                  className="p-3 rounded-lg hover:bg-neutral-100 transition-colors md:hidden focus:outline-none focus:ring-2 focus:ring-primary-400"
                   title="Toggle Sidebar"
                   aria-label="Toggle Sidebar"
                 >
@@ -365,22 +374,25 @@ export default function ProtectedAdminLayout({
                   </svg>
                 </button>
                 <div>
-                  <h2 className="text-xl font-bold text-neutral-800">
+                  <h2 className="text-lg md:text-xl font-bold text-neutral-800">
                     {navigation.find((item) => isActive(item.href))?.name ||
                       "Dashboard"}
                   </h2>
-                  <p className="text-sm text-neutral-500">
+                  <p className="text-sm text-neutral-500 hidden md:block">
                     Chào mừng trở lại, Admin!
                   </p>
                 </div>
               </div>
 
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-2 md:space-x-4">
                 {/* Notifications */}
                 <NotificationBell />
 
                 {/* Quick Actions */}
-                <Link href="/" className="btn-secondary text-sm">
+                <Link
+                  href="/"
+                  className="btn-secondary text-xs md:text-sm px-3 py-2"
+                >
                   <svg
                     className="w-4 h-4"
                     fill="none"
@@ -394,7 +406,8 @@ export default function ProtectedAdminLayout({
                       d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
                     />
                   </svg>
-                  Xem Website
+                  <span className="hidden md:inline">Xem Website</span>
+                  <span className="md:hidden">Website</span>
                 </Link>
               </div>
             </div>

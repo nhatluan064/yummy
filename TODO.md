@@ -1,4 +1,5 @@
-- [ ] Tách ô tìm kiếm thành hàng riêng ở trên cùng
-- [ ] Đặt các nút lọc danh mục ở hàng thứ hai
-- [ ] Giữ nguyên hàng sắp xếp và hàng lọc loại
-- [ ] Đảm bảo responsive trên mobile
+- [ ] Make sidebar responsive (overlay on mobile, fixed on desktop)
+- [ ] Adjust main content margin for mobile screens
+- [ ] Improve header responsiveness
+- [ ] Add mobile-specific styles for touch interactions
+- [ ] Test mobile layout functionality

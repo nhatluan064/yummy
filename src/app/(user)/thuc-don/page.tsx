@@ -261,7 +261,9 @@ export default function MenuPage() {
               <div className="flex flex-wrap gap-4 justify-center">
                 {categories
                   .filter((cat) =>
-                    ["mi-cay", "an-vat", "hu-tieu"].includes(cat.id)
+                    ["mi-cay", "an-vat", "hu-tieu", "rau-an-kem"].includes(
+                      cat.id
+                    )
                   )
                   .map((cat) => (
                     <button
