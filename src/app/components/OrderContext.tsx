@@ -21,7 +21,7 @@ type OrderContextType = {
   toggle: () => void;
   tableNumber: string;
   setTableNumber: (v: string) => void;
-  customerName: string;
+  customerName?: string;
   setCustomerName: (v: string) => void;
 };
 
@@ -32,14 +32,16 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
   const [tableNumber, setTableNumber] = useState("");
   const [customerName, setCustomerName] = useState("");
-  
 
   const addItem = (item: CurrentOrderItem) => {
     setItems((prev) => {
       const idx = prev.findIndex((p) => p.name === item.name);
       if (idx >= 0) {
         const copy = [...prev];
-        copy[idx] = { ...copy[idx], quantity: copy[idx].quantity + item.quantity };
+        copy[idx] = {
+          ...copy[idx],
+          quantity: copy[idx].quantity + item.quantity,
+        };
         return copy;
       }
       return [...prev, item];
@@ -51,12 +53,19 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
   };
 
   const setQuantity = (name: string, quantity: number) => {
-    setItems((prev) => prev.map((p) => (p.name === name ? { ...p, quantity: Math.max(1, quantity) } : p)));
+    setItems((prev) =>
+      prev.map((p) =>
+        p.name === name ? { ...p, quantity: Math.max(1, quantity) } : p
+      )
+    );
   };
 
   const clear = () => setItems([]);
 
-  const total = useMemo(() => items.reduce((sum, it) => sum + it.price * it.quantity, 0), [items]);
+  const total = useMemo(
+    () => items.reduce((sum, it) => sum + it.price * it.quantity, 0),
+    [items]
+  );
 
   const value: OrderContextType = {
     items,
@@ -75,7 +84,9 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     setCustomerName,
   };
 
-  return <OrderContext.Provider value={value}>{children}</OrderContext.Provider>;
+  return (
+    <OrderContext.Provider value={value}>{children}</OrderContext.Provider>
+  );
 }
 
 export function useOrder() {

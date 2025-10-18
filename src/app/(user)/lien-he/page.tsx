@@ -2,8 +2,7 @@
 "use client";
 import { useState } from "react";
 import { useToast } from "@/app/components/Toast";
-import { collection, addDoc } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { contactService } from "@/lib/contact.service";
 
 export default function LienHePage() {
   const [formData, setFormData] = useState({
@@ -18,11 +17,33 @@ export default function LienHePage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await addDoc(collection(db, "feedback"), formData);
+      // Map subject value to display label
+      const subjectLabels: { [key: string]: string } = {
+        booking: "Đặt Bàn",
+        menu: "Thực Đơn",
+        event: "Tổ Chức Sự Kiện",
+        feedback: "Góp Ý / Phản Hồi",
+        other: "Khác",
+      };
+
+      const contactData = {
+        ...formData,
+        subjectLabel: subjectLabels[formData.subject] || formData.subject,
+      };
+
+      await contactService.createContact(contactData);
       toast.showToast(
         "🎉 Cảm ơn bạn đã liên hệ! Chúng tôi sẽ phản hồi trong thời gian sớm nhất.",
         3500
       );
+      // Reset form
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        subject: "",
+        message: "",
+      });
     } catch (err) {
       toast.showToast(
         "❌ Gửi liên hệ thất bại: " +

@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import MenuItem from "@/app/components/MenuItem";
 import {
   getCategoriesFromFirestore,
-  getMenuItemsFromFirestore
+  getMenuItemsFromFirestore,
 } from "@/lib/firestoreMenu";
 import { type Category } from "@/lib/menuData";
 import { type Feedback } from "@/lib/types";
@@ -18,6 +18,7 @@ interface MenuItemData {
   available: boolean;
   popular?: boolean;
   bestSeller?: boolean;
+  isNew?: boolean;
   category: string;
   categoryName?: string;
   rating?: number;
@@ -26,17 +27,19 @@ interface MenuItemData {
 }
 
 export default function MenuPage() {
-  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [selectedCategory, setSelectedCategory] = useState("mi-cay");
   const [categories, setCategories] = useState<Category[]>([]);
   const [menuData, setMenuData] = useState<MenuItemData[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredMenuData, setFilteredMenuData] = useState<MenuItemData[]>([]);
   const [sortBy, setSortBy] = useState<
-    "default" | "price-asc" | "price-desc" | "name-asc" | "name-desc"
-  >("default");
+    "default" | "price-asc" | "price-desc" | "name-asc" | "name-desc" | "newest"
+  >("newest");
   const [filterType, setFilterType] = useState<
-    "all" | "popular" | "bestSeller"
+    "all" | "popular" | "bestSeller" | "new"
   >("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 12;
 
   // Review Modal State
   const [showReviewModal, setShowReviewModal] = useState(false);
@@ -65,10 +68,15 @@ export default function MenuPage() {
       const { feedbackService } = await import("@/lib/feedback.service");
       const allFeedback = await feedbackService.getAll();
       // Tính reviewCount và rating cho từng món ăn
-      const menuWithReviews = (items as MenuItemData[]).map(item => {
-        const reviews = allFeedback.filter((fb: Feedback) => fb.dishName === item.name);
+      const menuWithReviews = (items as MenuItemData[]).map((item) => {
+        const reviews = allFeedback.filter(
+          (fb: Feedback) => fb.dishName === item.name
+        );
         const reviewCount = reviews.length;
-        const rating = reviewCount > 0 ? (reviews.reduce((sum, r) => sum + (r.rating || 0), 0) / reviewCount) : 0;
+        const rating =
+          reviewCount > 0
+            ? reviews.reduce((sum, r) => sum + (r.rating || 0), 0) / reviewCount
+            : 0;
         return {
           ...item,
           reviewCount,
@@ -83,14 +91,16 @@ export default function MenuPage() {
 
   // Filter, search, sort menuData
   useEffect(() => {
-    let filtered = menuData.filter(item => item.available);
+    let filtered = menuData.filter((item) => item.available);
     if (selectedCategory !== "all") {
-      filtered = filtered.filter(item => item.category === selectedCategory);
+      filtered = filtered.filter((item) => item.category === selectedCategory);
     }
     if (filterType === "popular") {
-      filtered = filtered.filter(item => item.popular);
+      filtered = filtered.filter((item) => item.popular);
     } else if (filterType === "bestSeller") {
-      filtered = filtered.filter(item => item.bestSeller);
+      filtered = filtered.filter((item) => item.bestSeller);
+    } else if (filterType === "new") {
+      filtered = filtered.filter((item) => item.isNew);
     }
     if (searchQuery.trim() !== "") {
       filtered = filtered.filter(
@@ -118,6 +128,7 @@ export default function MenuPage() {
         break;
     }
     setFilteredMenuData(sorted);
+    setCurrentPage(1); // Reset to page 1 when filters change
   }, [searchQuery, menuData, sortBy, filterType, selectedCategory]);
 
   // Save review to localStorage and update state
@@ -152,7 +163,9 @@ export default function MenuPage() {
         comment: newReview.comment,
         // Có thể bổ sung customerEmail nếu muốn
       });
-      alert("✅ Cảm ơn bạn đã đánh giá! Feedback của bạn đã được lưu và gửi đến admin.");
+      alert(
+        "✅ Cảm ơn bạn đã đánh giá! Feedback của bạn đã được lưu và gửi đến admin."
+      );
     } catch (err) {
       alert("❌ Gửi feedback lên hệ thống thất bại. Vui lòng thử lại!");
       console.error("Feedback error:", err);
@@ -179,10 +192,57 @@ export default function MenuPage() {
       {/* Categories Filter & Search */}
       <section className="py-8 bg-white border-b border-neutral-200">
         <div className="container-custom space-y-4">
-          {/* Row 1: Category Buttons + Search */}
-          <div className="flex flex-col lg:flex-row items-center justify-between gap-4 bg-white border border-neutral-200 rounded-full px-4 py-3 shadow-card">
-            {/* Category Buttons */}
-            <div className="flex flex-wrap gap-4 justify-center flex-shrink-0">
+          {/* Row 1: Search Box */}
+          <div className="bg-white border border-neutral-200 rounded-full px-4 py-3 shadow-card max-w-2xl mx-auto">
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Tìm kiếm món ăn, thức uống..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-10 py-2 border-0 focus:ring-0 focus:outline-none text-sm"
+              />
+              <svg
+                className="w-4 h-4 text-neutral-400 absolute left-3 top-1/2 -translate-y-1/2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
+              </svg>
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600 transition-colors"
+                  aria-label="Clear search"
+                >
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Row 2: Category Buttons */}
+          <div className="space-y-6">
+            {/* Tất Cả Button */}
+            <div className="flex justify-center">
               <button
                 onClick={() => setSelectedCategory("all")}
                 className={
@@ -191,65 +251,62 @@ export default function MenuPage() {
               >
                 Tất Cả
               </button>
-              {categories.map((cat) => (
-                <button
-                  key={cat.id}
-                  onClick={() => setSelectedCategory(cat.id)}
-                  className={
-                    selectedCategory === cat.id
-                      ? "btn-primary"
-                      : "btn-secondary"
-                  }
-                >
-                  {cat.icon} {cat.name}
-                </button>
-              ))}
             </div>
 
-            {/* Search Box */}
-            <div className="w-full lg:flex-1 lg:max-w-2xl">
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Tìm kiếm món ăn, thức uống..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-10 py-2 border border-neutral-300 rounded-full focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all text-sm"
-                />
-                <svg
-                  className="w-4 h-4 text-neutral-400 absolute left-3 top-1/2 -translate-y-1/2"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                  />
-                </svg>
-                {searchQuery && (
-                  <button
-                    onClick={() => setSearchQuery("")}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600 transition-colors"
-                    aria-label="Clear search"
-                  >
-                    <svg
-                      className="w-4 h-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
+            {/* Food Categories */}
+            <div className="text-center">
+              <h3 className="text-lg font-bold text-neutral-800 mb-4">
+                🍜 Đồ Ăn
+              </h3>
+              <div className="flex flex-wrap gap-4 justify-center">
+                {categories
+                  .filter((cat) =>
+                    ["mi-cay", "an-vat", "hu-tieu"].includes(cat.id)
+                  )
+                  .map((cat) => (
+                    <button
+                      key={cat.id}
+                      onClick={() => setSelectedCategory(cat.id)}
+                      className={
+                        selectedCategory === cat.id
+                          ? "btn-primary"
+                          : "btn-secondary"
+                      }
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M6 18L18 6M6 6l12 12"
-                      />
-                    </svg>
-                  </button>
-                )}
+                      {cat.icon} {cat.name}
+                    </button>
+                  ))}
+              </div>
+            </div>
+
+            {/* Drink Categories */}
+            <div className="text-center">
+              <h3 className="text-lg font-bold text-neutral-800 mb-4">
+                🥤 Đồ Uống
+              </h3>
+              <div className="flex flex-wrap gap-4 justify-center">
+                {categories
+                  .filter((cat) =>
+                    [
+                      "coffee",
+                      "milk-tea",
+                      "sua-chua",
+                      "nuoc-giai-khat",
+                    ].includes(cat.id)
+                  )
+                  .map((cat) => (
+                    <button
+                      key={cat.id}
+                      onClick={() => setSelectedCategory(cat.id)}
+                      className={
+                        selectedCategory === cat.id
+                          ? "btn-primary"
+                          : "btn-secondary"
+                      }
+                    >
+                      {cat.icon} {cat.name}
+                    </button>
+                  ))}
               </div>
             </div>
           </div>
@@ -346,6 +403,16 @@ export default function MenuPage() {
             >
               🏆 Best Seller
             </button>
+            <button
+              onClick={() => setFilterType("new")}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                filterType === "new"
+                  ? "bg-secondary-600 text-white shadow-lg shadow-secondary-600/30"
+                  : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200"
+              }`}
+            >
+              ✨ Mới
+            </button>
           </div>
         </div>
       </section>
@@ -354,38 +421,105 @@ export default function MenuPage() {
       <section className="section-padding">
         <div className="container-custom">
           {filteredMenuData.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {filteredMenuData.map((item, index) => {
-                const delayClass =
-                  index % 3 === 0
-                    ? "animate-fade-in-up"
-                    : index % 3 === 1
-                    ? "animate-fade-in-up-delay-1"
-                    : "animate-fade-in-up-delay-2";
-                return (
-                  <div key={item.id} className={delayClass}>
-                    <MenuItem
-                      key={item.id}
-                      item={{
-                        ...item,
-                        id: Number(item.id) || undefined, // ép kiểu id về number hoặc undefined nếu không hợp lệ
-                        imageUrl: item.image // Đảm bảo prop imageUrl được truyền vào nếu MenuItem yêu cầu
-                      }}
-                      onReviewClick={async () => {
-                        setSelectedDish(item);
-                        // Lấy feedback từ Firestore cho món này
-                        const { feedbackService } = await import("@/lib/feedback.service");
-                        const allFeedback = await feedbackService.getAll();
-                        // Lọc feedback theo dishName hoặc dishId
-                        const reviews = allFeedback.filter((fb: Feedback) => fb.dishName === item.name);
-                        setDishReviews(reviews);
-                        setShowReviewModal(true);
-                      }}
-                    />
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {filteredMenuData
+                  .slice(
+                    (currentPage - 1) * itemsPerPage,
+                    currentPage * itemsPerPage
+                  )
+                  .map((item, index) => {
+                    const delayClass =
+                      index % 3 === 0
+                        ? "animate-fade-in-up"
+                        : index % 3 === 1
+                        ? "animate-fade-in-up-delay-1"
+                        : "animate-fade-in-up-delay-2";
+                    return (
+                      <div key={item.id} className={delayClass}>
+                        <MenuItem
+                          key={item.id}
+                          item={{
+                            ...item,
+                            id: Number(item.id) || undefined, // ép kiểu id về number hoặc undefined nếu không hợp lệ
+                            imageUrl: item.image, // Đảm bảo prop imageUrl được truyền vào nếu MenuItem yêu cầu
+                          }}
+                          onReviewClick={async () => {
+                            setSelectedDish(item);
+                            // Lấy feedback từ Firestore cho món này
+                            const { feedbackService } = await import(
+                              "@/lib/feedback.service"
+                            );
+                            const allFeedback = await feedbackService.getAll();
+                            // Lọc feedback theo dishName hoặc dishId
+                            const reviews = allFeedback.filter(
+                              (fb: Feedback) => fb.dishName === item.name
+                            );
+                            setDishReviews(reviews);
+                            setShowReviewModal(true);
+                          }}
+                        />
+                      </div>
+                    );
+                  })}
+              </div>
+
+              {/* Pagination */}
+              {Math.ceil(filteredMenuData.length / itemsPerPage) > 1 && (
+                <div className="flex justify-center mt-12">
+                  <div className="flex items-center space-x-2">
+                    <button
+                      onClick={() =>
+                        setCurrentPage(Math.max(1, currentPage - 1))
+                      }
+                      disabled={currentPage === 1}
+                      className="px-3 py-2 rounded-lg text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed bg-neutral-100 text-neutral-700 hover:bg-neutral-200"
+                    >
+                      ‹ Trước
+                    </button>
+
+                    {Array.from(
+                      {
+                        length: Math.ceil(
+                          filteredMenuData.length / itemsPerPage
+                        ),
+                      },
+                      (_, i) => i + 1
+                    ).map((page) => (
+                      <button
+                        key={page}
+                        onClick={() => setCurrentPage(page)}
+                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                          currentPage === page
+                            ? "bg-primary-500 text-white shadow-lg shadow-primary-500/30"
+                            : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200"
+                        }`}
+                      >
+                        {page}
+                      </button>
+                    ))}
+
+                    <button
+                      onClick={() =>
+                        setCurrentPage(
+                          Math.min(
+                            Math.ceil(filteredMenuData.length / itemsPerPage),
+                            currentPage + 1
+                          )
+                        )
+                      }
+                      disabled={
+                        currentPage ===
+                        Math.ceil(filteredMenuData.length / itemsPerPage)
+                      }
+                      className="px-3 py-2 rounded-lg text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed bg-neutral-100 text-neutral-700 hover:bg-neutral-200"
+                    >
+                      Sau ›
+                    </button>
                   </div>
-                );
-              })}
-            </div>
+                </div>
+              )}
+            </>
           ) : (
             <div className="text-center py-16">
               <svg
@@ -603,7 +737,9 @@ export default function MenuPage() {
                               {review.customerName || "Ẩn danh"}
                             </p>
                             <p className="text-xs text-neutral-500">
-                              {review.createdAt?.toDate?.() ? review.createdAt.toDate().toLocaleDateString() : ""}
+                              {review.createdAt?.toDate?.()
+                                ? review.createdAt.toDate().toLocaleDateString()
+                                : ""}
                             </p>
                           </div>
                         </div>

@@ -25,7 +25,9 @@ export default function DataManagementPage() {
       )
     ) {
       resetToDefaults();
-      try { localStorage.removeItem("customerReviews"); } catch {}
+      try {
+        localStorage.removeItem("customerReviews");
+      } catch {}
       showMessage("✅ Đã xóa sạch dữ liệu LocalStorage!", "success");
       setTimeout(() => {
         window.location.reload();
@@ -41,25 +43,53 @@ export default function DataManagementPage() {
         showMessage("✅ Đã reset thành công!", "success");
       } catch (e) {
         console.error(e);
-        showMessage("❌ Không thể reset. Kiểm tra quyền Firestore Rules.", "error");
+        showMessage(
+          "❌ Không thể reset. Kiểm tra quyền Firestore Rules.",
+          "error"
+        );
       }
     }
   };
 
   const resetAllFirestore = () =>
     confirmAndRun(
-      "⚠️ Reset TẤT CẢ dữ liệu trên Firestore (menu, orders, reservations, feedback, bills)?",
+      "⚠️ Reset TẤT CẢ dữ liệu trên Firestore (menu, orders, reservations, feedback, bills, contacts)?",
       () => adminMaintenance.resetAll()
     );
 
   const resetMenuFirestore = () =>
-    confirmAndRun("Reset Thực đơn (menu) trên Firestore?", () => adminMaintenance.resetMenu());
+    confirmAndRun("Reset Thực đơn (menu) trên Firestore?", () =>
+      adminMaintenance.resetMenu()
+    );
   const resetOrdersFirestore = () =>
-    confirmAndRun("Reset Đơn hàng (orders) trên Firestore?", () => adminMaintenance.resetOrders());
+    confirmAndRun("Reset Đơn hàng (orders) trên Firestore?", () =>
+      adminMaintenance.resetOrders()
+    );
   const resetReservationsFirestore = () =>
-    confirmAndRun("Reset Đơn đặt bàn (reservations) trên Firestore?", () => adminMaintenance.resetReservations());
+    confirmAndRun("Reset Đơn đặt bàn (reservations) trên Firestore?", () =>
+      adminMaintenance.resetReservations()
+    );
   const resetFeedbackFirestore = () =>
-    confirmAndRun("Reset Feedback trên Firestore?", () => adminMaintenance.resetFeedback());
+    confirmAndRun("Reset Feedback trên Firestore?", () =>
+      adminMaintenance.resetFeedback()
+    );
+  const resetContactsFirestore = () =>
+    confirmAndRun("Reset Liên hệ trên Firestore?", () =>
+      adminMaintenance.resetContacts()
+    );
+  const resetRevenueFirestore = (range: "today" | "week" | "month" | "year") =>
+    confirmAndRun(
+      `Reset Doanh thu ${
+        range === "today"
+          ? "Hôm nay"
+          : range === "week"
+          ? "Tuần này"
+          : range === "month"
+          ? "Tháng này"
+          : "Năm này"
+      } trên Firestore?`,
+      () => adminMaintenance.resetRevenue(range)
+    );
 
   const handleExport = () => {
     const data = exportData();
@@ -139,9 +169,12 @@ export default function DataManagementPage() {
         {/* Reset Section (LocalStorage) */}
         <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
           <h2 className="text-2xl font-bold text-gray-800 mb-4">
-            �️ Xóa Dữ Liệu LocalStorage
+            🗑️ Xóa Dữ Liệu LocalStorage
           </h2>
-          <p className="text-gray-600 mb-4">Xóa tất cả dữ liệu menu, danh mục và feedback đã lưu trong trình duyệt.</p>
+          <p className="text-gray-600 mb-4">
+            Xóa tất cả dữ liệu menu, danh mục và feedback đã lưu trong trình
+            duyệt.
+          </p>
           <button
             onClick={handleReset}
             className="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg font-semibold transition"
@@ -152,16 +185,87 @@ export default function DataManagementPage() {
 
         {/* Firestore Reset Section */}
         <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">🧹 Reset Dữ Liệu (Firestore)</h2>
-          <p className="text-gray-600 mb-4">Thao tác này sẽ xóa dữ liệu trong Firestore collections tương ứng.</p>
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">
+            🧹 Reset Dữ Liệu (Firestore)
+          </h2>
+          <p className="text-gray-600 mb-4">
+            Thao tác này sẽ xóa dữ liệu trong Firestore collections tương ứng.
+          </p>
           <div className="grid gap-3 sm:grid-cols-2">
-            <button onClick={resetAllFirestore} className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-semibold">Reset Tất Cả</button>
-            <button onClick={resetMenuFirestore} className="bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-lg font-semibold">Reset Thực Đơn</button>
-            <button onClick={resetOrdersFirestore} className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold">Reset Đơn Hàng</button>
-            <button onClick={resetReservationsFirestore} className="bg-amber-500 hover:bg-amber-600 text-white px-6 py-3 rounded-lg font-semibold">Reset Đơn Đặt Bàn</button>
-            <button onClick={resetFeedbackFirestore} className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold">Reset Feedback</button>
+            <button
+              onClick={resetAllFirestore}
+              className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-semibold"
+            >
+              Reset Tất Cả
+            </button>
+            <button
+              onClick={resetMenuFirestore}
+              className="bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-lg font-semibold"
+            >
+              Reset Thực Đơn
+            </button>
+            <button
+              onClick={resetOrdersFirestore}
+              className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold"
+            >
+              Reset Đơn Hàng
+            </button>
+            <button
+              onClick={resetReservationsFirestore}
+              className="bg-amber-500 hover:bg-amber-600 text-white px-6 py-3 rounded-lg font-semibold"
+            >
+              Reset Đơn Đặt Bàn
+            </button>
+            <button
+              onClick={resetFeedbackFirestore}
+              className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold"
+            >
+              Reset Feedback
+            </button>
+            <button
+              onClick={resetContactsFirestore}
+              className="bg-pink-500 hover:bg-pink-600 text-white px-6 py-3 rounded-lg font-semibold"
+            >
+              Reset Liên Hệ
+            </button>
           </div>
-          <p className="mt-3 text-sm text-gray-500">Lưu ý: Bạn cần cấu hình Firestore Rules cho phép admin xóa dữ liệu, hoặc đăng nhập tài khoản admin dùng Rules bảo vệ.</p>
+        </div>
+
+        {/* Revenue Reset Section */}
+        <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">
+            💰 Reset Doanh Thu (Firestore)
+          </h2>
+          <p className="text-gray-600 mb-4">
+            Xóa dữ liệu hóa đơn (bills) theo khoảng thời gian để reset doanh
+            thu.
+          </p>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <button
+              onClick={() => resetRevenueFirestore("today")}
+              className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-semibold"
+            >
+              Reset Doanh Thu Hôm Nay
+            </button>
+            <button
+              onClick={() => resetRevenueFirestore("week")}
+              className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-semibold"
+            >
+              Reset Doanh Thu Tuần Này
+            </button>
+            <button
+              onClick={() => resetRevenueFirestore("month")}
+              className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-semibold"
+            >
+              Reset Doanh Thu Tháng Này
+            </button>
+            <button
+              onClick={() => resetRevenueFirestore("year")}
+              className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-semibold"
+            >
+              Reset Doanh Thu Năm Này
+            </button>
+          </div>
         </div>
 
         {/* Export Section */}

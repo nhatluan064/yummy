@@ -1,0 +1,4 @@
+- [ ] Tách ô tìm kiếm thành hàng riêng ở trên cùng
+- [ ] Đặt các nút lọc danh mục ở hàng thứ hai
+- [ ] Giữ nguyên hàng sắp xếp và hàng lọc loại
+- [ ] Đảm bảo responsive trên mobile

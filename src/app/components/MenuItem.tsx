@@ -14,6 +14,7 @@ interface MenuItemProps {
     imageUrl: string;
     popular?: boolean;
     bestSeller?: boolean;
+    isNew?: boolean;
     rating?: number;
     reviewCount?: number;
   };
@@ -64,6 +65,12 @@ export default function MenuItem({ item, onReviewClick }: MenuItemProps) {
 
         {/* Badge Labels (top-right) */}
         <div className="absolute top-3 right-3 flex flex-col gap-2">
+          {item.isNew && (
+            <div className="bg-gradient-to-r from-green-500 to-green-600 text-white font-bold px-3 py-1 rounded-full text-xs shadow-lg flex items-center gap-1">
+              <span>✨</span>
+              <span>Mới</span>
+            </div>
+          )}
           {item.bestSeller && (
             <div className="bg-gradient-to-r from-red-500 to-red-600 text-white font-bold px-3 py-1 rounded-full text-xs shadow-lg flex items-center gap-1">
               <span>⭐</span>

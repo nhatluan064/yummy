@@ -29,8 +29,8 @@ export default function OrderDrawer() {
       setError("Bạn chưa chọn món nào");
       return;
     }
-    if (!customerName || !tableNumber) {
-      setError("Vui lòng nhập tên và số bàn");
+    if (!tableNumber) {
+      setError("Vui lòng nhập số bàn");
       return;
     }
     setSubmitting(true);
@@ -41,7 +41,7 @@ export default function OrderDrawer() {
         price: i.price,
         quantity: i.quantity,
       }));
-  const { orderCode } = await orderService.createOrder({
+      const { orderCode } = await orderService.createOrder({
         items: orderItems,
         customerName,
         totalAmount: total,
@@ -49,7 +49,7 @@ export default function OrderDrawer() {
         tableNumber,
         notes: "",
         paymentMethod: "unpaid",
-  } as Omit<Order, 'id' | 'createdAt' | 'updatedAt' | 'status'>);
+      } as Omit<Order, "id" | "createdAt" | "updatedAt" | "status">);
       showToast(
         `Oder của bạn đã được gửi cho Bếp trưởng, vui lòng chờ trong ít phút để món ăn được đưa ra !\nMã đơn: ${orderCode}`
       );
@@ -80,20 +80,26 @@ export default function OrderDrawer() {
         <div className="h-full flex flex-col">
           <div className="p-4 border-b flex items-center justify-between">
             <h2 className="text-lg font-bold">Đơn gọi món</h2>
-            <button onClick={close} aria-label="Đóng" className="text-neutral-500 hover:text-neutral-700">
+            <button
+              onClick={close}
+              aria-label="Đóng"
+              className="text-neutral-500 hover:text-neutral-700"
+            >
               ✕
             </button>
           </div>
 
           <div className="p-4 space-y-4 overflow-y-auto flex-1">
-            <div className="grid grid-cols-3 gap-3">
-              <div className="col-span-1">
+            <div className="grid grid-cols-2 gap-3">
+              <div>
                 <label className="text-sm text-neutral-600">Bàn số</label>
-                <input value={tableNumber} placeholder="Số bàn" aria-label="Số bàn" onChange={(e) => setTableNumber(e.target.value)} className="w-full border rounded px-2 py-1" />
-              </div>
-              <div className="col-span-1">
-                <label className="text-sm text-neutral-600">Tên</label>
-                <input value={customerName} placeholder="Tên khách" aria-label="Tên khách" onChange={(e) => setCustomerName(e.target.value)} className="w-full border rounded px-2 py-1" />
+                <input
+                  value={tableNumber}
+                  placeholder="Số bàn"
+                  aria-label="Số bàn"
+                  onChange={(e) => setTableNumber(e.target.value)}
+                  className="w-full border rounded px-2 py-1"
+                />
               </div>
             </div>
 
@@ -102,16 +108,38 @@ export default function OrderDrawer() {
                 <p className="text-sm text-neutral-500">Chưa có món nào.</p>
               )}
               {items.map((it) => (
-                <div key={it.name} className="flex items-center justify-between border rounded p-2">
+                <div
+                  key={it.name}
+                  className="flex items-center justify-between border rounded p-2"
+                >
                   <div>
                     <p className="font-medium">{it.name}</p>
-                    <p className="text-sm text-neutral-500">{it.price.toLocaleString()}₫</p>
+                    <p className="text-sm text-neutral-500">
+                      {it.price.toLocaleString()}₫
+                    </p>
                   </div>
                   <div className="flex items-center gap-2">
-                    <button className="px-2 py-1 bg-neutral-100 rounded" onClick={() => setQuantity(it.name, it.quantity - 1)}>-</button>
-                    <span className="min-w-[2ch] text-center">{it.quantity}</span>
-                    <button className="px-2 py-1 bg-neutral-100 rounded" onClick={() => setQuantity(it.name, it.quantity + 1)}>+</button>
-                    <button className="text-red-600 ml-2" onClick={() => removeItem(it.name)}>Xóa</button>
+                    <button
+                      className="px-2 py-1 bg-neutral-100 rounded"
+                      onClick={() => setQuantity(it.name, it.quantity - 1)}
+                    >
+                      -
+                    </button>
+                    <span className="min-w-[2ch] text-center">
+                      {it.quantity}
+                    </span>
+                    <button
+                      className="px-2 py-1 bg-neutral-100 rounded"
+                      onClick={() => setQuantity(it.name, it.quantity + 1)}
+                    >
+                      +
+                    </button>
+                    <button
+                      className="text-red-600 ml-2"
+                      onClick={() => removeItem(it.name)}
+                    >
+                      Xóa
+                    </button>
                   </div>
                 </div>
               ))}
@@ -124,9 +152,15 @@ export default function OrderDrawer() {
           <div className="p-4 border-t">
             <div className="flex items-center justify-between mb-3">
               <span className="text-neutral-600">Tổng cộng:</span>
-              <span className="text-xl font-bold text-primary-600">{total.toLocaleString()}₫</span>
+              <span className="text-xl font-bold text-primary-600">
+                {total.toLocaleString()}₫
+              </span>
             </div>
-            <button onClick={submitOrder} disabled={submitting} className="btn-primary w-full py-3">
+            <button
+              onClick={submitOrder}
+              disabled={submitting}
+              className="btn-primary w-full py-3"
+            >
               {submitting ? "Đang tạo đơn..." : "Gửi Oder đến Bếp"}
             </button>
           </div>

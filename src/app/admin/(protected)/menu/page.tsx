@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { menuService } from "@/lib/menu.service";
 import { categoryService } from "@/lib/category.service";
@@ -37,14 +37,14 @@ export default function MenuManagementPage() {
             setMenuItems(menu);
             setCategories(cats);
           } catch (error) {
-            console.error('Error fetching data:', error);
+            console.error("Error fetching data:", error);
             alert("Lỗi khi tải dữ liệu: " + String(error));
           }
         });
 
         return unsubscribe;
       } catch (error) {
-        console.error('Auth initialization error:', error);
+        console.error("Auth initialization error:", error);
         alert("Lỗi khởi tạo xác thực. Vui lòng đăng nhập lại!");
         window.location.href = "/admin/login";
       }
@@ -55,17 +55,21 @@ export default function MenuManagementPage() {
     // Cleanup
     return () => {
       if (unsubscribe) {
-        unsubscribe.then(fn => fn?.());
+        unsubscribe.then((fn) => fn?.());
       }
     };
   }, []);
+
+  const menuModalRef = useRef<HTMLDivElement | null>(null);
+  const categoryModalRef = useRef<HTMLDivElement | null>(null);
 
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedDish, setSelectedDish] = useState<MenuItem | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showCategoryModal, setShowCategoryModal] = useState(false);
-  const [selectedCategoryEdit, setSelectedCategoryEdit] = useState<Category | null>(null);
+  const [selectedCategoryEdit, setSelectedCategoryEdit] =
+    useState<Category | null>(null);
   const [formData, setFormData] = useState({
     name: "",
     category: "",
@@ -75,6 +79,7 @@ export default function MenuManagementPage() {
     prepTime: "",
     popular: false,
     bestSeller: false,
+    isNew: false,
     available: true,
   });
   const [categoryFormData, setCategoryFormData] = useState({
@@ -134,6 +139,7 @@ export default function MenuManagementPage() {
       prepTime: "",
       popular: false,
       bestSeller: false,
+      isNew: false,
       available: true,
     });
     setSelectedDish(null);
@@ -151,6 +157,7 @@ export default function MenuManagementPage() {
       prepTime: dish.prepTime || "",
       popular: dish.popular || false,
       bestSeller: dish.bestSeller || false,
+      isNew: dish.isNew || false,
       available: dish.available,
     });
     setSelectedDish(dish);
@@ -177,9 +184,8 @@ export default function MenuManagementPage() {
     const categoryName = selectedCat?.name || formData.category;
     try {
       if (selectedDish) {
-        // Update Firestore
-        await menuService.update(selectedDish!.id!, {
-          ...selectedDish,
+        // Update Firestore - chỉ truyền các trường cần update, không spread selectedDish để tránh ghi đè field cũ
+        await menuService.update(selectedDish.id!, {
           name: formData.name,
           category: formData.category,
           categoryName,
@@ -189,6 +195,7 @@ export default function MenuManagementPage() {
           prepTime: formData.prepTime,
           popular: formData.popular,
           bestSeller: formData.bestSeller,
+          isNew: formData.isNew, // Đảm bảo luôn truyền field này
           available: formData.available,
         });
         alert(`✅ Đã cập nhật món "${formData.name}"!`);
@@ -207,6 +214,7 @@ export default function MenuManagementPage() {
           prepTime: formData.prepTime,
           popular: formData.popular,
           bestSeller: formData.bestSeller,
+          isNew: formData.isNew,
           available: formData.available,
           rating: 0,
           reviewCount: 0,
@@ -231,7 +239,11 @@ export default function MenuManagementPage() {
     try {
       await menuService.update(itemId, { available: !item.available });
       setMenuItems(await menuService.getAll());
-      alert(`✅ Đã ${!item.available ? "bật" : "tắt"} trạng thái món "${item.name}"!`);
+      alert(
+        `✅ Đã ${!item.available ? "bật" : "tắt"} trạng thái món "${
+          item.name
+        }"!`
+      );
     } catch (err) {
       alert("Lỗi khi cập nhật trạng thái: " + String(err));
     }
@@ -307,8 +319,8 @@ export default function MenuManagementPage() {
       return;
     }
     try {
-      console.log('Creating category with ID:', categoryFormData.id);
-      console.log('Category data:', {
+      console.log("Creating category with ID:", categoryFormData.id);
+      console.log("Category data:", {
         name: categoryFormData.name,
         icon: categoryFormData.icon,
         order: categories.length + 1,
@@ -333,9 +345,11 @@ export default function MenuManagementPage() {
       setCategories(await categoryService.getAll());
       closeCategoryModal();
     } catch (err) {
-      console.error('Error creating category:', err);
-      if (String(err).includes('permission-denied')) {
-        alert("❌ Không có quyền chỉnh sửa! Chỉ tài khoản Admin mới có thể thực hiện thao tác này.");
+      console.error("Error creating category:", err);
+      if (String(err).includes("permission-denied")) {
+        alert(
+          "❌ Không có quyền chỉnh sửa! Chỉ tài khoản Admin mới có thể thực hiện thao tác này."
+        );
       } else {
         alert("Lỗi khi lưu danh mục: " + String(err));
       }
@@ -348,23 +362,16 @@ export default function MenuManagementPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-neutral-800">
-            Quản Lý Thực Đơn
-          </h1>
-          <p className="text-neutral-600 mt-1">
-            Tạo và quản lý món ăn, danh mục, giá cả
-          </p>
-        </div>
+        <h1 className="text-xl font-bold text-neutral-800">Quản Lý Dữ Liệu</h1>
         <button
           onClick={activeTab === "menu" ? openAddModal : openAddCategoryModal}
-          className="btn-primary"
+          className="btn-primary px-3 py-2 text-sm"
         >
           <svg
-            className="w-5 h-5"
+            className="w-4 h-4"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -376,36 +383,31 @@ export default function MenuManagementPage() {
               d="M12 4v16m8-8H4"
             />
           </svg>
-          {activeTab === "menu" ? "Thêm Món Mới" : "Thêm Danh Mục"}
         </button>
       </div>
 
       {/* Tabs */}
-      <div className="card p-1">
-        <div className="flex space-x-2">
-          <button
-            onClick={() => setActiveTab("menu")}
-            className={`flex-1 px-6 py-3 rounded-lg font-medium text-sm transition-all ${
-              activeTab === "menu"
-                ? "bg-primary-500 text-white shadow-lg shadow-primary-500/30"
-                : "bg-transparent text-neutral-700 hover:bg-neutral-100"
-            }`}
-          >
-            <span className="mr-2">🍽️</span>
-            Quản Lý Món Ăn
-          </button>
-          <button
-            onClick={() => setActiveTab("category")}
-            className={`flex-1 px-6 py-3 rounded-lg font-medium text-sm transition-all ${
-              activeTab === "category"
-                ? "bg-primary-500 text-white shadow-lg shadow-primary-500/30"
-                : "bg-transparent text-neutral-700 hover:bg-neutral-100"
-            }`}
-          >
-            <span className="mr-2">📂</span>
-            Quản Lý Danh Mục
-          </button>
-        </div>
+      <div className="flex border-b border-neutral-200">
+        <button
+          onClick={() => setActiveTab("menu")}
+          className={`flex-1 px-4 py-3 font-medium text-sm transition-colors ${
+            activeTab === "menu"
+              ? "border-b-2 border-primary-500 text-primary-600"
+              : "text-neutral-500 hover:text-neutral-700"
+          }`}
+        >
+          🍽️ Món Ăn
+        </button>
+        <button
+          onClick={() => setActiveTab("category")}
+          className={`flex-1 px-4 py-3 font-medium text-sm transition-colors ${
+            activeTab === "category"
+              ? "border-b-2 border-primary-500 text-primary-600"
+              : "text-neutral-500 hover:text-neutral-700"
+          }`}
+        >
+          📂 Danh Mục
+        </button>
       </div>
 
       {/* Menu Tab Content */}
@@ -477,7 +479,10 @@ export default function MenuManagementPage() {
                 {/* Image */}
                 <div className="relative h-48 overflow-hidden bg-neutral-200">
                   <Image
-                    src={item.image || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400"}
+                    src={
+                      item.image ||
+                      "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400"
+                    }
                     alt={item.name}
                     fill
                     className="object-cover group-hover:scale-110 transition-transform duration-300"
@@ -516,6 +521,18 @@ export default function MenuManagementPage() {
                   >
                     {item.available ? "Còn món" : "Hết món"}
                   </div>
+                  {item.isNew && (
+                    <div className="absolute top-12 right-3 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center space-x-1">
+                      <svg
+                        className="w-3 h-3"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <span>Mới</span>
+                    </div>
+                  )}
                 </div>
 
                 {/* Content */}
@@ -718,7 +735,9 @@ export default function MenuManagementPage() {
                       </svg>
                     </button>
                     <button
-                      onClick={() => category.id && handleDeleteCategory(category.id)}
+                      onClick={() =>
+                        category.id && handleDeleteCategory(category.id)
+                      }
                       className="p-2 hover:bg-red-50 text-red-600 rounded-lg transition-colors"
                       title="Xóa"
                     >
@@ -783,6 +802,7 @@ export default function MenuManagementPage() {
           <div
             className="bg-white rounded-2xl max-w-lg w-full"
             onClick={(e) => e.stopPropagation()}
+            ref={categoryModalRef}
           >
             <div className="bg-white border-b border-neutral-200 p-6">
               <div className="flex items-center justify-between">
@@ -890,13 +910,11 @@ export default function MenuManagementPage() {
 
       {/* Add/Edit Menu Item Modal */}
       {showAddModal && (
-        <div
-          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
-          onClick={closeModal}
-        >
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div
             className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
+            ref={menuModalRef}
           >
             <div className="sticky top-0 bg-white border-b border-neutral-200 p-6 z-10">
               <div className="flex items-center justify-between">
@@ -1058,6 +1076,16 @@ export default function MenuManagementPage() {
                   <span className="text-sm text-neutral-700">
                     🏆 Best Seller
                   </span>
+                </label>
+                <label className="flex items-center space-x-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    name="isNew"
+                    checked={formData.isNew}
+                    onChange={handleFormChange}
+                    className="w-4 h-4 text-primary-600 border-neutral-300 rounded focus:ring-primary-500"
+                  />
+                  <span className="text-sm text-neutral-700">🆕 Món mới</span>
                 </label>
                 <label className="flex items-center space-x-2 cursor-pointer">
                   <input

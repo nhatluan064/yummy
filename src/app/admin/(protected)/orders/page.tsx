@@ -15,7 +15,11 @@ export default function OrdersPage() {
   const [orders, setOrders] = useState<UIOrder[]>([]);
 
   useEffect(() => {
-    orderService.getAll().then((list) => setOrders(list));
+    const unsubscribe = orderService.subscribeToOrders((updatedOrders) => {
+      setOrders(updatedOrders);
+    });
+
+    return () => unsubscribe();
   }, []);
 
   const statusConfig = {
@@ -62,33 +66,95 @@ export default function OrdersPage() {
     const matchesStatus =
       selectedStatus === "all" || order.status === selectedStatus;
     const matchesSearch =
-      (order.orderCode ?? order.id).toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (order.customerName || "").toLowerCase().includes(searchQuery.toLowerCase());
+      (order.orderCode ?? order.id)
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase()) ||
+      (order.customerName || "")
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase());
     return matchesStatus && matchesSearch;
   });
 
-  const updateOrderStatus = async (orderId: string, newStatus: Order["status"]) => {
+  // Group orders by date
+  const groupedOrders = filteredOrders.reduce((groups, order) => {
+    const ts = order.createdAt as unknown as
+      | { toDate?: () => Date }
+      | undefined;
+    const date = ts?.toDate ? ts.toDate() : new Date();
+    const dateKey = date.toISOString().split("T")[0]; // YYYY-MM-DD format
+
+    if (!groups[dateKey]) {
+      groups[dateKey] = [];
+    }
+    groups[dateKey].push(order);
+    return groups;
+  }, {} as Record<string, UIOrder[]>);
+
+  // Sort orders within each date group by time (newest first)
+  Object.keys(groupedOrders).forEach((dateKey) => {
+    groupedOrders[dateKey].sort((a, b) => {
+      const aTime =
+        (a.createdAt as unknown as { toDate?: () => Date })
+          ?.toDate?.()
+          ?.getTime() || 0;
+      const bTime =
+        (b.createdAt as unknown as { toDate?: () => Date })
+          ?.toDate?.()
+          ?.getTime() || 0;
+      return bTime - aTime; // Newest first
+    });
+  });
+
+  // Sort date groups (newest dates first)
+  const sortedDateKeys = Object.keys(groupedOrders).sort((a, b) =>
+    b.localeCompare(a)
+  );
+
+  // Helper function to format date headers
+  const formatDateHeader = (dateKey: string) => {
+    const date = new Date(dateKey + "T00:00:00");
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    if (date.toDateString() === today.toDateString()) {
+      return "Hôm nay";
+    } else if (date.toDateString() === yesterday.toDateString()) {
+      return "Hôm qua";
+    } else {
+      return date.toLocaleDateString("vi-VN", {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      });
+    }
+  };
+
+  const updateOrderStatus = async (
+    orderId: string,
+    newStatus: Order["status"]
+  ) => {
     // find current order snapshot for bill persistence when completed
-    const current = orders.find(o => o.id === orderId) || null;
+    const current = orders.find((o) => o.id === orderId) || null;
     await orderService.updateStatus(orderId, newStatus);
     // If mark completed, persist a bill snapshot
-    if (newStatus === 'completed' && current) {
+    if (newStatus === "completed" && current) {
       try {
         await billService.ensureForOrder({
           id: current.id!,
           orderCode: current.orderCode,
-          customerName: current.customerName,
+          customerName: current.customerName || "",
           tableNumber: current.tableNumber,
           items: current.items,
           totalAmount: current.totalAmount,
         });
       } catch (e) {
         // best-effort; ignore if rules forbid or already exists
-        console.warn('Persist bill failed:', e);
+        console.warn("Persist bill failed:", e);
       }
     }
-    const fresh = await orderService.getAll();
-    setOrders(fresh);
+    // No need to manually refresh orders as subscription will handle it
   };
 
   return (
@@ -195,145 +261,201 @@ export default function OrdersPage() {
       </div>
 
       {/* Orders Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-        {filteredOrders.map((order) => (
-          <div
-            key={order.id}
-            className="card p-6 hover:shadow-xl transition-all duration-300 cursor-pointer"
-            onClick={() => setSelectedOrder(order)}
-          >
-            {/* Header */}
-            <div className="flex items-start justify-between mb-4">
-              <div>
-                <h3 className="text-lg font-bold text-primary-600">{order.orderCode ?? order.id}</h3>
-                <p className="text-sm text-neutral-500 mt-1">
-                  {(() => {
-                    const ts = order.createdAt as unknown as { toDate?: () => Date } | undefined;
-                    return ts?.toDate ? ts.toDate().toLocaleString() : "";
-                  })()}
-                </p>
-              </div>
-              {getStatusBadge(order.status)}
+      <div className="space-y-8">
+        {sortedDateKeys.map((dateKey) => (
+          <div key={dateKey} className="space-y-4">
+            {/* Date Header */}
+            <div className="flex items-center space-x-3">
+              <h2 className="text-xl font-bold text-neutral-800">
+                {formatDateHeader(dateKey)}
+              </h2>
+              <div className="flex-1 h-px bg-neutral-200"></div>
+              <span className="text-sm text-neutral-500 bg-neutral-100 px-3 py-1 rounded-full">
+                {groupedOrders[dateKey].length} đơn hàng
+              </span>
             </div>
 
-            {/* Customer Info */}
-            <div className="mb-4 pb-4 border-b border-neutral-200">
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center">
-                  <svg
-                    className="w-5 h-5 text-primary-600"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                    />
-                  </svg>
-                </div>
-                <div className="flex-1">
-                  <p className="font-medium text-neutral-800">{order.customerName}</p>
-                  {order.customerPhone && (
-                    <p className="text-sm text-neutral-500">{order.customerPhone}</p>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            {/* Order Items */}
-            <div className="mb-4 space-y-2">
-              {order.items.map((item, idx) => (
+            {/* Orders for this date */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+              {groupedOrders[dateKey].map((order) => (
                 <div
-                  key={idx}
-                  className="flex items-center justify-between text-sm"
+                  key={order.id}
+                  className="card p-6 hover:shadow-xl transition-all duration-300 cursor-pointer"
+                  onClick={() => setSelectedOrder(order)}
                 >
-                  <span className="text-neutral-700">
-                    <span className="font-medium text-primary-600">
-                      {item.quantity}x
-                    </span>{" "}
-                    {item.name}
-                  </span>
-                  <span className="font-medium text-neutral-800">
-                    {item.price.toLocaleString()}₫
-                  </span>
+                  {/* Header */}
+                  <div className="flex items-start justify-between mb-4">
+                    <div>
+                      <h3 className="text-lg font-bold text-primary-600">
+                        {order.orderCode ?? order.id}
+                      </h3>
+                      <p className="text-sm text-neutral-500 mt-1">
+                        {(() => {
+                          const ts = order.createdAt as unknown as
+                            | { toDate?: () => Date }
+                            | undefined;
+                          return ts?.toDate
+                            ? ts.toDate().toLocaleTimeString("vi-VN", {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              })
+                            : "";
+                        })()}
+                      </p>
+                    </div>
+                    {getStatusBadge(order.status)}
+                  </div>
+
+                  {/* Customer Info */}
+                  <div className="mb-4 pb-4 border-b border-neutral-200">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center">
+                        <svg
+                          className="w-5 h-5 text-primary-600"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                          />
+                        </svg>
+                      </div>
+                      <div className="flex-1">
+                        <p className="font-medium text-neutral-800">
+                          {order.customerName}
+                        </p>
+                        {order.customerPhone && (
+                          <p className="text-sm text-neutral-500">
+                            {order.customerPhone}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Order Items */}
+                  <div className="mb-4 space-y-2">
+                    {order.items.map((item, idx) => (
+                      <div
+                        key={idx}
+                        className="flex items-center justify-between text-sm"
+                      >
+                        <span className="text-neutral-700">
+                          <span className="font-medium text-primary-600">
+                            {item.quantity}x
+                          </span>{" "}
+                          {item.name}
+                        </span>
+                        <span className="font-medium text-neutral-800">
+                          {item.price.toLocaleString()}₫
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Footer */}
+                  <div className="pt-4 border-t border-neutral-200">
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="text-sm text-neutral-600">
+                        Tổng cộng:
+                      </span>
+                      <span className="text-lg font-bold text-primary-600">
+                        {(order.totalAmount ?? 0).toLocaleString()}₫
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between text-xs text-neutral-500">
+                      <span className="flex items-center space-x-1">
+                        <svg
+                          className="w-4 h-4"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                          />
+                        </svg>
+                        <span>Bàn {order.tableNumber ?? "-"}</span>
+                      </span>
+                      <span className="flex items-center space-x-1">
+                        <svg
+                          className="w-4 h-4"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5"
+                          />
+                        </svg>
+                        <span>{order.status}</span>
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Actions */}
+                  {order.status !== "completed" &&
+                    order.status !== "cancelled" && (
+                      <div className="mt-4 pt-4 border-t border-neutral-200 flex gap-2">
+                        {order.status === "pending" && (
+                          <>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                updateOrderStatus(order.id!, "preparing");
+                              }}
+                              className="flex-1 btn-primary text-sm py-2"
+                            >
+                              Xác nhận
+                            </button>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                updateOrderStatus(order.id!, "cancelled");
+                              }}
+                              className="px-4 btn-secondary text-sm py-2"
+                            >
+                              Hủy
+                            </button>
+                          </>
+                        )}
+                        {order.status === "preparing" && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              updateOrderStatus(order.id!, "ready");
+                            }}
+                            className="flex-1 btn-primary text-sm py-2"
+                          >
+                            Hoàn thành
+                          </button>
+                        )}
+                        {order.status === "ready" && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              updateOrderStatus(order.id!, "completed");
+                            }}
+                            className="flex-1 btn-primary text-sm py-2"
+                          >
+                            Thanh toán xong
+                          </button>
+                        )}
+                      </div>
+                    )}
                 </div>
               ))}
             </div>
-
-            {/* Footer */}
-            <div className="pt-4 border-t border-neutral-200">
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-sm text-neutral-600">Tổng cộng:</span>
-                <span className="text-lg font-bold text-primary-600">{(order.totalAmount ?? 0).toLocaleString()}₫</span>
-              </div>
-              <div className="flex items-center justify-between text-xs text-neutral-500">
-                <span className="flex items-center space-x-1">
-                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                  </svg>
-                  <span>Bàn {order.tableNumber ?? '-'}</span>
-                </span>
-                <span className="flex items-center space-x-1">
-                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5" />
-                  </svg>
-                  <span>{order.status}</span>
-                </span>
-              </div>
-            </div>
-
-            {/* Actions */}
-            {order.status !== "completed" && order.status !== "cancelled" && (
-              <div className="mt-4 pt-4 border-t border-neutral-200 flex gap-2">
-                {order.status === "pending" && (
-                  <>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        updateOrderStatus(order.id!, "preparing");
-                      }}
-                      className="flex-1 btn-primary text-sm py-2"
-                    >
-                      Xác nhận
-                    </button>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        updateOrderStatus(order.id!, "cancelled");
-                      }}
-                      className="px-4 btn-secondary text-sm py-2"
-                    >
-                      Hủy
-                    </button>
-                  </>
-                )}
-                {order.status === "preparing" && (
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      updateOrderStatus(order.id!, "ready");
-                    }}
-                    className="flex-1 btn-primary text-sm py-2"
-                  >
-                    Hoàn thành
-                  </button>
-                )}
-                {order.status === "ready" && (
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      updateOrderStatus(order.id!, "completed");
-                    }}
-                    className="flex-1 btn-primary text-sm py-2"
-                  >
-                    Thanh toán xong
-                  </button>
-                )}
-              </div>
-            )}
           </div>
         ))}
       </div>
@@ -441,7 +563,9 @@ export default function OrdersPage() {
                   <span className="text-lg font-semibold text-neutral-800">
                     Tổng cộng:
                   </span>
-                  <span className="text-2xl font-bold text-primary-600">{selectedOrder.totalAmount.toLocaleString()}₫</span>
+                  <span className="text-2xl font-bold text-primary-600">
+                    {selectedOrder.totalAmount.toLocaleString()}₫
+                  </span>
                 </div>
               </div>
 
@@ -449,11 +573,15 @@ export default function OrdersPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="bg-neutral-50 rounded-lg p-4">
                   <p className="text-sm text-neutral-600 mb-1">Số bàn</p>
-                  <p className="font-medium text-neutral-800">{selectedOrder.tableNumber}</p>
+                  <p className="font-medium text-neutral-800">
+                    {selectedOrder.tableNumber}
+                  </p>
                 </div>
                 <div className="bg-neutral-50 rounded-lg p-4">
                   <p className="text-sm text-neutral-600 mb-1">Trạng thái</p>
-                  <p className="font-medium text-neutral-800">{selectedOrder.status}</p>
+                  <p className="font-medium text-neutral-800">
+                    {selectedOrder.status}
+                  </p>
                 </div>
               </div>
             </div>
