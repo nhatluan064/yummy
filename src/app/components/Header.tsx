@@ -54,6 +54,21 @@ export default function Header() {
               ></span>
             </Link>
             <Link
+              href="/lien-he"
+              className={`font-medium transition-all duration-300 relative group ${
+                isActive("/lien-he")
+                  ? "text-primary-600"
+                  : "text-neutral-700 hover:text-primary-600"
+              }`}
+            >
+              Liên Hệ
+              <span
+                className={`absolute bottom-0 left-0 h-0.5 bg-primary-600 transition-all duration-300 ${
+                  isActive("/lien-he") ? "w-full" : "w-0 group-hover:w-full"
+                }`}
+              ></span>
+            </Link>
+            <Link
               href="/dat-ban"
               className={`font-medium transition-all duration-300 relative group ${
                 isActive("/dat-ban")
@@ -80,21 +95,6 @@ export default function Header() {
               <span
                 className={`absolute bottom-0 left-0 h-0.5 bg-primary-600 transition-all duration-300 ${
                   isActive("/thuc-don") ? "w-full" : "w-0 group-hover:w-full"
-                }`}
-              ></span>
-            </Link>
-            <Link
-              href="/lien-he"
-              className={`font-medium transition-all duration-300 relative group ${
-                isActive("/lien-he")
-                  ? "text-primary-600"
-                  : "text-neutral-700 hover:text-primary-600"
-              }`}
-            >
-              Liên Hệ
-              <span
-                className={`absolute bottom-0 left-0 h-0.5 bg-primary-600 transition-all duration-300 ${
-                  isActive("/lien-he") ? "w-full" : "w-0 group-hover:w-full"
                 }`}
               ></span>
             </Link>
@@ -200,6 +200,17 @@ export default function Header() {
               🏠 Trang Chủ
             </Link>
             <Link
+              href="/lien-he"
+              className={`font-medium transition-colors py-2 ${
+                isActive("/lien-he")
+                  ? "text-primary-600"
+                  : "text-neutral-700 hover:text-primary-600"
+              }`}
+              onClick={() => setIsMenuOpen(false)}
+            >
+              � Liên Hệ
+            </Link>
+            <Link
               href="/dat-ban"
               className={`font-medium transition-colors py-2 ${
                 isActive("/dat-ban")
@@ -220,17 +231,6 @@ export default function Header() {
               onClick={() => setIsMenuOpen(false)}
             >
               🍜 Thực Đơn
-            </Link>
-            <Link
-              href="/lien-he"
-              className={`font-medium transition-colors py-2 ${
-                isActive("/lien-he")
-                  ? "text-primary-600"
-                  : "text-neutral-700 hover:text-primary-600"
-              }`}
-              onClick={() => setIsMenuOpen(false)}
-            >
-              📞 Liên Hệ
             </Link>
           </nav>
         </div>
