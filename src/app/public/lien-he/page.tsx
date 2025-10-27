@@ -1,5 +1,5 @@
 import ContactForm from "@/app/components/ContactForm";
 
-export default function LienHePage() {
+export default function LienHePublicPage() {
   return <ContactForm />;
 }

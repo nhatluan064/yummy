@@ -57,7 +57,7 @@ export default function Footer() {
                 </span>
                 <div>
                   <div className="font-semibold text-white">Facebook</div>
-                  <a href="https://facebook.com/dieuhien" className="text-[#1877F2] text-sm" target="_blank" rel="noopener noreferrer">Diệu Hiền</a>
+                  <a href="https://www.facebook.com/dieu.hien.169" className="text-[#1877F2] text-sm" target="_blank" rel="noopener noreferrer">Diệu Hiền</a>
                 </div>
               </div>
               <div className="flex items-center space-x-3">

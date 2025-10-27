@@ -4,24 +4,41 @@ import Link from "next/link";
 import { useState } from "react";
 import { useOrder } from "./OrderContext";
 import { usePathname } from "next/navigation";
+import { User2, Menu as MenuIcon, ShoppingBag } from "lucide-react";
 
-export default function Header() {
+type HeaderMode = "public" | "admin" | "default";
+
+interface HeaderProps {
+  mode?: HeaderMode;
+}
+
+export default function Header({ mode = "default" }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
-  // Header is used under User layout (wrapped with OrderProvider). If not wrapped (e.g., in admin), this may throw.
-  // To keep it simple, we conditionally render the button only when provider exists.
+
+  // Only try to use OrderContext in admin mode or default mode
   let order: ReturnType<typeof useOrder> | null = null;
-  try {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    order = useOrder();
-  } catch {
-    order = null;
+  if (mode !== "public") {
+    try {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      order = useOrder();
+    } catch {
+      order = null;
+    }
   }
 
   const isActive = (path: string) => {
-    if (path === "/") return pathname === "/";
+    if (path === "/") return pathname === path;
     return pathname.startsWith(path);
   };
+  
+  // Determine visibility and routes based on mode
+  const showOrderButton = mode === "admin" || mode === "default";
+  const showAdminButton = mode === "admin" || mode === "default";
+  const menuHref = mode === "public" ? "/public/thuc-don" : "/thuc-don";
+  const homeHref = mode === "public" ? "/public" : "/";
+  const contactHref = mode === "public" ? "/public/lien-he" : "/lien-he";
+  const reservationHref = mode === "public" ? "/public/dat-ban" : "/dat-ban";
 
   return (
     <header className="bg-white/95 backdrop-blur-sm shadow-lg border-b border-neutral-200 sticky top-0 z-50">
@@ -29,17 +46,18 @@ export default function Header() {
         <div className="flex justify-between items-center py-4">
           {/* Logo */}
           <Link
-            href="/"
+            href={homeHref}
             className="text-3xl font-bold text-gradient hover:scale-105 transition-transform duration-300"
           >
             🍜 Mì cay yummy
           </Link>
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center space-x-8">
+            {/* Home - visible in all modes */}
             <Link
-              href="/"
+              href={homeHref}
               className={`font-medium transition-all duration-300 relative group ${
-                isActive("/") && pathname === "/"
+                isActive(homeHref)
                   ? "text-primary-600"
                   : "text-neutral-700 hover:text-primary-600"
               }`}
@@ -47,46 +65,53 @@ export default function Header() {
               Trang Chủ
               <span
                 className={`absolute bottom-0 left-0 h-0.5 bg-primary-600 transition-all duration-300 ${
-                  isActive("/") && pathname === "/"
+                  isActive(homeHref)
                     ? "w-full"
                     : "w-0 group-hover:w-full"
                 }`}
               ></span>
             </Link>
-            <Link
-              href="/lien-he"
-              className={`font-medium transition-all duration-300 relative group ${
-                isActive("/lien-he")
-                  ? "text-primary-600"
-                  : "text-neutral-700 hover:text-primary-600"
-              }`}
-            >
-              Liên Hệ
-              <span
-                className={`absolute bottom-0 left-0 h-0.5 bg-primary-600 transition-all duration-300 ${
-                  isActive("/lien-he") ? "w-full" : "w-0 group-hover:w-full"
+            {/* Contact - visible in public and default modes */}
+            {mode !== "admin" && (
+              <Link
+                href={contactHref}
+                className={`font-medium transition-all duration-300 relative group ${
+                  isActive(contactHref)
+                    ? "text-primary-600"
+                    : "text-neutral-700 hover:text-primary-600"
                 }`}
-              ></span>
-            </Link>
-            <Link
-              href="/dat-ban"
-              className={`font-medium transition-all duration-300 relative group ${
-                isActive("/dat-ban")
-                  ? "text-primary-600"
-                  : "text-neutral-700 hover:text-primary-600"
-              }`}
-            >
-              Đặt Bàn
-              <span
-                className={`absolute bottom-0 left-0 h-0.5 bg-primary-600 transition-all duration-300 ${
-                  isActive("/dat-ban") ? "w-full" : "w-0 group-hover:w-full"
+              >
+                Liên Hệ
+                <span
+                  className={`absolute bottom-0 left-0 h-0.5 bg-primary-600 transition-all duration-300 ${
+                    isActive(contactHref) ? "w-full" : "w-0 group-hover:w-full"
+                  }`}
+                ></span>
+              </Link>
+            )}
+            {/* Reservation - visible in public and default modes */}
+            {mode !== "admin" && (
+              <Link
+                href={reservationHref}
+                className={`font-medium transition-all duration-300 relative group ${
+                  isActive(reservationHref)
+                    ? "text-primary-600"
+                    : "text-neutral-700 hover:text-primary-600"
                 }`}
-              ></span>
-            </Link>
+              >
+                Đặt Bàn
+                <span
+                  className={`absolute bottom-0 left-0 h-0.5 bg-primary-600 transition-all duration-300 ${
+                    isActive(reservationHref) ? "w-full" : "w-0 group-hover:w-full"
+                  }`}
+                ></span>
+              </Link>
+            )}
+            {/* Menu - always visible but links to different routes based on mode */}
             <Link
-              href="/thuc-don"
+              href={menuHref}
               className={`font-medium transition-all duration-300 relative group ${
-                isActive("/thuc-don")
+                isActive(menuHref)
                   ? "text-primary-600"
                   : "text-neutral-700 hover:text-primary-600"
               }`}
@@ -94,7 +119,7 @@ export default function Header() {
               Thực Đơn
               <span
                 className={`absolute bottom-0 left-0 h-0.5 bg-primary-600 transition-all duration-300 ${
-                  isActive("/thuc-don") ? "w-full" : "w-0 group-hover:w-full"
+                  isActive(menuHref) ? "w-full" : "w-0 group-hover:w-full"
                 }`}
               ></span>
             </Link>
@@ -102,83 +127,43 @@ export default function Header() {
           {/* Admin Login & Mobile Menu Button */}
           <div className="flex items-center gap-4">
             {/* Order Drawer trigger */}
-            <button
-              onClick={() => order?.open()}
-              className="btn-primary hidden sm:inline-flex p-2 rounded-full relative"
-              aria-label="Xem giỏ hàng"
-            >
-              <svg
-                className="w-5 h-5"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
+            {showOrderButton && (
+              <button
+                onClick={() => order?.open()}
+                className="btn-primary hidden sm:inline-flex p-2 rounded-full relative"
+                aria-label="Xem giỏ hàng"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m0 0L12 21m0 0l2.5-3M12 21l2.5-3"
-                />
-              </svg>
-              {order && order.items.length > 0 && (
-                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
-                  {order.items.length}
-                </span>
-              )}
-            </button>
-            <Link
-              href="/admin/login"
-              className="btn-secondary hidden sm:inline-flex p-2 rounded-full"
-              aria-label="Admin login"
-            >
-              <svg
-                className="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+                <ShoppingBag className="w-5 h-5" />
+                {order && order.items.length > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                    {order.items.length}
+                  </span>
+                )}
+              </button>
+            )}
+            {/* Admin login */}
+            {showAdminButton && (
+              <Link
+                href="/admin/login"
+                className="btn-secondary hidden sm:inline-flex p-2 rounded-full"
+                aria-label="Admin login"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                />
-              </svg>
-            </Link>
+                <User2 className="w-5 h-5" />
+              </Link>
+            )}
             {/* Mobile Menu Button */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="lg:hidden p-2 text-neutral-700 hover:text-primary-600 transition-colors"
               aria-label="Toggle mobile menu"
             >
-              <svg
+              <MenuIcon
                 className={`w-6 h-6 transition-transform duration-300 ${
                   isMenuOpen ? "rotate-45" : ""
                 }`}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                {isMenuOpen ? (
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                ) : (
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 6h16M4 12h16M4 18h16"
-                  />
-                )}
-              </svg>
+              />
             </button>
           </div>
-
-          {/* end of header controls */}
         </div>
 
         {/* Mobile Navigation */}
@@ -189,9 +174,9 @@ export default function Header() {
         >
           <nav className="flex flex-col space-y-4 pt-4 border-t border-neutral-200">
             <Link
-              href="/"
+              href={homeHref}
               className={`font-medium transition-colors py-2 ${
-                isActive("/") && pathname === "/"
+                isActive(homeHref)
                   ? "text-primary-600"
                   : "text-neutral-700 hover:text-primary-600"
               }`}
@@ -199,32 +184,36 @@ export default function Header() {
             >
               🏠 Trang Chủ
             </Link>
+            {mode !== "admin" && (
+              <Link
+                href={contactHref}
+                className={`font-medium transition-colors py-2 ${
+                  isActive(contactHref)
+                    ? "text-primary-600"
+                    : "text-neutral-700 hover:text-primary-600"
+                }`}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                📞 Liên Hệ
+              </Link>
+            )}
+            {mode !== "admin" && (
+              <Link
+                href={reservationHref}
+                className={`font-medium transition-colors py-2 ${
+                  isActive(reservationHref)
+                    ? "text-primary-600"
+                    : "text-neutral-700 hover:text-primary-600"
+                }`}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                📅 Đặt Bàn
+              </Link>
+            )}
             <Link
-              href="/lien-he"
+              href={menuHref}
               className={`font-medium transition-colors py-2 ${
-                isActive("/lien-he")
-                  ? "text-primary-600"
-                  : "text-neutral-700 hover:text-primary-600"
-              }`}
-              onClick={() => setIsMenuOpen(false)}
-            >
-              � Liên Hệ
-            </Link>
-            <Link
-              href="/dat-ban"
-              className={`font-medium transition-colors py-2 ${
-                isActive("/dat-ban")
-                  ? "text-primary-600"
-                  : "text-neutral-700 hover:text-primary-600"
-              }`}
-              onClick={() => setIsMenuOpen(false)}
-            >
-              📅 Đặt Bàn
-            </Link>
-            <Link
-              href="/thuc-don"
-              className={`font-medium transition-colors py-2 ${
-                isActive("/thuc-don")
+                isActive(menuHref)
                   ? "text-primary-600"
                   : "text-neutral-700 hover:text-primary-600"
               }`}
