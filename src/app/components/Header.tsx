@@ -27,11 +27,6 @@ export default function Header({ mode = "default" }: HeaderProps) {
     }
   }
 
-  const isActive = (path: string) => {
-    if (path === "/") return pathname === path;
-    return pathname.startsWith(path);
-  };
-  
   // Determine visibility and routes based on mode
   const showOrderButton = mode === "admin" || mode === "default";
   const showAdminButton = mode === "admin" || mode === "default";
@@ -39,6 +34,13 @@ export default function Header({ mode = "default" }: HeaderProps) {
   const homeHref = mode === "public" ? "/public" : "/";
   const contactHref = mode === "public" ? "/public/lien-he" : "/lien-he";
   const reservationHref = mode === "public" ? "/public/dat-ban" : "/dat-ban";
+
+  const isActive = (path: string) => {
+    // Home should be exact match only (avoid making home active for child pages like /public/dat-ban)
+    if (path === "/" || path === homeHref) return pathname === path;
+    // For other routes, consider as active when pathname starts with that path
+    return pathname.startsWith(path);
+  };
 
   return (
     <header className="bg-white/95 backdrop-blur-sm shadow-lg border-b border-neutral-200 sticky top-0 z-50">

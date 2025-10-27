@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { getCategoriesFromFirestore, getMenuItemsFromFirestore } from "@/lib/firestoreMenu";
 // NOTE: we intentionally don't import the full MenuItem/Category types here because
 // Firestore returns a loose shape (id as string). We use local FS types instead.
@@ -80,11 +79,8 @@ export default function PublicMenuPage() {
                 <div className="p-4">
                   <h3 className="text-lg font-semibold">{it.name}</h3>
                   <p className="text-sm text-neutral-600 my-2 line-clamp-2">{it.description}</p>
-                  <div className="flex items-center justify-between mt-4">
+                  <div className="flex items-center justify-end mt-4">
                     <div className="text-primary-600 font-bold">{(it.price || 0).toLocaleString("vi-VN")}₫</div>
-                    <Link href={`/thuc-don/${it.id}`} className="text-sm text-primary-600 underline">
-                      Xem chi tiết
-                    </Link>
                   </div>
                 </div>
               </div>
