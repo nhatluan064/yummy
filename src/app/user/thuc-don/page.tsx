@@ -179,29 +179,29 @@ export default function MenuPage() {
   return (
     <div className="bg-neutral-50">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-primary-500 via-primary-600 to-secondary-600 text-white py-20">
+      <section className="bg-gradient-to-br from-primary-500 via-primary-600 to-secondary-600 text-white py-12">
         <div className="container-custom text-center">
-          <h1 className="text-5xl font-bold mb-4 animate-fade-in-up">
+          <h1 className="text-3xl font-bold mb-2 animate-fade-in-up">
             🍜 Thực Đơn Món Ăn
           </h1>
-          <p className="text-xl opacity-90 max-w-2xl mx-auto animate-fade-in-up-delay-1">
+          <p className="text-sm opacity-90 max-w-2xl mx-auto animate-fade-in-up-delay-1">
             Khám phá hương vị đặc trưng của ẩm thực Việt Nam
           </p>
         </div>
       </section>
 
       {/* Categories Filter & Search */}
-      <section className="py-8 bg-white border-b border-neutral-200">
-        <div className="container-custom space-y-4">
+      <section className="py-4 bg-white border-b border-neutral-200">
+        <div className="container-custom space-y-3">
           {/* Row 1: Search Box */}
-          <div className="bg-white border border-neutral-200 rounded-full px-4 py-3 shadow-card max-w-2xl mx-auto">
+          <div className="bg-white border border-neutral-200 rounded-full px-3 py-2 shadow-card max-w-xl mx-auto">
             <div className="relative">
               <input
                 type="text"
                 placeholder="Tìm kiếm món ăn, thức uống..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-10 py-2 border-0 focus:ring-0 focus:outline-none text-sm"
+                className="w-full pl-8 pr-8 py-1 border-0 focus:ring-0 focus:outline-none text-xs"
               />
               <svg
                 className="w-4 h-4 text-neutral-400 absolute left-3 top-1/2 -translate-y-1/2"
@@ -241,14 +241,16 @@ export default function MenuPage() {
           </div>
 
           {/* Row 2: Category Buttons */}
-          <div className="space-y-6">
+          <div className="space-y-3">
             {/* Tất Cả Button */}
             <div className="flex justify-center">
               <button
                 onClick={() => setSelectedCategory("all")}
-                className={
-                  selectedCategory === "all" ? "btn-primary" : "btn-secondary"
-                }
+                className={`px-4 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                  selectedCategory === "all"
+                    ? "bg-primary-500 text-white shadow-lg"
+                    : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200"
+                }`}
               >
                 Tất Cả
               </button>
@@ -256,10 +258,10 @@ export default function MenuPage() {
 
             {/* Food Categories */}
             <div className="text-center">
-              <h3 className="text-lg font-bold text-neutral-800 mb-4">
+              <h3 className="text-sm font-bold text-neutral-800 mb-2">
                 🍜 Đồ Ăn
               </h3>
-              <div className="flex flex-wrap gap-4 justify-center">
+              <div className="flex flex-wrap gap-2 justify-center">
                 {categories
                   .filter((cat) =>
                     ["mi-cay", "an-vat", "hu-tieu", "rau-an-kem"].includes(
@@ -270,11 +272,11 @@ export default function MenuPage() {
                     <button
                       key={cat.id}
                       onClick={() => setSelectedCategory(cat.id)}
-                      className={
+                      className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                         selectedCategory === cat.id
-                          ? "btn-primary"
-                          : "btn-secondary"
-                      }
+                          ? "bg-primary-500 text-white shadow-lg"
+                          : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200"
+                      }`}
                     >
                       {cat.icon} {cat.name}
                     </button>
@@ -284,10 +286,10 @@ export default function MenuPage() {
 
             {/* Drink Categories */}
             <div className="text-center">
-              <h3 className="text-lg font-bold text-neutral-800 mb-4">
+              <h3 className="text-sm font-bold text-neutral-800 mb-2">
                 🥤 Đồ Uống
               </h3>
-              <div className="flex flex-wrap gap-4 justify-center">
+              <div className="flex flex-wrap gap-2 justify-center">
                 {categories
                   .filter((cat) =>
                     [
@@ -301,11 +303,11 @@ export default function MenuPage() {
                     <button
                       key={cat.id}
                       onClick={() => setSelectedCategory(cat.id)}
-                      className={
+                      className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                         selectedCategory === cat.id
-                          ? "btn-primary"
-                          : "btn-secondary"
-                      }
+                          ? "bg-primary-500 text-white shadow-lg"
+                          : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200"
+                      }`}
                     >
                       {cat.icon} {cat.name}
                     </button>
@@ -315,15 +317,15 @@ export default function MenuPage() {
           </div>
 
           {/* Row 2: Sort Buttons */}
-          <div className="flex flex-wrap items-center justify-center gap-3">
-            <span className="text-sm font-medium text-neutral-600">
+          <div className="flex flex-wrap items-center justify-center gap-2 text-xs">
+            <span className="text-xs font-medium text-neutral-600">
               Sắp xếp:
             </span>
             <button
               onClick={() => setSortBy("default")}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+              className={`px-3 py-1 rounded-lg text-xs font-medium transition-all ${
                 sortBy === "default"
-                  ? "bg-primary-500 text-white shadow-lg shadow-primary-500/30"
+                  ? "bg-primary-500 text-white shadow-lg"
                   : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200"
               }`}
             >
@@ -331,9 +333,9 @@ export default function MenuPage() {
             </button>
             <button
               onClick={() => setSortBy("price-asc")}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+              className={`px-3 py-1 rounded-lg text-xs font-medium transition-all ${
                 sortBy === "price-asc"
-                  ? "bg-primary-500 text-white shadow-lg shadow-primary-500/30"
+                  ? "bg-primary-500 text-white shadow-lg"
                   : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200"
               }`}
             >
@@ -341,9 +343,9 @@ export default function MenuPage() {
             </button>
             <button
               onClick={() => setSortBy("price-desc")}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+              className={`px-3 py-1 rounded-lg text-xs font-medium transition-all ${
                 sortBy === "price-desc"
-                  ? "bg-primary-500 text-white shadow-lg shadow-primary-500/30"
+                  ? "bg-primary-500 text-white shadow-lg"
                   : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200"
               }`}
             >
@@ -351,9 +353,9 @@ export default function MenuPage() {
             </button>
             <button
               onClick={() => setSortBy("name-asc")}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+              className={`px-3 py-1 rounded-lg text-xs font-medium transition-all ${
                 sortBy === "name-asc"
-                  ? "bg-primary-500 text-white shadow-lg shadow-primary-500/30"
+                  ? "bg-primary-500 text-white shadow-lg"
                   : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200"
               }`}
             >
@@ -361,9 +363,9 @@ export default function MenuPage() {
             </button>
             <button
               onClick={() => setSortBy("name-desc")}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+              className={`px-3 py-1 rounded-lg text-xs font-medium transition-all ${
                 sortBy === "name-desc"
-                  ? "bg-primary-500 text-white shadow-lg shadow-primary-500/30"
+                  ? "bg-primary-500 text-white shadow-lg"
                   : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200"
               }`}
             >
@@ -372,15 +374,15 @@ export default function MenuPage() {
           </div>
 
           {/* Row 3: Filter Type Buttons */}
-          <div className="flex flex-wrap items-center justify-center gap-3 pt-4 border-t border-neutral-200">
-            <span className="text-sm font-medium text-neutral-600">
+          <div className="flex flex-wrap items-center justify-center gap-2 pt-2 border-t border-neutral-200">
+            <span className="text-xs font-medium text-neutral-600">
               Lọc theo:
             </span>
             <button
               onClick={() => setFilterType("all")}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+              className={`px-3 py-1 rounded-lg text-xs font-medium transition-all ${
                 filterType === "all"
-                  ? "bg-secondary-600 text-white shadow-lg shadow-secondary-600/30"
+                  ? "bg-secondary-600 text-white shadow-lg"
                   : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200"
               }`}
             >
@@ -388,9 +390,9 @@ export default function MenuPage() {
             </button>
             <button
               onClick={() => setFilterType("popular")}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+              className={`px-3 py-1 rounded-lg text-xs font-medium transition-all ${
                 filterType === "popular"
-                  ? "bg-secondary-600 text-white shadow-lg shadow-secondary-600/30"
+                  ? "bg-secondary-600 text-white shadow-lg"
                   : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200"
               }`}
             >
@@ -398,9 +400,9 @@ export default function MenuPage() {
             </button>
             <button
               onClick={() => setFilterType("bestSeller")}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+              className={`px-3 py-1 rounded-lg text-xs font-medium transition-all ${
                 filterType === "bestSeller"
-                  ? "bg-secondary-600 text-white shadow-lg shadow-secondary-600/30"
+                  ? "bg-secondary-600 text-white shadow-lg"
                   : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200"
               }`}
             >
@@ -408,9 +410,9 @@ export default function MenuPage() {
             </button>
             <button
               onClick={() => setFilterType("new")}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+              className={`px-3 py-1 rounded-lg text-xs font-medium transition-all ${
                 filterType === "new"
-                  ? "bg-secondary-600 text-white shadow-lg shadow-secondary-600/30"
+                  ? "bg-secondary-600 text-white shadow-lg"
                   : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200"
               }`}
             >

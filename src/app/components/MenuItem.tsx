@@ -40,16 +40,16 @@ export default function MenuItem({ item, onReviewClick, showAddToCart = true }: 
   };
 
   return (
-    <div className="card group overflow-hidden animate-fade-in-up h-[700px] flex flex-col">
+    <div className="card group overflow-hidden animate-fade-in-up h-auto flex flex-col">
       {/* Image Container */}
       <div className="relative overflow-hidden">
-        {!imageLoaded && <div className="skeleton w-full h-80"></div>}
+        {!imageLoaded && <div className="skeleton w-full h-48"></div>}
         <Image
           src={item.imageUrl}
           alt={item.name}
           width={400}
-          height={320}
-          className={`w-full h-80 object-cover transition-transform duration-400 group-hover:scale-105 rounded-t-md ${
+          height={192}
+          className={`w-full h-48 object-cover transition-transform duration-400 group-hover:scale-105 rounded-t-md ${
             imageLoaded ? "opacity-100" : "opacity-0"
           }`}
           onLoad={() => setImageLoaded(true)}
@@ -60,26 +60,26 @@ export default function MenuItem({ item, onReviewClick, showAddToCart = true }: 
         <div className="absolute inset-0 bg-gradient-to-t from-black/6 to-transparent opacity-100 transition-opacity duration-300"></div>
 
         {/* Price Ribbon (top-left) */}
-        <div className="absolute top-3 left-3 bg-gradient-to-r from-primary-500 to-primary-600 text-white font-semibold px-4 py-1.5 rounded-full text-sm shadow-lg">
+        <div className="absolute top-2 left-2 bg-gradient-to-r from-primary-500 to-primary-600 text-white font-semibold px-3 py-1 rounded-full text-xs shadow-lg">
           {item.price.toLocaleString("vi-VN")}₫
         </div>
 
         {/* Badge Labels (top-right) */}
-        <div className="absolute top-3 right-3 flex flex-col gap-2">
+        <div className="absolute top-2 right-2 flex flex-col gap-1">
           {item.isNew && (
-            <div className="bg-gradient-to-r from-green-500 to-green-600 text-white font-bold px-3 py-1 rounded-full text-xs shadow-lg flex items-center gap-1">
+            <div className="bg-gradient-to-r from-green-500 to-green-600 text-white font-bold px-2 py-0.5 rounded-full text-[10px] shadow-lg flex items-center gap-1">
               <span>✨</span>
               <span>Mới</span>
             </div>
           )}
           {item.bestSeller && (
-            <div className="bg-gradient-to-r from-red-500 to-red-600 text-white font-bold px-3 py-1 rounded-full text-xs shadow-lg flex items-center gap-1">
+            <div className="bg-gradient-to-r from-red-500 to-red-600 text-white font-bold px-2 py-0.5 rounded-full text-[10px] shadow-lg flex items-center gap-1">
               <span>⭐</span>
               <span>Best Seller</span>
             </div>
           )}
           {item.popular && (
-            <div className="bg-gradient-to-r from-orange-500 to-orange-600 text-white font-bold px-3 py-1 rounded-full text-xs shadow-lg flex items-center gap-1">
+            <div className="bg-gradient-to-r from-orange-500 to-orange-600 text-white font-bold px-2 py-0.5 rounded-full text-[10px] shadow-lg flex items-center gap-1">
               <span>🔥</span>
               <span>Phổ Biến</span>
             </div>
@@ -88,24 +88,24 @@ export default function MenuItem({ item, onReviewClick, showAddToCart = true }: 
       </div>
 
       {/* Content */}
-      <div className="p-6 bg-white flex-1 flex flex-col">
-        <div className="min-h-[90px] mb-2">
-          <h3 className="text-xl font-bold text-neutral-900 group-hover:text-primary-600 transition-colors duration-300 line-clamp-3 leading-relaxed">
+      <div className="p-4 bg-white flex-1 flex flex-col">
+        <div className="min-h-[50px] mb-2">
+          <h3 className="text-base font-bold text-neutral-900 group-hover:text-primary-600 transition-colors duration-300 line-clamp-2 leading-snug">
             {item.name}
           </h3>
         </div>
-        <p className="text-neutral-600 mb-4 line-clamp-2 leading-relaxed">
+        <p className="text-sm text-neutral-600 mb-3 line-clamp-2 leading-snug">
           {item.description}
         </p>
 
         {/* Rating & Reviews */}
         {item.rating !== undefined && (
-          <div className="flex items-center gap-2 mb-4">
-            <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1.5 mb-3">
+            <div className="flex items-center gap-0.5">
               {[...Array(5)].map((_, i) => (
                 <svg
                   key={i}
-                  className={`w-4 h-4 ${
+                  className={`w-3 h-3 ${
                     i < Math.round(item.rating || 0)
                       ? "text-yellow-400"
                       : "text-gray-300"
@@ -117,32 +117,32 @@ export default function MenuItem({ item, onReviewClick, showAddToCart = true }: 
                 </svg>
               ))}
             </div>
-            <span className="text-sm text-gray-600 font-medium">
-              {item.rating?.toFixed(1)} ({item.reviewCount || 0} đánh giá)
+            <span className="text-xs text-gray-600 font-medium">
+              {item.rating?.toFixed(1)} ({item.reviewCount || 0})
             </span>
           </div>
         )}
 
         {/* Divider */}
-        <div className="my-4 border-t border-neutral-100" />
+        <div className="my-2 border-t border-neutral-100" />
 
         {/* Quantity Selector & Add to Cart - Chỉ hiển thị khi showAddToCart = true */}
         {showAddToCart && (
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2">
               <button
                 onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                className="w-9 h-9 flex items-center justify-center bg-neutral-100 rounded-md text-neutral-700 hover:bg-neutral-200 transition"
+                className="w-7 h-7 flex items-center justify-center bg-neutral-100 rounded-md text-neutral-700 hover:bg-neutral-200 transition text-sm"
                 aria-label="Decrease quantity"
               >
                 −
               </button>
-              <div className="min-w-[2.5rem] text-center font-medium text-neutral-900">
+              <div className="min-w-[2rem] text-center font-medium text-neutral-900 text-sm">
                 {quantity}
               </div>
               <button
                 onClick={() => setQuantity(quantity + 1)}
-                className="w-9 h-9 flex items-center justify-center bg-neutral-100 rounded-md text-neutral-700 hover:bg-neutral-200 transition"
+                className="w-7 h-7 flex items-center justify-center bg-neutral-100 rounded-md text-neutral-700 hover:bg-neutral-200 transition text-sm"
                 aria-label="Increase quantity"
               >
                 +
@@ -152,7 +152,7 @@ export default function MenuItem({ item, onReviewClick, showAddToCart = true }: 
             <div className="flex-1">
               <button
                 onClick={handleAddToCart}
-                className="btn-accent w-full py-2 rounded-md flex items-center justify-center gap-1 animate-order-btn text-sm"
+                className="btn-accent w-full py-1.5 rounded-md flex items-center justify-center gap-1 animate-order-btn text-xs"
                 aria-label={`Thêm ${item.name} vào giỏ hàng`}
                 style={{
                   transition: "transform 0.15s cubic-bezier(.4,2,.6,1)",
@@ -182,18 +182,15 @@ export default function MenuItem({ item, onReviewClick, showAddToCart = true }: 
           </div>
         )}
 
-        {/* Spacer */}
-        <div className="flex-1" />
-
         {/* Review Button */}
         {onReviewClick && (
           <button
             onClick={onReviewClick}
-            className="w-full py-4 my-4 px-4 bg-white border-2 border-primary-500 text-primary-600 rounded-md font-semibold hover:bg-primary-50 transition-colors flex items-center justify-center gap-4"
+            className="w-full py-2 mt-3 px-3 bg-white border-2 border-primary-500 text-primary-600 rounded-md font-semibold hover:bg-primary-50 transition-colors flex items-center justify-center gap-2 text-xs"
             aria-label={`Viết đánh giá cho ${item.name}`}
           >
             <svg
-              className="w-4 h-4"
+              className="w-3 h-3"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"

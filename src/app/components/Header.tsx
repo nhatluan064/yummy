@@ -76,42 +76,38 @@ export default function Header({ mode = "user" }: HeaderProps) {
                 }`}
               ></span>
             </Link>
-            {/* Contact - visible in public and default modes */}
-            {mode !== "admin" && (
-              <Link
-                href={contactHref}
-                className={`font-medium transition-all duration-300 relative group ${
-                  isActive(contactHref)
-                    ? "text-primary-600"
-                    : "text-neutral-700 hover:text-primary-600"
+            {/* Contact - visible in all modes */}
+            <Link
+              href={contactHref}
+              className={`font-medium transition-all duration-300 relative group ${
+                isActive(contactHref)
+                  ? "text-primary-600"
+                  : "text-neutral-700 hover:text-primary-600"
+              }`}
+            >
+              Liên Hệ
+              <span
+                className={`absolute bottom-0 left-0 h-0.5 bg-primary-600 transition-all duration-300 ${
+                  isActive(contactHref) ? "w-full" : "w-0 group-hover:w-full"
                 }`}
-              >
-                Liên Hệ
-                <span
-                  className={`absolute bottom-0 left-0 h-0.5 bg-primary-600 transition-all duration-300 ${
-                    isActive(contactHref) ? "w-full" : "w-0 group-hover:w-full"
-                  }`}
-                ></span>
-              </Link>
-            )}
-            {/* Reservation - visible in public and default modes */}
-            {mode !== "admin" && (
-              <Link
-                href={reservationHref}
-                className={`font-medium transition-all duration-300 relative group ${
-                  isActive(reservationHref)
-                    ? "text-primary-600"
-                    : "text-neutral-700 hover:text-primary-600"
+              ></span>
+            </Link>
+            {/* Reservation - visible in all modes */}
+            <Link
+              href={reservationHref}
+              className={`font-medium transition-all duration-300 relative group ${
+                isActive(reservationHref)
+                  ? "text-primary-600"
+                  : "text-neutral-700 hover:text-primary-600"
+              }`}
+            >
+              Đặt Bàn
+              <span
+                className={`absolute bottom-0 left-0 h-0.5 bg-primary-600 transition-all duration-300 ${
+                  isActive(reservationHref) ? "w-full" : "w-0 group-hover:w-full"
                 }`}
-              >
-                Đặt Bàn
-                <span
-                  className={`absolute bottom-0 left-0 h-0.5 bg-primary-600 transition-all duration-300 ${
-                    isActive(reservationHref) ? "w-full" : "w-0 group-hover:w-full"
-                  }`}
-                ></span>
-              </Link>
-            )}
+              ></span>
+            </Link>
             {/* Menu - always visible but links to different routes based on mode */}
             <Link
               href={menuHref}
@@ -189,32 +185,28 @@ export default function Header({ mode = "user" }: HeaderProps) {
             >
               🏠 Trang Chủ
             </Link>
-            {mode !== "admin" && (
-              <Link
-                href={contactHref}
-                className={`font-medium transition-colors py-2 ${
-                  isActive(contactHref)
-                    ? "text-primary-600"
-                    : "text-neutral-700 hover:text-primary-600"
-                }`}
-                onClick={() => setIsMenuOpen(false)}
-              >
-                📞 Liên Hệ
-              </Link>
-            )}
-            {mode !== "admin" && (
-              <Link
-                href={reservationHref}
-                className={`font-medium transition-colors py-2 ${
-                  isActive(reservationHref)
-                    ? "text-primary-600"
-                    : "text-neutral-700 hover:text-primary-600"
-                }`}
-                onClick={() => setIsMenuOpen(false)}
-              >
-                📅 Đặt Bàn
-              </Link>
-            )}
+            <Link
+              href={contactHref}
+              className={`font-medium transition-colors py-2 ${
+                isActive(contactHref)
+                  ? "text-primary-600"
+                  : "text-neutral-700 hover:text-primary-600"
+              }`}
+              onClick={() => setIsMenuOpen(false)}
+            >
+              📞 Liên Hệ
+            </Link>
+            <Link
+              href={reservationHref}
+              className={`font-medium transition-colors py-2 ${
+                isActive(reservationHref)
+                  ? "text-primary-600"
+                  : "text-neutral-700 hover:text-primary-600"
+              }`}
+              onClick={() => setIsMenuOpen(false)}
+            >
+              📅 Đặt Bàn
+            </Link>
             <Link
               href={menuHref}
               className={`font-medium transition-colors py-2 ${
