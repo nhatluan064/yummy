@@ -6,19 +6,19 @@ import { useOrder } from "./OrderContext";
 import { usePathname } from "next/navigation";
 import { User2, Menu as MenuIcon, ShoppingBag } from "lucide-react";
 
-type HeaderMode = "public" | "admin" | "default";
+type HeaderMode = "user" | "admin";
 
 interface HeaderProps {
   mode?: HeaderMode;
 }
 
-export default function Header({ mode = "default" }: HeaderProps) {
+export default function Header({ mode = "user" }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
 
-  // Only try to use OrderContext in admin mode or default mode
+  // Only try to use OrderContext in admin mode
   let order: ReturnType<typeof useOrder> | null = null;
-  if (mode !== "public") {
+  if (mode === "admin") {
     try {
       // eslint-disable-next-line react-hooks/rules-of-hooks
       order = useOrder();
@@ -28,12 +28,15 @@ export default function Header({ mode = "default" }: HeaderProps) {
   }
 
   // Determine visibility and routes based on mode
-  const showOrderButton = mode === "admin" || mode === "default";
-  const showAdminButton = mode === "admin" || mode === "default";
-  const menuHref = mode === "public" ? "/public/thuc-don" : "/thuc-don";
-  const homeHref = mode === "public" ? "/public" : "/";
-  const contactHref = mode === "public" ? "/public/lien-he" : "/lien-he";
-  const reservationHref = mode === "public" ? "/public/dat-ban" : "/dat-ban";
+  const showOrderButton = mode === "admin"; // Only show Cart in admin
+  const showAdminButton = mode === "admin"; // Show Login button in admin
+  
+  // Routes based on mode
+  const baseHref = mode === "user" ? "/user" : "/admin";
+  const menuHref = `${baseHref}/thuc-don`;
+  const homeHref = `${baseHref}/trang-chu`;
+  const contactHref = `${baseHref}/lien-he`;
+  const reservationHref = `${baseHref}/dat-ban`;
 
   const isActive = (path: string) => {
     // Home should be exact match only (avoid making home active for child pages like /public/dat-ban)

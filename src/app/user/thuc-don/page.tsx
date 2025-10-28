@@ -447,6 +447,7 @@ export default function MenuPage() {
                             id: Number(item.id) || undefined, // ép kiểu id về number hoặc undefined nếu không hợp lệ
                             imageUrl: item.image, // Đảm bảo prop imageUrl được truyền vào nếu MenuItem yêu cầu
                           }}
+                          showAddToCart={false}
                           onReviewClick={async () => {
                             setSelectedDish(item);
                             // Lấy feedback từ Firestore cho món này

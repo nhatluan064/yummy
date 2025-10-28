@@ -19,9 +19,10 @@ interface MenuItemProps {
     reviewCount?: number;
   };
   onReviewClick?: () => void;
+  showAddToCart?: boolean; // Kiểm soát hiển thị nút thêm vào giỏ
 }
 
-export default function MenuItem({ item, onReviewClick }: MenuItemProps) {
+export default function MenuItem({ item, onReviewClick, showAddToCart = true }: MenuItemProps) {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [quantity, setQuantity] = useState(1);
   let order: ReturnType<typeof useOrder> | null = null;
@@ -125,59 +126,61 @@ export default function MenuItem({ item, onReviewClick }: MenuItemProps) {
         {/* Divider */}
         <div className="my-4 border-t border-neutral-100" />
 
-        {/* Quantity Selector & Add to Cart */}
-        <div className="flex items-center gap-3">
+        {/* Quantity Selector & Add to Cart - Chỉ hiển thị khi showAddToCart = true */}
+        {showAddToCart && (
           <div className="flex items-center gap-3">
-            <button
-              onClick={() => setQuantity(Math.max(1, quantity - 1))}
-              className="w-9 h-9 flex items-center justify-center bg-neutral-100 rounded-md text-neutral-700 hover:bg-neutral-200 transition"
-              aria-label="Decrease quantity"
-            >
-              −
-            </button>
-            <div className="min-w-[2.5rem] text-center font-medium text-neutral-900">
-              {quantity}
-            </div>
-            <button
-              onClick={() => setQuantity(quantity + 1)}
-              className="w-9 h-9 flex items-center justify-center bg-neutral-100 rounded-md text-neutral-700 hover:bg-neutral-200 transition"
-              aria-label="Increase quantity"
-            >
-              +
-            </button>
-          </div>
-
-          <div className="flex-1">
-            <button
-              onClick={handleAddToCart}
-              className="btn-accent w-full py-2 rounded-md flex items-center justify-center gap-1 animate-order-btn text-sm"
-              aria-label={`Thêm ${item.name} vào giỏ hàng`}
-              style={{
-                transition: "transform 0.15s cubic-bezier(.4,2,.6,1)",
-              }}
-              onMouseDown={(e) =>
-                (e.currentTarget.style.transform = "scale(0.96)")
-              }
-              onMouseUp={(e) => (e.currentTarget.style.transform = "")}
-              onMouseLeave={(e) => (e.currentTarget.style.transform = "")}
-            >
-              <svg
-                className="w-3 h-3 transform transition-transform duration-300 group-hover:animate-wiggle"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                className="w-9 h-9 flex items-center justify-center bg-neutral-100 rounded-md text-neutral-700 hover:bg-neutral-200 transition"
+                aria-label="Decrease quantity"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m0 0L12 21m0 0l2.5-3M12 21l2.5-3"
-                />
-              </svg>
-              Thêm vào giỏ
-            </button>
+                −
+              </button>
+              <div className="min-w-[2.5rem] text-center font-medium text-neutral-900">
+                {quantity}
+              </div>
+              <button
+                onClick={() => setQuantity(quantity + 1)}
+                className="w-9 h-9 flex items-center justify-center bg-neutral-100 rounded-md text-neutral-700 hover:bg-neutral-200 transition"
+                aria-label="Increase quantity"
+              >
+                +
+              </button>
+            </div>
+
+            <div className="flex-1">
+              <button
+                onClick={handleAddToCart}
+                className="btn-accent w-full py-2 rounded-md flex items-center justify-center gap-1 animate-order-btn text-sm"
+                aria-label={`Thêm ${item.name} vào giỏ hàng`}
+                style={{
+                  transition: "transform 0.15s cubic-bezier(.4,2,.6,1)",
+                }}
+                onMouseDown={(e) =>
+                  (e.currentTarget.style.transform = "scale(0.96)")
+                }
+                onMouseUp={(e) => (e.currentTarget.style.transform = "")}
+                onMouseLeave={(e) => (e.currentTarget.style.transform = "")}
+              >
+                <svg
+                  className="w-3 h-3 transform transition-transform duration-300 group-hover:animate-wiggle"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m0 0L12 21m0 0l2.5-3M12 21l2.5-3"
+                  />
+                </svg>
+                Thêm vào giỏ
+              </button>
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Spacer */}
         <div className="flex-1" />
