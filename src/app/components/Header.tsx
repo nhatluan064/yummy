@@ -35,7 +35,7 @@ export default function Header({ mode = "user" }: HeaderProps) {
   const baseHref = mode === "user" ? "/user" : "/admin";
   const menuHref = `${baseHref}/thuc-don`;
   const homeHref = `${baseHref}/trang-chu`;
-  const contactHref = `${baseHref}/lien-he`;
+  const contactHref = `${baseHref}/dia-chi`;
   const reservationHref = `${baseHref}/dat-ban`;
 
   const isActive = (path: string) => {
@@ -85,7 +85,7 @@ export default function Header({ mode = "user" }: HeaderProps) {
                   : "text-neutral-700 hover:text-primary-600"
               }`}
             >
-              Liên Hệ
+              Địa Chỉ
               <span
                 className={`absolute bottom-0 left-0 h-0.5 bg-primary-600 transition-all duration-300 ${
                   isActive(contactHref) ? "w-full" : "w-0 group-hover:w-full"
@@ -101,7 +101,7 @@ export default function Header({ mode = "user" }: HeaderProps) {
                   : "text-neutral-700 hover:text-primary-600"
               }`}
             >
-              Đặt Bàn
+              Đặt Bàn & Liên hệ
               <span
                 className={`absolute bottom-0 left-0 h-0.5 bg-primary-600 transition-all duration-300 ${
                   isActive(reservationHref) ? "w-full" : "w-0 group-hover:w-full"
@@ -194,7 +194,7 @@ export default function Header({ mode = "user" }: HeaderProps) {
               }`}
               onClick={() => setIsMenuOpen(false)}
             >
-              📞 Liên Hệ
+              📍 Địa Chỉ
             </Link>
             <Link
               href={reservationHref}

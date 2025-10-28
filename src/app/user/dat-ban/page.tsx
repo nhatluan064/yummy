@@ -75,10 +75,10 @@ export default function DatBanPage() {
       <section className="bg-gradient-to-br from-primary-500 via-primary-600 to-secondary-600 text-white py-20">
         <div className="container-custom text-center">
           <h1 className="text-5xl font-bold mb-4 animate-fade-in-up">
-            📅 Đặt Bàn Trước
+            📅 Đặt Bàn & Liên Hệ
           </h1>
           <p className="text-xl opacity-90 max-w-2xl mx-auto animate-fade-in-up-delay-1">
-            Đảm bảo chỗ ngồi thoải mái cho bữa ăn tuyệt vời của bạn
+            Đặt bàn trước hoặc liên hệ với chúng tôi ngay hôm nay
           </p>
         </div>
       </section>
