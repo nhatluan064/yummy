@@ -146,10 +146,10 @@ export default function Header({ mode = "user" }: HeaderProps) {
             {showAdminButton && (
               <Link
                 href="/admin/dashboard"
-                className="btn-secondary hidden sm:inline-flex gap-1.5 px-3 py-2 text-sm"
+                className="btn-secondary hidden sm:inline-flex gap-1 px-3 py-1 text-xs"
                 aria-label="Quản lý"
               >
-                <User2 className="w-4 h-4" />
+                <User2 className="w-3.5 h-3.5" />
                 <span>Quản lý</span>
               </Link>
             )}
@@ -239,11 +239,11 @@ export default function Header({ mode = "user" }: HeaderProps) {
             {showAdminButton && (
               <Link
                 href="/admin/dashboard"
-                className="btn-secondary py-2 flex items-center gap-2 justify-center"
+                className="btn-secondary py-1 flex items-center gap-1 justify-center px-3 text-xs"
                 onClick={() => setIsMenuOpen(false)}
               >
-                <User2 className="w-5 h-5" />
-                <span className="font-medium">Quản lý</span>
+                <User2 className="w-3.5 h-3.5" />
+                <span>Quản lý</span>
               </Link>
             )}
           </nav>
