@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { tableService, Table } from "@/lib/table.service";
 import { useToast } from "@/app/components/Toast";
 
@@ -14,7 +14,7 @@ export default function TableManagementPage() {
   const toast = useToast();
 
   // Load tables
-  const loadTables = async () => {
+  const loadTables = useCallback(async () => {
     try {
       setLoading(true);
       const data = await tableService.getAllTables();
@@ -25,11 +25,11 @@ export default function TableManagementPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [toast]);
 
   useEffect(() => {
     loadTables();
-  }, []);
+  }, [loadTables]);
 
   // Tạo bàn mới
   const handleCreateTable = async () => {
@@ -190,7 +190,7 @@ export default function TableManagementPage() {
             Chưa Có Bàn Nào
           </h3>
           <p className="text-neutral-600 mb-6">
-            Nhấn nút "Tạo Bàn Mới" để bắt đầu
+            Nhấn nút &ldquo;Tạo Bàn Mới&rdquo; để bắt đầu
           </p>
         </div>
       ) : (

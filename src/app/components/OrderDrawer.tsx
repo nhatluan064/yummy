@@ -359,7 +359,7 @@ export default function OrderDrawer() {
       const totalAmount = tableItems.reduce((sum, i) => sum + i.price * i.quantity, 0);
       
       // Create bill
-      const billId = await billService.createFromOrder({
+      await billService.createFromOrder({
         id: `table-${tableId}-${Date.now()}`,
         orderCode: `#TABLE-${tableNumber}`,
         customerName: customerName || `Khách ${tableNumber}`,

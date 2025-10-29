@@ -1,6 +1,6 @@
 "use client";
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { getAuthClient } from "@/lib/sdk";
 import {
@@ -14,7 +14,7 @@ import type { FirebaseError } from "firebase/app";
 import type { FirebaseUser, AdminUser } from "@/lib/auth.types";
 import { useToastSystem } from "@/app/components/ToastSystem";
 
-export default function AdminLoginPage() {
+function AdminLoginContent() {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -24,6 +24,7 @@ export default function AdminLoginPage() {
   const [error, setError] = useState("");
   const [currentUser, setCurrentUser] = useState<FirebaseUser | null>(null);
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { addToast } = useToastSystem();
 
   // Check if already logged in by inspecting Firebase auth state
@@ -103,7 +104,13 @@ export default function AdminLoginPage() {
         "Chào mừng bạn quay lại hệ thống quản trị.",
         1800
       );
-      // Don't auto-redirect; let user click through
+      
+      // Redirect to original page or dashboard after login
+      const redirectUrl = searchParams?.get('redirect') || '/admin/dashboard/';
+      setTimeout(() => {
+        router.push(redirectUrl);
+      }, 500);
+      
       setCurrentUser(user);
       setIsLoading(false);
     } catch (err: unknown) {
@@ -434,5 +441,20 @@ export default function AdminLoginPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function AdminLoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-neutral-600">Đang tải...</p>
+        </div>
+      </div>
+    }>
+      <AdminLoginContent />
+    </Suspense>
   );
 }

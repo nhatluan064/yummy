@@ -19,10 +19,6 @@ export default function AdminDashboard() {
   const [reservations, setReservations] = useState<WithId<TableReservation>[]>([]);
   const [contacts, setContacts] = useState<WithId<Contact>[]>([]);
   const [selectedDate, setSelectedDate] = useState<string>(""); // yyyy-mm-dd
-  const [sortColumn, setSortColumn] = useState<
-    "orderCode" | "customerName" | "totalAmount" | "completedAt"
-  >("completedAt");
-  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
 
   useEffect(() => {
     const now = new Date();
@@ -196,46 +192,12 @@ export default function AdminDashboard() {
 
   const sortedBills = useMemo(() => {
     return [...bills].sort((a, b) => {
-      let aVal: string | number | Date;
-      let bVal: string | number | Date;
-      switch (sortColumn) {
-        case "orderCode":
-          aVal = a.orderCode ?? a.orderId ?? "";
-          bVal = b.orderCode ?? b.orderId ?? "";
-          break;
-        case "customerName":
-          aVal = a.customerName ?? "";
-          bVal = b.customerName ?? "";
-          break;
-        case "totalAmount":
-          aVal = a.totalAmount || 0;
-          bVal = b.totalAmount || 0;
-          break;
-        case "completedAt":
-          aVal =
-            (a.completedAt as unknown as { toDate?: () => Date })?.toDate?.() ||
-            new Date(0);
-          bVal =
-            (b.completedAt as unknown as { toDate?: () => Date })?.toDate?.() ||
-            new Date(0);
-          break;
-        default:
-          return 0;
-      }
-      if (aVal < bVal) return sortDirection === "asc" ? -1 : 1;
-      if (aVal > bVal) return sortDirection === "asc" ? 1 : -1;
-      return 0;
+      const aVal = (a.completedAt as { toDate?: () => Date })?.toDate?.() || new Date(0);
+      const bVal = (b.completedAt as { toDate?: () => Date })?.toDate?.() || new Date(0);
+      // Sort descending (newest first)
+      return bVal.getTime() - aVal.getTime();
     });
-  }, [bills, sortColumn, sortDirection]);
-
-  const handleSort = (column: typeof sortColumn) => {
-    if (sortColumn === column) {
-      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
-    } else {
-      setSortColumn(column);
-      setSortDirection("asc");
-    }
-  };
+  }, [bills]);
 
   return (
     <div className="space-y-4 md:space-y-6">

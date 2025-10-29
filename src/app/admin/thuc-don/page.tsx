@@ -64,27 +64,46 @@ export default function MenuPage() {
   // Load menu và feedback từ Firestore
   useEffect(() => {
     async function fetchMenuAndFeedback() {
-      const items = await getMenuItemsFromFirestore();
-      const { feedbackService } = await import("@/lib/feedback.service");
-      const allFeedback = await feedbackService.getAll();
-      // Tính reviewCount và rating cho từng món ăn
-      const menuWithReviews = (items as MenuItemData[]).map((item) => {
-        const reviews = allFeedback.filter(
-          (fb: Feedback) => fb.dishName === item.name
-        );
-        const reviewCount = reviews.length;
-        const rating =
-          reviewCount > 0
-            ? reviews.reduce((sum, r) => sum + (r.rating || 0), 0) / reviewCount
-            : 0;
-        return {
-          ...item,
-          reviewCount,
-          rating,
-          reviews,
-        };
-      });
-      setMenuData(menuWithReviews);
+      try {
+        const items = await getMenuItemsFromFirestore();
+        const { feedbackService } = await import("@/lib/feedback.service");
+        
+        // Try to get feedback, but don't fail if permission denied
+        let allFeedback: Feedback[] = [];
+        try {
+          allFeedback = await feedbackService.getAll();
+        } catch (error) {
+          console.warn("Could not load feedback (permission denied or not logged in):", error);
+        }
+        
+        // Tính reviewCount và rating cho từng món ăn
+        const menuWithReviews = (items as MenuItemData[]).map((item) => {
+          const reviews = allFeedback.filter(
+            (fb: Feedback) => fb.dishName === item.name
+          );
+          const reviewCount = reviews.length;
+          const rating =
+            reviewCount > 0
+              ? reviews.reduce((sum, r) => sum + (r.rating || 0), 0) / reviewCount
+              : 0;
+          return {
+            ...item,
+            reviewCount,
+            rating,
+            reviews,
+          };
+        });
+        setMenuData(menuWithReviews);
+      } catch (error) {
+        console.error("Error loading menu:", error);
+        // Still try to load menu even if feedback fails
+        try {
+          const items = await getMenuItemsFromFirestore();
+          setMenuData(items as MenuItemData[]);
+        } catch (menuError) {
+          console.error("Critical error loading menu:", menuError);
+        }
+      }
     }
     fetchMenuAndFeedback();
   }, []);

@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { ToastContainer, useToastSystem } from "@/app/components/ToastSystem";
-import { NotificationBell } from "@/app/components/NotificationBell";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { getAuthClient } from "@/lib/sdk";

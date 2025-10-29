@@ -3,9 +3,14 @@
 import { useState } from "react";
 import { cleanupService } from "@/lib/cleanup.service";
 
+interface CleanupResults {
+  cancelledDeleted: number;
+  ordersArchived: number;
+}
+
 export default function DataCleanupPage() {
   const [loading, setLoading] = useState(false);
-  const [results, setResults] = useState<any>(null);
+  const [results, setResults] = useState<CleanupResults | null>(null);
 
   const handleCleanup = async () => {
     if (!confirm("Bạn có chắc muốn chạy cleanup? Dữ liệu đã xóa không thể khôi phục!")) {

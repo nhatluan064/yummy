@@ -1,10 +1,68 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // TOÀN QUYỀN ĐỌC/VIẾT cho tất cả collection (chỉ dùng cho test/dev)
-    match /{document=**} {
+    
+    // Menu items - Public read để khách xem thực đơn, chỉ admin write
+    match /menu/{itemId} {
       allow read: if true;
-      allow write: if true;
+      allow write: if request.auth != null;
+    }
+    
+    // Categories - Public read để khách xem danh mục, chỉ admin write
+    match /categories/{categoryId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+    
+    // Orders - CHỈ ADMIN, khách KHÔNG được tạo order trực tiếp
+    match /orders/{orderId} {
+      allow read, write: if request.auth != null;
+    }
+    
+    // Bills - CHỈ ADMIN
+    match /bills/{billId} {
+      allow read, write: if request.auth != null;
+    }
+    
+    // Tables - Admin có thể read/write, User có thể read để xem bàn trống
+    match /tables/{tableId} {
+      allow read: if true; // Cho phép public đọc để xem bàn trống
+      allow write: if request.auth != null; // Chỉ admin mới write
+    }
+    
+    // Feedback - User có thể READ để xem ratings, chỉ admin write
+    match /feedback/{feedbackId} {
+      allow read: if true; // Cho phép public đọc để xem rating
+      allow create: if true; // Cho phép khách gửi feedback
+      allow update, delete: if request.auth != null; // Chỉ admin sửa/xóa
+    }
+    
+    // ✅ Reservations - KHÁCH có thể ĐẶT BÀN
+    match /reservations/{reservationId} {
+      allow read: if request.auth != null; // Admin đọc
+      allow create: if true; // Khách có thể tạo đặt bàn
+      allow update, delete: if request.auth != null; // Chỉ admin sửa/xóa
+    }
+    
+    // ✅ Contacts - KHÁCH có thể LIÊN HỆ
+    match /contacts/{contactId} {
+      allow read: if request.auth != null; // Admin đọc
+      allow create: if true; // Khách có thể gửi liên hệ
+      allow update, delete: if request.auth != null; // Chỉ admin sửa/xóa
+    }
+    
+    // Kitchen orders - CHỈ ADMIN
+    match /kitchenOrders/{orderId} {
+      allow read, write: if request.auth != null;
+    }
+    
+    // Archive collections - CHỈ ADMIN
+    match /orders_archive/{orderId} {
+      allow read, write: if request.auth != null;
+    }
+    
+    match /bills_archive/{billId} {
+      allow read, write: if request.auth != null;
     }
   }
 }

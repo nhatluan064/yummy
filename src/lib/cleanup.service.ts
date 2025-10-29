@@ -1,6 +1,6 @@
-import { FirestoreService } from "./firestore.service";
 import { orderService } from "./order.service";
 import { billService } from "./bill.service";
+import { Timestamp } from "firebase/firestore";
 
 /**
  * Service để tự động dọn dẹp dữ liệu cũ
@@ -25,7 +25,7 @@ class CleanupService {
       ]);
 
       const toDelete = cancelledOrders.filter(order => {
-        const createdAt = (order.createdAt as any)?.toDate?.() || new Date();
+        const createdAt = (order.createdAt as Timestamp)?.toDate?.() || new Date();
         return createdAt < sevenDaysAgo;
       });
 
@@ -57,7 +57,7 @@ class CleanupService {
       ]);
 
       const toArchive = completedOrders.filter(order => {
-        const createdAt = (order.createdAt as any)?.toDate?.() || new Date();
+        const createdAt = (order.createdAt as Timestamp)?.toDate?.() || new Date();
         return createdAt < oneYearAgo;
       });
 
@@ -84,7 +84,7 @@ class CleanupService {
       const bills = await billService.getAll([]);
       
       const monthBills = bills.filter(bill => {
-        const createdAt = (bill.createdAt as any)?.toDate?.() || new Date();
+        const createdAt = (bill.createdAt as Timestamp)?.toDate?.() || new Date();
         return createdAt >= startDate && createdAt <= endDate;
       });
 
