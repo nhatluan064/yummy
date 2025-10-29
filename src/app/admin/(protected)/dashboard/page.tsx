@@ -2,14 +2,22 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { billService } from "@/lib/sdk";
+import { orderService } from "@/lib/order.service";
+import { feedbackService } from "@/lib/feedback.service";
+import { reservationService } from "@/lib/reservation.service";
+import { contactService } from "@/lib/contact.service";
 import type { WithId } from "@/lib/firestore.service";
-import type { Bill } from "@/lib/types";
+import type { Bill, Order, Feedback, TableReservation, Contact } from "@/lib/types";
 
 export default function AdminDashboard() {
   const [timeRange, setTimeRange] = useState<
     "today" | "week" | "month" | "year"
-  >("today");
+  >("month");
   const [bills, setBills] = useState<WithId<Bill>[]>([]);
+  const [orders, setOrders] = useState<WithId<Order>[]>([]);
+  const [feedbacks, setFeedbacks] = useState<WithId<Feedback>[]>([]);
+  const [reservations, setReservations] = useState<WithId<TableReservation>[]>([]);
+  const [contacts, setContacts] = useState<WithId<Contact>[]>([]);
   const [selectedDate, setSelectedDate] = useState<string>(""); // yyyy-mm-dd
   const [sortColumn, setSortColumn] = useState<
     "orderCode" | "customerName" | "totalAmount" | "completedAt"
@@ -46,12 +54,45 @@ export default function AdminDashboard() {
       }
     }
     // Query theo khoảng [start, end)
-    const constraints = [
+    const billConstraints = [
       billService.by("completedAt", ">=", start),
       billService.by("completedAt", "<", end),
       billService.take(50),
     ];
-    billService.getAll(constraints).then(setBills).catch(console.error);
+    const orderConstraints = [
+      orderService.by("createdAt", ">=", start),
+      orderService.by("createdAt", "<", end),
+      orderService.take(50),
+    ];
+    const feedbackConstraints = [
+      feedbackService.by("createdAt", ">=", start),
+      feedbackService.by("createdAt", "<", end),
+      feedbackService.take(50),
+    ];
+    const reservationConstraints = [
+      reservationService.by("createdAt", ">=", start),
+      reservationService.by("createdAt", "<", end),
+      reservationService.take(50),
+    ];
+    const contactConstraints = [
+      contactService.by("createdAt", ">=", start),
+      contactService.by("createdAt", "<", end),
+      contactService.take(50),
+    ];
+    
+    Promise.all([
+      billService.getAll(billConstraints),
+      orderService.getAll(orderConstraints),
+      feedbackService.getAll(feedbackConstraints),
+      reservationService.getAll(reservationConstraints),
+      contactService.getAll(contactConstraints),
+    ]).then(([billsData, ordersData, feedbacksData, reservationsData, contactsData]) => {
+      setBills(billsData);
+      setOrders(ordersData);
+      setFeedbacks(feedbacksData);
+      setReservations(reservationsData);
+      setContacts(contactsData);
+    }).catch(console.error);
   }, [timeRange, selectedDate]);
 
   const metrics = useMemo(() => {
@@ -145,11 +186,13 @@ export default function AdminDashboard() {
     return {
       revenue,
       revenueLabel: label,
-      newOrders: 0,
-      reservations: 0,
+      totalOrders: orders.length,
+      totalFeedbacks: feedbacks.length,
+      totalReservations: reservations.length,
+      totalContacts: contacts.length,
       customers,
     };
-  }, [bills, selectedDate, timeRange]);
+  }, [bills, orders, feedbacks, reservations, contacts, selectedDate, timeRange]);
 
   const sortedBills = useMemo(() => {
     return [...bills].sort((a, b) => {
@@ -249,112 +292,173 @@ export default function AdminDashboard() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-        <div className="card p-4 md:p-6">
-          <p className="text-xs md:text-sm text-neutral-600 mb-1">
-            {metrics.revenueLabel}
-          </p>
-          <p className="text-2xl md:text-3xl font-bold text-neutral-800 mb-2">
+        <div className="card p-4 md:p-6 bg-gradient-to-br from-primary-50 to-primary-100 border-primary-200">
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-xs md:text-sm text-primary-700 font-medium">
+              {metrics.revenueLabel}
+            </p>
+            <svg className="w-8 h-8 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <p className="text-2xl md:text-3xl font-bold text-primary-900 mb-1">
             {metrics.revenue.toLocaleString()}₫
           </p>
+          <p className="text-xs text-primary-600">{bills.length} đơn hoàn tất</p>
         </div>
-        <div className="card p-4 md:p-6">
-          <p className="text-xs md:text-sm text-neutral-600 mb-1">
-            Đơn Hoàn Tất (gần đây)
+        
+        <div className="card p-4 md:p-6 bg-gradient-to-br from-green-50 to-green-100 border-green-200">
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-xs md:text-sm text-green-700 font-medium">
+              Đơn Hàng
+            </p>
+            <svg className="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+            </svg>
+          </div>
+          <p className="text-2xl md:text-3xl font-bold text-green-900 mb-1">
+            {metrics.totalOrders}
           </p>
-          <p className="text-2xl md:text-3xl font-bold text-neutral-800 mb-2">
-            {bills.length}
-          </p>
+          <p className="text-xs text-green-600">Tổng đơn hàng</p>
         </div>
-        <div className="card p-4 md:p-6">
-          <p className="text-xs md:text-sm text-neutral-600 mb-1">Khách Hàng</p>
-          <p className="text-2xl md:text-3xl font-bold text-neutral-800 mb-2">
-            {metrics.customers}
+        
+        <div className="card p-4 md:p-6 bg-gradient-to-br from-amber-50 to-amber-100 border-amber-200">
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-xs md:text-sm text-amber-700 font-medium">
+              Feedback
+            </p>
+            <svg className="w-8 h-8 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+            </svg>
+          </div>
+          <p className="text-2xl md:text-3xl font-bold text-amber-900 mb-1">
+            {metrics.totalFeedbacks}
           </p>
+          <p className="text-xs text-amber-600">Phản hồi khách hàng</p>
         </div>
-        <div className="card p-4 md:p-6">
-          <p className="text-xs md:text-sm text-neutral-600 mb-1">Đơn mới</p>
-          <p className="text-2xl md:text-3xl font-bold text-neutral-800 mb-2">
-            —
+        
+        <div className="card p-4 md:p-6 bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-xs md:text-sm text-blue-700 font-medium">
+              Đặt Bàn & Liên Hệ
+            </p>
+            <svg className="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+          </div>
+          <p className="text-2xl md:text-3xl font-bold text-blue-900 mb-1">
+            {metrics.totalReservations + metrics.totalContacts}
           </p>
+          <p className="text-xs text-blue-600">{metrics.totalReservations} đặt bàn, {metrics.totalContacts} liên hệ</p>
         </div>
       </div>
 
       <div className="card p-4 md:p-6">
         <div className="flex items-center justify-between mb-4 md:mb-6">
           <h3 className="text-base md:text-lg font-bold text-neutral-800">
-            Đơn Hàng Gần Đây
+            {selectedDate 
+              ? `Đơn Hàng Ngày ${new Date(selectedDate).toLocaleDateString("vi-VN")}`
+              : timeRange === "today"
+              ? "Đơn Hàng Hôm Nay"
+              : timeRange === "week"
+              ? "Đơn Hàng Tuần Này"
+              : timeRange === "month"
+              ? "Đơn Hàng Tháng Này"
+              : "Đơn Hàng Năm Này"}
           </h3>
         </div>
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[600px]">
-            <thead>
-              <tr className="border-b border-neutral-200">
-                <th
-                  className="text-left py-2 md:py-3 px-2 md:px-4 text-xs md:text-sm font-semibold text-neutral-600 cursor-pointer hover:text-neutral-800"
-                  onClick={() => handleSort("orderCode")}
-                >
-                  Mã Đơn{" "}
-                  {sortColumn === "orderCode" &&
-                    (sortDirection === "asc" ? "↑" : "↓")}
-                </th>
-                <th
-                  className="text-left py-2 md:py-3 px-2 md:px-4 text-xs md:text-sm font-semibold text-neutral-600 cursor-pointer hover:text-neutral-800"
-                  onClick={() => handleSort("customerName")}
-                >
-                  Khách Hàng{" "}
-                  {sortColumn === "customerName" &&
-                    (sortDirection === "asc" ? "↑" : "↓")}
-                </th>
-                <th className="text-left py-2 md:py-3 px-2 md:px-4 text-xs md:text-sm font-semibold text-neutral-600">
-                  Món Ăn
-                </th>
-                <th
-                  className="text-left py-2 md:py-3 px-2 md:px-4 text-xs md:text-sm font-semibold text-neutral-600 cursor-pointer hover:text-neutral-800"
-                  onClick={() => handleSort("totalAmount")}
-                >
-                  Tổng Tiền{" "}
-                  {sortColumn === "totalAmount" &&
-                    (sortDirection === "asc" ? "↑" : "↓")}
-                </th>
-                <th
-                  className="text-left py-2 md:py-3 px-2 md:px-4 text-xs md:text-sm font-semibold text-neutral-600 cursor-pointer hover:text-neutral-800"
-                  onClick={() => handleSort("completedAt")}
-                >
-                  Thời Gian{" "}
-                  {sortColumn === "completedAt" &&
-                    (sortDirection === "asc" ? "↑" : "↓")}
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {sortedBills.map((b) => (
-                <tr key={b.id} className="border-b border-neutral-100">
-                  <td className="py-3 md:py-4 px-2 md:px-4">
-                    <span className="font-medium text-primary-600 text-sm">
-                      {b.orderCode ?? b.orderId}
-                    </span>
-                  </td>
-                  <td className="py-3 md:py-4 px-2 md:px-4 text-sm">
-                    {b.customerName}
-                  </td>
-                  <td className="py-3 md:py-4 px-2 md:px-4 text-xs md:text-sm text-neutral-600">
-                    {b.items.map((i) => `${i.quantity}x ${i.name}`).join(", ")}
-                  </td>
-                  <td className="py-3 md:py-4 px-2 md:px-4 font-medium text-sm">
-                    {(b.totalAmount || 0).toLocaleString()}₫
-                  </td>
-                  <td className="py-3 md:py-4 px-2 md:px-4 text-xs md:text-sm text-neutral-500">
-                    {(() => {
-                      const ts = (
-                        b.completedAt as unknown as { toDate?: () => Date }
-                      )?.toDate?.();
-                      return ts ? ts.toLocaleString() : "";
-                    })()}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="space-y-4">
+          {(() => {
+            // Nhóm bills theo ngày
+            const billsByDate: Record<string, WithId<Bill>[]> = {};
+            sortedBills.forEach((bill) => {
+              const ts = (bill.completedAt as unknown as { toDate?: () => Date })?.toDate?.();
+              if (ts) {
+                const dateKey = ts.toLocaleDateString("vi-VN");
+                if (!billsByDate[dateKey]) {
+                  billsByDate[dateKey] = [];
+                }
+                billsByDate[dateKey].push(bill);
+              }
+            });
+
+            return Object.entries(billsByDate).map(([dateKey, dayBills], index) => (
+              <div key={dateKey}>
+                {index > 0 && <hr className="my-4 border-neutral-300" />}
+                
+                {/* Ngày */}
+                <div className="mb-3">
+                  <h4 className="text-sm font-bold text-neutral-700 bg-neutral-100 inline-block px-3 py-1 rounded">
+                    📅 {dateKey}
+                  </h4>
+                </div>
+
+                {/* Bills trong ngày - thụt vào */}
+                <div className="ml-6 space-y-3">
+                  {dayBills.map((bill) => {
+                    const ts = (bill.completedAt as unknown as { toDate?: () => Date })?.toDate?.();
+                    const timeStr = ts ? ts.toLocaleTimeString("vi-VN", { hour: '2-digit', minute: '2-digit' }) : "";
+                    
+                    return (
+                      <div key={bill.id} className="border border-neutral-200 rounded-lg p-3 bg-white hover:shadow-md transition-shadow">
+                        <div className="flex flex-wrap items-start justify-between gap-2 mb-2">
+                          <div className="flex items-center gap-2">
+                            <span className="font-bold text-primary-600 text-sm">
+                              {bill.orderCode ?? bill.orderId}
+                            </span>
+                            <span className="text-xs text-neutral-500">•</span>
+                            <span className="text-xs font-medium text-neutral-600">
+                              🕐 {timeStr}
+                            </span>
+                            {bill.tableNumber && (
+                              <>
+                                <span className="text-xs text-neutral-500">•</span>
+                                <span className="text-xs font-medium text-neutral-600">
+                                  🪑 {bill.tableNumber}
+                                </span>
+                              </>
+                            )}
+                          </div>
+                          <div className="font-bold text-primary-700">
+                            {(bill.totalAmount || 0).toLocaleString()}₫
+                          </div>
+                        </div>
+                        
+                        {bill.customerName && (
+                          <div className="text-xs text-neutral-600 mb-2">
+                            👤 {bill.customerName}
+                          </div>
+                        )}
+                        
+                        {/* Chi tiết món ăn */}
+                        <div className="bg-neutral-50 rounded p-2 mt-2">
+                          <div className="text-xs font-semibold text-neutral-700 mb-1">Món ăn:</div>
+                          <div className="space-y-1">
+                            {bill.items.map((item, idx) => (
+                              <div key={idx} className="flex justify-between text-xs">
+                                <span className="text-neutral-600">
+                                  <span className="font-medium text-neutral-800">{item.quantity}x</span> {item.name}
+                                </span>
+                                <span className="text-neutral-700 font-medium">
+                                  {(item.price * item.quantity).toLocaleString()}₫
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            ));
+          })()}
+          
+          {sortedBills.length === 0 && (
+            <div className="text-center py-8 text-neutral-500">
+              Không có đơn hàng nào trong khoảng thời gian này
+            </div>
+          )}
         </div>
       </div>
     </div>

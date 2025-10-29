@@ -21,6 +21,8 @@ type OrderContextType = {
   toggle: () => void;
   tableNumber: string;
   setTableNumber: (v: string) => void;
+  tableId: string;
+  setTableId: (v: string) => void;
   customerName?: string;
   setCustomerName: (v: string) => void;
 };
@@ -31,6 +33,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<CurrentOrderItem[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [tableNumber, setTableNumber] = useState("");
+  const [tableId, setTableId] = useState("");
   const [customerName, setCustomerName] = useState("");
 
   const addItem = (item: CurrentOrderItem) => {
@@ -80,6 +83,8 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     toggle: () => setIsOpen((s) => !s),
     tableNumber,
     setTableNumber,
+    tableId,
+    setTableId,
     customerName,
     setCustomerName,
   };

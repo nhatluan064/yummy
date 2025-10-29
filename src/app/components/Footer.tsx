@@ -8,16 +8,16 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Company Info */}
           <div className="space-y-4">
-            <h3 className="text-3xl font-bold text-gradient mb-4">
+            <h3 className="text-2xl font-bold text-gradient mb-4">
               🍜 Mì cay yummy
             </h3>
-            <p className="text-neutral-300 leading-relaxed">
+            <p className="text-neutral-200 leading-relaxed text-sm">
               Thưởng thức tô mì cay chuẩn vị Hàn Quốc, sợi mì dai ngon, nước dùng đậm đà, topping đa dạng. Không gian quán ấm cúng, phục vụ tận tâm, là điểm đến lý tưởng cho những ai yêu thích vị cay nồng và trải nghiệm ẩm thực đặc sắc.
             </p>
           </div>
 
           {/* Quick Links (the same as Navbar) */}
-          <div className="space-y-4">
+          <div className="space-y-4 py-1 mx-8">
             <h4 className="text-lg font-semibold mb-4">Liên Kết Nhanh</h4>
             <nav className="space-y-2">
               <Link href="/" className="block text-neutral-300 hover:text-white transition-colors">Trang Chủ</Link>
@@ -28,7 +28,7 @@ export default function Footer() {
           </div>
 
           {/* Contact Info mới với icon màu nền */}
-          <div className="space-y-4">
+          <div className="space-y-4 py-1">
             <h4 className="text-lg font-semibold mb-4">Thông Tin Liên Hệ</h4>
             <div className="space-y-3">
               <div className="flex items-center space-x-3">
@@ -73,7 +73,7 @@ export default function Footer() {
           </div>
 
           {/* Opening Hours */}
-          <div className="space-y-4">
+          <div className="space-y-4 py-1">
             <h4 className="text-lg font-semibold mb-4">Giờ Hoạt Động</h4>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
@@ -126,11 +126,11 @@ export default function Footer() {
       {/* Bottom Bar */}
       <div className="border-t border-neutral-700 mt-12 p-6">
         <div className="container-custom py-8">
-          <div className="flex flex-col md:flex-row justify-between items-center text-sm text-neutral-400 gap-4">
+          <div className="flex flex-col md:flex-row justify-center items-center text-sm text-neutral-400 gap-4">
             <p className="text-center md:text-left">
-              &copy; 2024 Mì cay yummy. Tất cả quyền được bảo lưu.
+              &copy; 2025 Mì cay yummy. Tất cả quyền được bảo lưu.
             </p>
-            <div className="flex flex-wrap justify-center gap-6">
+            {/* <div className="flex flex-wrap justify-center gap-6">
               <Link
                 href="/privacy"
                 className="hover:text-white transition-colors"
@@ -149,7 +149,7 @@ export default function Footer() {
               >
                 Sơ Đồ Trang Web
               </Link>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

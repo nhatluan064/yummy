@@ -142,14 +142,15 @@ export default function Header({ mode = "user" }: HeaderProps) {
                 )}
               </button>
             )}
-            {/* Admin login */}
+            {/* Admin Dashboard link */}
             {showAdminButton && (
               <Link
-                href="/admin/login"
-                className="btn-secondary hidden sm:inline-flex p-2 rounded-full"
-                aria-label="Admin login"
+                href="/admin/dashboard"
+                className="btn-secondary hidden sm:inline-flex gap-2"
+                aria-label="Quản lý"
               >
                 <User2 className="w-5 h-5" />
+                <span className="font-medium">Quản lý</span>
               </Link>
             )}
             {/* Mobile Menu Button */}
@@ -218,6 +219,33 @@ export default function Header({ mode = "user" }: HeaderProps) {
             >
               🍜 Thực Đơn
             </Link>
+            {showOrderButton && (
+              <button
+                onClick={() => {
+                  order?.open();
+                  setIsMenuOpen(false);
+                }}
+                className="btn-primary py-3 flex items-center gap-2 justify-center relative"
+              >
+                <ShoppingBag className="w-5 h-5" />
+                <span className="font-medium">Giỏ hàng</span>
+                {order && order.items.length > 0 && (
+                  <span className="bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                    {order.items.length}
+                  </span>
+                )}
+              </button>
+            )}
+            {showAdminButton && (
+              <Link
+                href="/admin/dashboard"
+                className="btn-secondary py-2 flex items-center gap-2 justify-center"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <User2 className="w-5 h-5" />
+                <span className="font-medium">Quản lý</span>
+              </Link>
+            )}
           </nav>
         </div>
       </div>

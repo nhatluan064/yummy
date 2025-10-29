@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { orderService, billService } from "@/lib/sdk";
+import { tableService } from "@/lib/table.service";
 import type { Order } from "@/lib/types";
 import type { WithId } from "@/lib/firestore.service";
 import type { OrderItem } from "@/lib/types";
@@ -131,6 +132,28 @@ export default function OrdersPage() {
     }
   };
 
+  // Check and reset table if no more pending orders
+  const checkAndResetTable = async (tableNumber: string) => {
+    try {
+      // Fetch latest orders from Firebase to check if any pending orders exist
+      const allOrders = await orderService.getAll([
+        orderService.by('tableNumber', '==', tableNumber),
+        orderService.by('status', '==', 'pending')
+      ]);
+      
+      // If no pending orders, reset table to empty
+      if (allOrders.length === 0) {
+        const tables = await tableService.getAllTables();
+        const table = tables.find((t) => t.tableNumber === tableNumber);
+        if (table?.id && table.status === "occupied") {
+          await tableService.updateTableStatus(table.id, "empty");
+        }
+      }
+    } catch (error) {
+      console.error("Error checking table status:", error);
+    }
+  };
+
   const updateOrderStatus = async (
     orderId: string,
     newStatus: Order["status"]
@@ -138,6 +161,7 @@ export default function OrdersPage() {
     // find current order snapshot for bill persistence when completed
     const current = orders.find((o) => o.id === orderId) || null;
     await orderService.updateStatus(orderId, newStatus);
+    
     // If mark completed, persist a bill snapshot
     if (newStatus === "completed" && current) {
       try {
@@ -154,7 +178,39 @@ export default function OrdersPage() {
         console.warn("Persist bill failed:", e);
       }
     }
+    
+    // If cancelled, check if table should be reset
+    if (newStatus === "cancelled" && current?.tableNumber) {
+      await checkAndResetTable(current.tableNumber);
+    }
+    
     // No need to manually refresh orders as subscription will handle it
+  };
+
+  const deleteOrder = async (orderId: string, orderCode: string) => {
+    const confirmed = confirm(
+      `⚠️ XÓA ĐỠN HÀNG\n\nBạn có chắc chắn muốn xóa đơn hàng ${orderCode}?\n\n🚨 CẢNH BÁO: Hành động này KHÔNG THỂ KHÔI PHỤC!\nĐơn hàng sẽ bị xóa vĩnh viễn khỏi hệ thống.`
+    );
+    
+    if (!confirmed) return;
+    
+    try {
+      // Get order info before deleting
+      const orderToDelete = orders.find((o) => o.id === orderId);
+      const tableNumber = orderToDelete?.tableNumber;
+      
+      await orderService.delete(orderId);
+      
+      // Check and reset table if needed
+      if (tableNumber) {
+        await checkAndResetTable(tableNumber);
+      }
+      
+      // Subscription will auto-update the list
+    } catch (error) {
+      console.error("Failed to delete order:", error);
+      alert("Không thể xóa đơn hàng. Vui lòng thử lại.");
+    }
   };
 
   return (
@@ -303,7 +359,34 @@ export default function OrdersPage() {
                         })()}
                       </p>
                     </div>
-                    {getStatusBadge(order.status)}
+                    <div className="flex items-center gap-2">
+                      {getStatusBadge(order.status)}
+                      {/* Delete button for cancelled and completed orders */}
+                      {(order.status === "cancelled" || order.status === "completed") && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            deleteOrder(order.id!, order.orderCode ?? order.id!);
+                          }}
+                          className="p-2 hover:bg-red-50 rounded-lg transition-colors group"
+                          title="Xóa đơn hàng"
+                        >
+                          <svg
+                            className="w-5 h-5 text-neutral-400 group-hover:text-red-600 transition-colors"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                            />
+                          </svg>
+                        </button>
+                      )}
+                    </div>
                   </div>
 
                   {/* Customer Info */}
@@ -584,6 +667,37 @@ export default function OrdersPage() {
                   </p>
                 </div>
               </div>
+
+              {/* Delete Button */}
+              {(selectedOrder.status === "cancelled" || selectedOrder.status === "completed") && (
+                <div className="pt-4 border-t border-neutral-200">
+                  <button
+                    onClick={() => {
+                      deleteOrder(selectedOrder.id!, selectedOrder.orderCode ?? selectedOrder.id!);
+                      setSelectedOrder(null);
+                    }}
+                    className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-red-50 hover:bg-red-100 text-red-600 font-medium rounded-lg transition-colors border border-red-200"
+                  >
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                      />
+                    </svg>
+                    <span>Xóa đơn hàng này</span>
+                  </button>
+                  <p className="text-xs text-center text-neutral-500 mt-2">
+                    ⚠️ Hành động này không thể hoàn tác
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         </div>

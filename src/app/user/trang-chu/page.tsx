@@ -33,7 +33,7 @@ export default function HomePage() {
             vụ tận tâm
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Link href="/thuc-don" className="btn-primary text-lg px-8 py-4">
+            <Link href="/thuc-don" className="btn-secondary">
               <svg
                 className="w-5 h-5"
                 fill="none"
@@ -51,8 +51,7 @@ export default function HomePage() {
             </Link>
             <Link
               href="/dat-ban"
-              className="btn-secondary bg-white text-red-600 border-white hover:bg-red-600 hover:text-white text-lg px-8 py-4"
-            >
+              className="btn-secondary">
               <svg
                 className="w-5 h-5"
                 fill="none"
@@ -129,9 +128,9 @@ export default function HomePage() {
             </div>
 
             <div className="text-center group animate-fade-in-up-delay-2">
-              <div className="w-16 h-16 bg-accent-200 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-accent-300 transition-colors">
+              <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-primary-200 transition-colors">
                 <svg
-                  className="w-8 h-8 text-secondary-600"
+                  className="w-8 h-8 text-primary-600"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -154,9 +153,9 @@ export default function HomePage() {
             </div>
 
             <div className="text-center group animate-fade-in-up-delay-3">
-              <div className="w-16 h-16 bg-secondary-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-secondary-200 transition-colors">
+              <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-primary-200 transition-colors">
                 <svg
-                  className="w-8 h-8 text-secondary-600"
+                  className="w-8 h-8 text-primary-600"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -251,7 +250,7 @@ export default function HomePage() {
           </div>
 
           <div className="text-center mt-12">
-            <Link href="/thuc-don" className="btn-secondary">
+            <Link href="/thuc-don" className="btn-primary text-lg px-8 py-4">
               <svg
                 className="w-5 h-5"
                 fill="none"
@@ -283,8 +282,7 @@ export default function HomePage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-fade-in-up-delay-2">
             <Link
               href="/dat-ban"
-              className="btn-secondary bg-white text-primary-600 border-white hover:bg-accent-50"
-            >
+              className="btn-secondary">
               <svg
                 className="w-5 h-5"
                 fill="none"
@@ -302,8 +300,7 @@ export default function HomePage() {
             </Link>
             <Link
               href="/lien-he"
-              className="btn-secondary border-white text-white hover:bg-white hover:text-primary-600"
-            >
+              className="btn-secondary">
               <svg
                 className="w-5 h-5"
                 fill="none"

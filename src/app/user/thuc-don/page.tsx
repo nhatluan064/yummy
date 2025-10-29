@@ -616,9 +616,9 @@ export default function MenuPage() {
 
             <div className="card text-center animate-fade-in-up-delay-2">
               <div className="p-6">
-                <div className="w-16 h-16 bg-secondary-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <div className="w-16 h-16 bg-accent-200 rounded-full flex items-center justify-center mx-auto mb-4">
                   <svg
-                    className="w-8 h-8 text-secondary-600"
+                    className="w-8 h-8 text-primary-600"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
