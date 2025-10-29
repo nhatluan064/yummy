@@ -146,11 +146,11 @@ export default function Header({ mode = "user" }: HeaderProps) {
             {showAdminButton && (
               <Link
                 href="/admin/dashboard"
-                className="btn-secondary hidden sm:inline-flex gap-1 px-3 py-1 text-xs"
+                className="btn-secondary inline-flex gap-1 px-2 sm:px-3 py-1.5 sm:py-1 text-xs"
                 aria-label="Quản lý"
               >
-                <User2 className="w-3.5 h-3.5" />
-                <span>Quản lý</span>
+                <User2 className="w-4 h-4 sm:w-3.5 sm:h-3.5" />
+                <span className="hidden sm:inline">Quản lý</span>
               </Link>
             )}
             {/* Mobile Menu Button */}
