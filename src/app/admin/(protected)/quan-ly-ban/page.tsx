@@ -21,7 +21,7 @@ export default function TableManagementPage() {
       setTables(data);
     } catch (error) {
       console.error("Error loading tables:", error);
-      toast.showToast("Không thể tải danh sách bàn", 3000);
+      toast.showToast("Không thể tải danh sách bàn", 3000, "error");
     } finally {
       setLoading(false);
     }
@@ -34,25 +34,25 @@ export default function TableManagementPage() {
   // Tạo bàn mới
   const handleCreateTable = async () => {
     if (!newTableNumber.trim()) {
-      toast.showToast("Vui lòng nhập số bàn", 2000);
+      toast.showToast("Vui lòng nhập số bàn", 2000, "error");
       return;
     }
 
     // Kiểm tra trùng số bàn
     if (tables.some((t) => t.tableNumber === newTableNumber.trim())) {
-      toast.showToast("Số bàn đã tồn tại", 2000);
+      toast.showToast("Số bàn đã tồn tại", 2000, "error");
       return;
     }
 
     try {
       await tableService.createTable(newTableNumber.trim());
-      toast.showToast(`Đã tạo bàn ${newTableNumber}`, 2000);
+      toast.showToast(`Đã tạo bàn ${newTableNumber}`, 2000, "success");
       setNewTableNumber("");
       setShowAddModal(false);
       loadTables();
     } catch (error) {
       console.error("Error creating table:", error);
-      toast.showToast("Không thể tạo bàn", 3000);
+      toast.showToast("Không thể tạo bàn", 3000, "error");
     }
   };
 
@@ -63,12 +63,12 @@ export default function TableManagementPage() {
     try {
       if (table.id) {
         await tableService.deleteTable(table.id);
-        toast.showToast(`Đã xóa ${table.tableNumber}`, 2000);
+        toast.showToast(`Đã xóa ${table.tableNumber}`, 2000, "success");
         loadTables();
       }
     } catch (error) {
       console.error("Error deleting table:", error);
-      toast.showToast("Không thể xóa bàn", 3000);
+      toast.showToast("Không thể xóa bàn", 3000, "error");
     }
   };
 
@@ -82,19 +82,19 @@ export default function TableManagementPage() {
         (t) => t.tableNumber === editTableNumber.trim() && t.id !== editingTable.id
       )
     ) {
-      toast.showToast("Số bàn đã tồn tại", 2000);
+      toast.showToast("Số bàn đã tồn tại", 2000, "error");
       return;
     }
 
     try {
       await tableService.updateTableNumber(editingTable.id, editTableNumber.trim());
-      toast.showToast("Đã cập nhật số bàn", 2000);
+      toast.showToast("Đã cập nhật số bàn", 2000, "success");
       setEditingTable(null);
       setEditTableNumber("");
       loadTables();
     } catch (error) {
       console.error("Error updating table:", error);
-      toast.showToast("Không thể cập nhật bàn", 3000);
+      toast.showToast("Không thể cập nhật bàn", 3000, "error");
     }
   };
 

@@ -58,57 +58,61 @@ export default function Header({ mode = "user" }: HeaderProps) {
           </Link>
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center space-x-8">
-            {/* Home - visible in all modes */}
-            <Link
-              href={homeHref}
-              className={`font-medium transition-all duration-300 relative group ${
-                isActive(homeHref)
-                  ? "text-primary-600"
-                  : "text-neutral-700 hover:text-primary-600"
-              }`}
-            >
-              Trang Chủ
-              <span
-                className={`absolute bottom-0 left-0 h-0.5 bg-primary-600 transition-all duration-300 ${
-                  isActive(homeHref)
-                    ? "w-full"
-                    : "w-0 group-hover:w-full"
-                }`}
-              ></span>
-            </Link>
-            {/* Contact - visible in all modes */}
-            <Link
-              href={contactHref}
-              className={`font-medium transition-all duration-300 relative group ${
-                isActive(contactHref)
-                  ? "text-primary-600"
-                  : "text-neutral-700 hover:text-primary-600"
-              }`}
-            >
-              Địa Chỉ
-              <span
-                className={`absolute bottom-0 left-0 h-0.5 bg-primary-600 transition-all duration-300 ${
-                  isActive(contactHref) ? "w-full" : "w-0 group-hover:w-full"
-                }`}
-              ></span>
-            </Link>
-            {/* Reservation - visible in all modes */}
-            <Link
-              href={reservationHref}
-              className={`font-medium transition-all duration-300 relative group ${
-                isActive(reservationHref)
-                  ? "text-primary-600"
-                  : "text-neutral-700 hover:text-primary-600"
-              }`}
-            >
-              Đặt Bàn & Liên hệ
-              <span
-                className={`absolute bottom-0 left-0 h-0.5 bg-primary-600 transition-all duration-300 ${
-                  isActive(reservationHref) ? "w-full" : "w-0 group-hover:w-full"
-                }`}
-              ></span>
-            </Link>
-            {/* Menu - always visible but links to different routes based on mode */}
+            {mode === "user" && (
+              <>
+                {/* Home - visible in user mode only */}
+                <Link
+                  href={homeHref}
+                  className={`font-medium transition-all duration-300 relative group ${
+                    isActive(homeHref)
+                      ? "text-primary-600"
+                      : "text-neutral-700 hover:text-primary-600"
+                  }`}
+                >
+                  Trang Chủ
+                  <span
+                    className={`absolute bottom-0 left-0 h-0.5 bg-primary-600 transition-all duration-300 ${
+                      isActive(homeHref)
+                        ? "w-full"
+                        : "w-0 group-hover:w-full"
+                    }`}
+                  ></span>
+                </Link>
+                {/* Contact - visible in user mode only */}
+                <Link
+                  href={contactHref}
+                  className={`font-medium transition-all duration-300 relative group ${
+                    isActive(contactHref)
+                      ? "text-primary-600"
+                      : "text-neutral-700 hover:text-primary-600"
+                  }`}
+                >
+                  Địa Chỉ
+                  <span
+                    className={`absolute bottom-0 left-0 h-0.5 bg-primary-600 transition-all duration-300 ${
+                      isActive(contactHref) ? "w-full" : "w-0 group-hover:w-full"
+                    }`}
+                  ></span>
+                </Link>
+                {/* Reservation - visible in user mode only */}
+                <Link
+                  href={reservationHref}
+                  className={`font-medium transition-all duration-300 relative group ${
+                    isActive(reservationHref)
+                      ? "text-primary-600"
+                      : "text-neutral-700 hover:text-primary-600"
+                  }`}
+                >
+                  Đặt Bàn & Liên hệ
+                  <span
+                    className={`absolute bottom-0 left-0 h-0.5 bg-primary-600 transition-all duration-300 ${
+                      isActive(reservationHref) ? "w-full" : "w-0 group-hover:w-full"
+                    }`}
+                  ></span>
+                </Link>
+              </>
+            )}
+            {/* Menu - always visible */}
             <Link
               href={menuHref}
               className={`font-medium transition-all duration-300 relative group ${
@@ -146,11 +150,11 @@ export default function Header({ mode = "user" }: HeaderProps) {
             {showAdminButton && (
               <Link
                 href="/admin/dashboard"
-                className="btn-secondary inline-flex gap-1 px-2 sm:px-3 py-1.5 sm:py-1 text-xs"
+                className="hidden lg:flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-secondary-600 to-primary-600 text-white rounded-lg font-medium shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200"
                 aria-label="Quản lý"
               >
-                <User2 className="w-4 h-4 sm:w-3.5 sm:h-3.5" />
-                <span className="hidden sm:inline">Quản lý</span>
+                <User2 className="w-4 h-4" />
+                <span>Quản lý</span>
               </Link>
             )}
             {/* Mobile Menu Button */}
@@ -175,39 +179,43 @@ export default function Header({ mode = "user" }: HeaderProps) {
           }`}
         >
           <nav className="flex flex-col space-y-4 pt-4 border-t border-neutral-200">
-            <Link
-              href={homeHref}
-              className={`font-medium transition-colors py-2 ${
-                isActive(homeHref)
-                  ? "text-primary-600"
-                  : "text-neutral-700 hover:text-primary-600"
-              }`}
-              onClick={() => setIsMenuOpen(false)}
-            >
-              🏠 Trang Chủ
-            </Link>
-            <Link
-              href={contactHref}
-              className={`font-medium transition-colors py-2 ${
-                isActive(contactHref)
-                  ? "text-primary-600"
-                  : "text-neutral-700 hover:text-primary-600"
-              }`}
-              onClick={() => setIsMenuOpen(false)}
-            >
-              📍 Địa Chỉ
-            </Link>
-            <Link
-              href={reservationHref}
-              className={`font-medium transition-colors py-2 ${
-                isActive(reservationHref)
-                  ? "text-primary-600"
-                  : "text-neutral-700 hover:text-primary-600"
-              }`}
-              onClick={() => setIsMenuOpen(false)}
-            >
-              📅 Đặt Bàn
-            </Link>
+            {mode === "user" && (
+              <>
+                <Link
+                  href={homeHref}
+                  className={`font-medium transition-colors py-2 ${
+                    isActive(homeHref)
+                      ? "text-primary-600"
+                      : "text-neutral-700 hover:text-primary-600"
+                  }`}
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  🏠 Trang Chủ
+                </Link>
+                <Link
+                  href={contactHref}
+                  className={`font-medium transition-colors py-2 ${
+                    isActive(contactHref)
+                      ? "text-primary-600"
+                      : "text-neutral-700 hover:text-primary-600"
+                  }`}
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  📍 Địa Chỉ
+                </Link>
+                <Link
+                  href={reservationHref}
+                  className={`font-medium transition-colors py-2 ${
+                    isActive(reservationHref)
+                      ? "text-primary-600"
+                      : "text-neutral-700 hover:text-primary-600"
+                  }`}
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  📅 Đặt Bàn
+                </Link>
+              </>
+            )}
             <Link
               href={menuHref}
               className={`font-medium transition-colors py-2 ${

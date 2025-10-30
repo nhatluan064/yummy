@@ -76,8 +76,6 @@ export default function MenuManagementPage() {
     price: "",
     description: "",
     image: "",
-    prepTime: "",
-    popular: false,
     bestSeller: false,
     isNew: false,
     available: true,
@@ -136,8 +134,6 @@ export default function MenuManagementPage() {
       price: "",
       description: "",
       image: "",
-      prepTime: "",
-      popular: false,
       bestSeller: false,
       isNew: false,
       available: true,
@@ -154,8 +150,6 @@ export default function MenuManagementPage() {
       price: dish.price.toString(),
       description: dish.description || "",
       image: dish.image || "",
-      prepTime: dish.prepTime || "",
-      popular: dish.popular || false,
       bestSeller: dish.bestSeller || false,
       isNew: dish.isNew || false,
       available: dish.available,
@@ -172,8 +166,8 @@ export default function MenuManagementPage() {
 
   // Save dish (Add or Update)
   const saveDish = async () => {
-    if (!formData.name || !formData.price || !formData.description) {
-      alert("Vui lòng điền đầy đủ thông tin!");
+    if (!formData.name) {
+      alert("Vui lòng điền tên món!");
       return;
     }
     if (categories.length === 0) {
@@ -189,13 +183,11 @@ export default function MenuManagementPage() {
           name: formData.name,
           category: formData.category,
           categoryName,
-          price: parseInt(formData.price),
+          price: formData.price ? parseInt(formData.price) : 0,
           description: formData.description,
           image: formData.image || selectedDish.image,
-          prepTime: formData.prepTime,
-          popular: formData.popular,
           bestSeller: formData.bestSeller,
-          isNew: formData.isNew, // Đảm bảo luôn truyền field này
+          isNew: formData.isNew,
           available: formData.available,
         });
         alert(`✅ Đã cập nhật món "${formData.name}"!`);
@@ -206,13 +198,11 @@ export default function MenuManagementPage() {
           name: formData.name,
           category: formData.category,
           categoryName,
-          price: parseInt(formData.price),
+          price: formData.price ? parseInt(formData.price) : 0,
           description: formData.description,
           image:
             formData.image ||
             "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400",
-          prepTime: formData.prepTime,
-          popular: formData.popular,
           bestSeller: formData.bestSeller,
           isNew: formData.isNew,
           available: formData.available,
@@ -488,18 +478,6 @@ export default function MenuManagementPage() {
                     className="object-cover group-hover:scale-110 transition-transform duration-300"
                     unoptimized
                   />
-                  {item.popular && (
-                    <div className="absolute top-3 left-3 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center space-x-1">
-                      <svg
-                        className="w-3 h-3"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
-                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                      </svg>
-                      <span>Phổ biến</span>
-                    </div>
-                  )}
                   {item.bestSeller && (
                     <div className="absolute top-12 left-3 bg-yellow-500 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center space-x-1">
                       <svg
@@ -551,25 +529,6 @@ export default function MenuManagementPage() {
                   <p className="text-sm text-neutral-600 mb-3 line-clamp-2">
                     {item.description || ""}
                   </p>
-
-                  <div className="flex items-center justify-between mb-3 text-sm text-neutral-500">
-                    <span className="flex items-center">
-                      <svg
-                        className="w-4 h-4 mr-1"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                        />
-                      </svg>
-                      {item.prepTime || ""}
-                    </span>
-                  </div>
 
                   <div className="flex items-center justify-between pt-3 border-t border-neutral-200">
                     <span className="text-xl font-bold text-primary-600">
@@ -991,7 +950,7 @@ export default function MenuManagementPage() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-neutral-700 mb-2">
-                    Giá (₫) <span className="text-red-500">*</span>
+                    Giá (₫)
                   </label>
                   <input
                     type="number"
@@ -1000,7 +959,6 @@ export default function MenuManagementPage() {
                     onChange={handleFormChange}
                     className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                     placeholder="VD: 85000"
-                    required
                   />
                 </div>
               </div>
@@ -1008,7 +966,7 @@ export default function MenuManagementPage() {
               {/* Mô tả */}
               <div>
                 <label className="block text-sm font-medium text-neutral-700 mb-2">
-                  Mô tả <span className="text-red-500">*</span>
+                  Mô tả
                 </label>
                 <textarea
                   name="description"
@@ -1017,54 +975,26 @@ export default function MenuManagementPage() {
                   rows={3}
                   className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                   placeholder="Mô tả ngắn gọn về món ăn..."
-                  required
                 />
               </div>
 
-              {/* Thời gian chuẩn bị & URL ảnh */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-neutral-700 mb-2">
-                    Thời gian chuẩn bị
-                  </label>
-                  <input
-                    type="text"
-                    name="prepTime"
-                    value={formData.prepTime}
-                    onChange={handleFormChange}
-                    className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                    placeholder="VD: 15-20 phút"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-neutral-700 mb-2">
-                    URL Hình ảnh
-                  </label>
-                  <input
-                    type="text"
-                    name="image"
-                    value={formData.image}
-                    onChange={handleFormChange}
-                    className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                    placeholder="https://..."
-                  />
-                </div>
+              {/* URL ảnh */}
+              <div>
+                <label className="block text-sm font-medium text-neutral-700 mb-2">
+                  URL Hình ảnh
+                </label>
+                <input
+                  type="text"
+                  name="image"
+                  value={formData.image}
+                  onChange={handleFormChange}
+                  className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                  placeholder="https://..."
+                />
               </div>
 
               {/* Checkboxes */}
               <div className="flex items-center space-x-6">
-                <label className="flex items-center space-x-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    name="popular"
-                    checked={formData.popular}
-                    onChange={handleFormChange}
-                    className="w-4 h-4 text-primary-600 border-neutral-300 rounded focus:ring-primary-500"
-                  />
-                  <span className="text-sm text-neutral-700">
-                    ⭐ Món phổ biến
-                  </span>
-                </label>
                 <label className="flex items-center space-x-2 cursor-pointer">
                   <input
                     type="checkbox"

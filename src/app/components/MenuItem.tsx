@@ -15,6 +15,7 @@ interface MenuItemProps {
     popular?: boolean;
     bestSeller?: boolean;
     isNew?: boolean;
+    available?: boolean;
     rating?: number;
     reviewCount?: number;
   };
@@ -43,13 +44,13 @@ export default function MenuItem({ item, onReviewClick, showAddToCart = true }: 
     <div className="card group overflow-hidden animate-fade-in-up h-auto flex flex-col">
       {/* Image Container */}
       <div className="relative overflow-hidden">
-        {!imageLoaded && <div className="skeleton w-full h-48"></div>}
+        {!imageLoaded && <div className="skeleton w-full h-40"></div>}
         <Image
           src={item.imageUrl}
           alt={item.name}
           width={400}
-          height={192}
-          className={`w-full h-48 object-cover transition-transform duration-400 group-hover:scale-105 rounded-t-md ${
+          height={160}
+          className={`w-full h-40 object-cover transition-transform duration-400 group-hover:scale-105 rounded-t-md ${
             imageLoaded ? "opacity-100" : "opacity-0"
           }`}
           onLoad={() => setImageLoaded(true)}
@@ -78,17 +79,11 @@ export default function MenuItem({ item, onReviewClick, showAddToCart = true }: 
               <span>Best Seller</span>
             </div>
           )}
-          {item.popular && (
-            <div className="bg-gradient-to-r from-orange-500 to-orange-600 text-white font-bold px-2 py-0.5 rounded-full text-[10px] shadow-lg flex items-center gap-1">
-              <span>🔥</span>
-              <span>Phổ Biến</span>
-            </div>
-          )}
         </div>
       </div>
 
       {/* Content */}
-      <div className="p-4 bg-white flex-1 flex flex-col">
+      <div className="p-3 bg-white flex-1 flex flex-col">
         <div className="min-h-[50px] mb-2">
           <h3 className="text-base font-bold text-neutral-900 group-hover:text-primary-600 transition-colors duration-300 line-clamp-2 leading-snug">
             {item.name}

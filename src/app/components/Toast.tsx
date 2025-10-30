@@ -4,19 +4,20 @@ import React, { createContext, useContext, useState, useCallback } from "react";
 type Toast = {
   id: number;
   message: string;
+  type: "success" | "error";
 };
 
 type ToastContextType = {
-  showToast: (message: string, durationMs?: number) => void;
+  showToast: (message: string, durationMs?: number, type?: "success" | "error") => void;
 };
 
 const ToastContext = createContext<ToastContextType | undefined>(undefined);
 
 export function ToastProvider({ children }: { children?: React.ReactNode }) {
   const [toasts, setToasts] = useState<Toast[]>([]);
-  const showToast = useCallback((message: string, durationMs = 3500) => {
+  const showToast = useCallback((message: string, durationMs = 3500, type: "success" | "error" = "success") => {
     const id = Date.now();
-    setToasts((prev) => [...prev, { id, message }]);
+    setToasts((prev) => [...prev, { id, message, type }]);
     window.setTimeout(() => {
       setToasts((prev) => prev.filter((t) => t.id !== id));
     }, durationMs);
@@ -30,11 +31,32 @@ export function ToastProvider({ children }: { children?: React.ReactNode }) {
         {toasts.map((t) => (
           <div
             key={t.id}
-            className="pointer-events-auto max-w-[90vw] w-full sm:w-[400px] px-6 py-5 rounded-2xl shadow-2xl bg-primary-600 text-white text-base font-semibold text-center animate-fade-in-up"
+            className={`pointer-events-auto max-w-[90vw] w-full sm:w-[450px] px-6 py-5 rounded-2xl shadow-2xl text-white text-base font-semibold animate-fade-in-up ${
+              t.type === "success" 
+                ? "bg-gradient-to-br from-green-500 to-green-600" 
+                : "bg-gradient-to-br from-red-500 to-red-600"
+            }`}
             role="status"
             aria-live="polite"
           >
-            {t.message}
+            <div className="flex items-center gap-3">
+              {/* Icon */}
+              <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center flex-shrink-0">
+                {t.type === "success" ? (
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                  </svg>
+                ) : (
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                )}
+              </div>
+              {/* Message */}
+              <div className="flex-1 text-left">
+                {t.message}
+              </div>
+            </div>
           </div>
         ))}
       </div>

@@ -16,7 +16,6 @@ interface MenuItemData {
   price: number;
   image: string;
   available: boolean;
-  popular?: boolean;
   bestSeller?: boolean;
   isNew?: boolean;
   category: string;
@@ -36,10 +35,11 @@ export default function MenuPage() {
     "default" | "price-asc" | "price-desc" | "name-asc" | "name-desc" | "newest"
   >("newest");
   const [filterType, setFilterType] = useState<
-    "all" | "popular" | "bestSeller" | "new"
+    "all" | "bestSeller" | "new"
   >("all");
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 12;
+  const itemsPerPage = 9;
+  const [showFilters, setShowFilters] = useState(false);
 
   // Review Modal State
   const [showReviewModal, setShowReviewModal] = useState(false);
@@ -95,9 +95,7 @@ export default function MenuPage() {
     if (selectedCategory !== "all") {
       filtered = filtered.filter((item) => item.category === selectedCategory);
     }
-    if (filterType === "popular") {
-      filtered = filtered.filter((item) => item.popular);
-    } else if (filterType === "bestSeller") {
+    if (filterType === "bestSeller") {
       filtered = filtered.filter((item) => item.bestSeller);
     } else if (filterType === "new") {
       filtered = filtered.filter((item) => item.isNew);
@@ -190,233 +188,123 @@ export default function MenuPage() {
         </div>
       </section>
 
-      {/* Categories Filter & Search */}
-      <section className="py-4 bg-white border-b border-neutral-200">
-        <div className="container-custom space-y-3">
-          {/* Row 1: Search Box */}
-          <div className="bg-white border border-neutral-200 rounded-full px-3 py-2 shadow-card max-w-xl mx-auto">
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Tìm kiếm món ăn, thức uống..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-8 pr-8 py-1 border-0 focus:ring-0 focus:outline-none text-xs"
-              />
-              <svg
-                className="w-4 h-4 text-neutral-400 absolute left-3 top-1/2 -translate-y-1/2"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+      {/* Search & Filters Bar */}
+      <section className="py-3 bg-white border-b border-neutral-200 sticky top-[73px] z-40 shadow-sm">
+        <div className="container-custom">
+          {/* Compact Filter Bar */}
+          <div className="flex flex-wrap items-end gap-3">
+            {/* Search Box - Compact */}
+            <div className="flex-1 min-w-[200px] max-w-md">
+              <label className="block text-xs font-medium text-neutral-600 mb-1.5">
+                🔍 Tìm kiếm
+              </label>
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Tìm kiếm món ăn..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-9 pr-9 py-2 text-sm border border-neutral-200 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all"
                 />
-              </svg>
-              {searchQuery && (
-                <button
-                  onClick={() => setSearchQuery("")}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600 transition-colors"
-                  aria-label="Clear search"
-                >
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
-                </button>
-              )}
+                <svg className="w-4 h-4 text-neutral-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                {searchQuery && (
+                  <button onClick={() => setSearchQuery("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                )}
+              </div>
             </div>
-          </div>
 
-          {/* Row 2: Category Buttons */}
-          <div className="space-y-3">
-            {/* Tất Cả Button */}
-            <div className="flex justify-center">
-              <button
-                onClick={() => setSelectedCategory("all")}
-                className={`px-4 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                  selectedCategory === "all"
-                    ? "bg-primary-500 text-white shadow-lg"
-                    : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200"
-                }`}
+            {/* Category Dropdown */}
+            <div>
+              <label className="block text-xs font-medium text-neutral-600 mb-1.5">
+                📂 Danh mục
+              </label>
+              <select
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                className="px-3 py-2 text-sm border border-neutral-200 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white font-medium"
               >
-                Tất Cả
-              </button>
-            </div>
-
-            {/* Food Categories */}
-            <div className="text-center">
-              <h3 className="text-sm font-bold text-neutral-800 mb-2">
-                🍜 Đồ Ăn
-              </h3>
-              <div className="flex flex-wrap gap-2 justify-center">
+              <option value="all">📂 Tất cả danh mục ({menuData.filter(i => i.available).length})</option>
+              <optgroup label="🍜 Đồ Ăn">
                 {categories
-                  .filter((cat) =>
-                    ["mi-cay", "an-vat", "hu-tieu", "rau-an-kem"].includes(
-                      cat.id
-                    )
-                  )
-                  .map((cat) => (
-                    <button
-                      key={cat.id}
-                      onClick={() => setSelectedCategory(cat.id)}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                        selectedCategory === cat.id
-                          ? "bg-primary-500 text-white shadow-lg"
-                          : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200"
-                      }`}
-                    >
-                      {cat.icon} {cat.name}
-                    </button>
-                  ))}
-              </div>
-            </div>
-
-            {/* Drink Categories */}
-            <div className="text-center">
-              <h3 className="text-sm font-bold text-neutral-800 mb-2">
-                🥤 Đồ Uống
-              </h3>
-              <div className="flex flex-wrap gap-2 justify-center">
+                  .filter((cat) => ["mi-cay", "an-vat", "hu-tieu", "rau-an-kem"].includes(cat.id))
+                  .map((cat) => {
+                    const count = menuData.filter(i => i.available && i.category === cat.id).length;
+                    return (
+                      <option key={cat.id} value={cat.id}>
+                        {cat.icon} {cat.name} ({count})
+                      </option>
+                    );
+                  })}
+              </optgroup>
+              <optgroup label="🥤 Đồ Uống">
                 {categories
-                  .filter((cat) =>
-                    [
-                      "coffee",
-                      "milk-tea",
-                      "sua-chua",
-                      "nuoc-giai-khat",
-                    ].includes(cat.id)
-                  )
-                  .map((cat) => (
-                    <button
-                      key={cat.id}
-                      onClick={() => setSelectedCategory(cat.id)}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                        selectedCategory === cat.id
-                          ? "bg-primary-500 text-white shadow-lg"
-                          : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200"
-                      }`}
-                    >
-                      {cat.icon} {cat.name}
-                    </button>
-                  ))}
-              </div>
+                  .filter((cat) => ["coffee", "milk-tea", "sua-chua", "nuoc-giai-khat"].includes(cat.id))
+                  .map((cat) => {
+                    const count = menuData.filter(i => i.available && i.category === cat.id).length;
+                    return (
+                      <option key={cat.id} value={cat.id}>
+                        {cat.icon} {cat.name} ({count})
+                      </option>
+                    );
+                  })}
+              </optgroup>
+              </select>
             </div>
-          </div>
 
-          {/* Row 2: Sort Buttons */}
-          <div className="flex flex-wrap items-center justify-center gap-2 text-xs">
-            <span className="text-xs font-medium text-neutral-600">
-              Sắp xếp:
-            </span>
-            <button
-              onClick={() => setSortBy("default")}
-              className={`px-3 py-1 rounded-lg text-xs font-medium transition-all ${
-                sortBy === "default"
-                  ? "bg-primary-500 text-white shadow-lg"
-                  : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200"
-              }`}
-            >
-              Mặc định
-            </button>
-            <button
-              onClick={() => setSortBy("price-asc")}
-              className={`px-3 py-1 rounded-lg text-xs font-medium transition-all ${
-                sortBy === "price-asc"
-                  ? "bg-primary-500 text-white shadow-lg"
-                  : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200"
-              }`}
-            >
-              Giá: Thấp → Cao
-            </button>
-            <button
-              onClick={() => setSortBy("price-desc")}
-              className={`px-3 py-1 rounded-lg text-xs font-medium transition-all ${
-                sortBy === "price-desc"
-                  ? "bg-primary-500 text-white shadow-lg"
-                  : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200"
-              }`}
-            >
-              Giá: Cao → Thấp
-            </button>
-            <button
-              onClick={() => setSortBy("name-asc")}
-              className={`px-3 py-1 rounded-lg text-xs font-medium transition-all ${
-                sortBy === "name-asc"
-                  ? "bg-primary-500 text-white shadow-lg"
-                  : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200"
-              }`}
-            >
-              Tên: A → Z
-            </button>
-            <button
-              onClick={() => setSortBy("name-desc")}
-              className={`px-3 py-1 rounded-lg text-xs font-medium transition-all ${
-                sortBy === "name-desc"
-                  ? "bg-primary-500 text-white shadow-lg"
-                  : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200"
-              }`}
-            >
-              Tên: Z → A
-            </button>
-          </div>
+            {/* Sort Dropdown */}
+            <div>
+              <label className="block text-xs font-medium text-neutral-600 mb-1.5">
+                🔄 Sắp xếp
+              </label>
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
+                className="px-3 py-2 text-sm border border-neutral-200 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white font-medium"
+              >
+                <option value="price-asc">💰 Giá: Thấp → Cao</option>
+                <option value="price-desc">💎 Giá: Cao → Thấp</option>
+                <option value="name-asc">🔤 Tên: A → Z</option>
+                <option value="name-desc">🔡 Tên: Z → A</option>
+              </select>
+            </div>
 
-          {/* Row 3: Filter Type Buttons */}
-          <div className="flex flex-wrap items-center justify-center gap-2 pt-2 border-t border-neutral-200">
-            <span className="text-xs font-medium text-neutral-600">
-              Lọc theo:
-            </span>
+            {/* Filter Type Dropdown */}
+            <div>
+              <label className="block text-xs font-medium text-neutral-600 mb-1.5">
+                🎯 Lọc
+              </label>
+              <select
+                value={filterType}
+                onChange={(e) => setFilterType(e.target.value as typeof filterType)}
+                className="px-3 py-2 text-sm border border-neutral-200 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white font-medium"
+              >
+                <option value="all">🎯 Tất cả</option>
+                <option value="bestSeller">🏆 Best Seller</option>
+                <option value="new">✨ Món mới</option>
+              </select>
+            </div>
+
+            {/* Reset Button */}
             <button
-              onClick={() => setFilterType("all")}
-              className={`px-3 py-1 rounded-lg text-xs font-medium transition-all ${
-                filterType === "all"
-                  ? "bg-secondary-600 text-white shadow-lg"
-                  : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200"
-              }`}
+              onClick={() => {
+                setSearchQuery("");
+                setSelectedCategory("all");
+                setSortBy("price-asc");
+                setFilterType("all");
+              }}
+              className="px-4 py-2 text-sm font-medium text-neutral-600 bg-neutral-100 hover:bg-neutral-200 rounded-lg transition-colors flex items-center gap-2"
+              title="Đặt lại bộ lọc"
             >
-              Tất Cả
-            </button>
-            <button
-              onClick={() => setFilterType("popular")}
-              className={`px-3 py-1 rounded-lg text-xs font-medium transition-all ${
-                filterType === "popular"
-                  ? "bg-secondary-600 text-white shadow-lg"
-                  : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200"
-              }`}
-            >
-              ⭐ Phổ Biến
-            </button>
-            <button
-              onClick={() => setFilterType("bestSeller")}
-              className={`px-3 py-1 rounded-lg text-xs font-medium transition-all ${
-                filterType === "bestSeller"
-                  ? "bg-secondary-600 text-white shadow-lg"
-                  : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200"
-              }`}
-            >
-              🏆 Best Seller
-            </button>
-            <button
-              onClick={() => setFilterType("new")}
-              className={`px-3 py-1 rounded-lg text-xs font-medium transition-all ${
-                filterType === "new"
-                  ? "bg-secondary-600 text-white shadow-lg"
-                  : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200"
-              }`}
-            >
-              ✨ Mới
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+              <span className="hidden sm:inline">Reset</span>
             </button>
           </div>
         </div>

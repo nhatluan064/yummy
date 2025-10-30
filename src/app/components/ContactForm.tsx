@@ -31,15 +31,17 @@ export default function ContactForm() {
       };
 
       await contactService.createContact(contactData);
-      toast.showToast(
-        "🎉 Cảm ơn bạn đã liên hệ! Chúng tôi sẽ phản hồi trong thời gian sớm nhất.",
-        3500
-      );
       setFormData({ name: "", email: "", phone: "", subject: "", message: "" });
+      toast.showToast(
+        "Cảm ơn bạn đã liên hệ! Chúng tôi sẽ phản hồi trong thời gian sớm nhất.",
+        3000,
+        "success"
+      );
     } catch (err) {
       toast.showToast(
-        "❌ Gửi liên hệ thất bại: " + (err instanceof Error ? err.message : "Lỗi không xác định"),
-        3500
+        "Gửi liên hệ thất bại: " + (err instanceof Error ? err.message : "Lỗi không xác định"),
+        3500,
+        "error"
       );
     }
   };

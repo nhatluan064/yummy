@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { orderService, billService } from "@/lib/sdk";
 import { tableService } from "@/lib/table.service";
 import type { Order } from "@/lib/types";
@@ -14,6 +15,12 @@ export default function OrdersPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedOrder, setSelectedOrder] = useState<UIOrder | null>(null);
   const [orders, setOrders] = useState<UIOrder[]>([]);
+  
+  // Date filter states
+  const [showFilterModal, setShowFilterModal] = useState(false);
+  const [dateFilter, setDateFilter] = useState<"all" | "today" | "yesterday" | "this-week" | "this-month" | "custom">("all");
+  const [customStartDate, setCustomStartDate] = useState("");
+  const [customEndDate, setCustomEndDate] = useState("");
 
   useEffect(() => {
     const unsubscribe = orderService.subscribeToOrders((updatedOrders) => {
@@ -63,6 +70,39 @@ export default function OrdersPage() {
     );
   };
 
+  // Date filter helper
+  const matchesDateFilter = (order: UIOrder) => {
+    const ts = order.createdAt as unknown as { toDate?: () => Date } | undefined;
+    const orderDate = ts?.toDate ? ts.toDate() : new Date();
+    const now = new Date();
+    
+    switch (dateFilter) {
+      case "today":
+        return orderDate.toDateString() === now.toDateString();
+      case "yesterday":
+        const yesterday = new Date(now);
+        yesterday.setDate(yesterday.getDate() - 1);
+        return orderDate.toDateString() === yesterday.toDateString();
+      case "this-week":
+        const weekStart = new Date(now);
+        weekStart.setDate(now.getDate() - now.getDay());
+        weekStart.setHours(0, 0, 0, 0);
+        return orderDate >= weekStart;
+      case "this-month":
+        return orderDate.getMonth() === now.getMonth() && 
+               orderDate.getFullYear() === now.getFullYear();
+      case "custom":
+        if (!customStartDate && !customEndDate) return true;
+        const start = customStartDate ? new Date(customStartDate) : new Date(0);
+        const end = customEndDate ? new Date(customEndDate) : new Date();
+        end.setHours(23, 59, 59, 999);
+        return orderDate >= start && orderDate <= end;
+      case "all":
+      default:
+        return true;
+    }
+  };
+
   const filteredOrders = orders.filter((order) => {
     const matchesStatus =
       selectedStatus === "all" || order.status === selectedStatus;
@@ -73,7 +113,8 @@ export default function OrdersPage() {
       (order.customerName || "")
         .toLowerCase()
         .includes(searchQuery.toLowerCase());
-    return matchesStatus && matchesSearch;
+    const matchesDate = matchesDateFilter(order);
+    return matchesStatus && matchesSearch && matchesDate;
   });
 
   // Group orders by date
@@ -226,7 +267,10 @@ export default function OrdersPage() {
           </p>
         </div>
         <div className="flex items-center space-x-3">
-          <button className="btn-secondary">
+          <button 
+            onClick={() => setShowFilterModal(true)}
+            className="btn-secondary relative"
+          >
             <svg
               className="w-5 h-5"
               fill="none"
@@ -241,8 +285,11 @@ export default function OrdersPage() {
               />
             </svg>
             Lọc
+            {dateFilter !== "all" && (
+              <span className="absolute -top-1 -right-1 w-3 h-3 bg-primary-500 rounded-full"></span>
+            )}
           </button>
-          <button className="btn-primary">
+          <Link href="/admin/orders/new" className="btn-primary">
             <svg
               className="w-5 h-5"
               fill="none"
@@ -257,7 +304,7 @@ export default function OrdersPage() {
               />
             </svg>
             Tạo Đơn Mới
-          </button>
+          </Link>
         </div>
       </div>
 
@@ -332,12 +379,13 @@ export default function OrdersPage() {
             </div>
 
             {/* Orders for this date */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-              {groupedOrders[dateKey].map((order) => (
+            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
+              {groupedOrders[dateKey].map((order) => {
+                const orderDate = (order.createdAt as any)?.toDate?.() || new Date();
+                return (
                 <div
                   key={order.id}
-                  className="card p-6 hover:shadow-xl transition-all duration-300 cursor-pointer"
-                  onClick={() => setSelectedOrder(order)}
+                  className="card p-4 hover:shadow-lg transition-all duration-200"
                 >
                   {/* Header */}
                   <div className="flex items-start justify-between mb-4">
@@ -537,7 +585,8 @@ export default function OrdersPage() {
                       </div>
                     )}
                 </div>
-              ))}
+              );
+              })}
             </div>
           </div>
         ))}
@@ -724,6 +773,104 @@ export default function OrdersPage() {
           <p className="text-neutral-600">
             Thử thay đổi bộ lọc hoặc tìm kiếm khác
           </p>
+        </div>
+      )}
+
+      {/* Date Filter Modal */}
+      {showFilterModal && (
+        <div
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+          onClick={() => setShowFilterModal(false)}
+        >
+          <div
+            className="bg-white rounded-2xl p-6 max-w-md w-full"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl font-bold text-neutral-900">Lọc theo thời gian</h3>
+              <button
+                onClick={() => setShowFilterModal(false)}
+                className="p-2 hover:bg-neutral-100 rounded-lg transition-colors"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="space-y-3">
+              {[
+                { value: "all", label: "Tất cả" },
+                { value: "today", label: "Hôm nay" },
+                { value: "yesterday", label: "Hôm qua" },
+                { value: "this-week", label: "Tuần này" },
+                { value: "this-month", label: "Tháng này" },
+                { value: "custom", label: "Tùy chỉnh" },
+              ].map((option) => (
+                <button
+                  key={option.value}
+                  onClick={() => {
+                    setDateFilter(option.value as any);
+                    if (option.value !== "custom") {
+                      setShowFilterModal(false);
+                    }
+                  }}
+                  className={`w-full text-left px-4 py-3 rounded-lg transition-all ${
+                    dateFilter === option.value
+                      ? "bg-primary-500 text-white font-semibold"
+                      : "bg-neutral-50 hover:bg-neutral-100 text-neutral-700"
+                  }`}
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
+
+            {dateFilter === "custom" && (
+              <div className="mt-4 space-y-3 pt-4 border-t">
+                <div>
+                  <label className="block text-sm font-medium text-neutral-700 mb-2">
+                    Từ ngày
+                  </label>
+                  <input
+                    type="date"
+                    value={customStartDate}
+                    onChange={(e) => setCustomStartDate(e.target.value)}
+                    className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-neutral-700 mb-2">
+                    Đến ngày
+                  </label>
+                  <input
+                    type="date"
+                    value={customEndDate}
+                    onChange={(e) => setCustomEndDate(e.target.value)}
+                    className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  />
+                </div>
+                <button
+                  onClick={() => setShowFilterModal(false)}
+                  className="w-full btn-primary"
+                >
+                  Áp dụng
+                </button>
+              </div>
+            )}
+
+            <div className="mt-4 pt-4 border-t flex gap-2">
+              <button
+                onClick={() => {
+                  setDateFilter("all");
+                  setCustomStartDate("");
+                  setCustomEndDate("");
+                  setShowFilterModal(false);
+                }}
+                className="flex-1 px-4 py-2 bg-neutral-100 hover:bg-neutral-200 rounded-lg font-medium text-neutral-700 transition-colors"
+              >
+                Reset
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

@@ -34,14 +34,32 @@ export default function DatBanPage() {
         reservationTime: getReservationTime(),
         notes: formData.notes,
       });
+      
+      // Reset form về trạng thái ban đầu
+      setFormData({
+        name: "",
+        phone: "",
+        email: "",
+        date: "",
+        guests: "",
+        notes: "",
+      });
+      setTimeData({
+        hour: "",
+        minute: "",
+        period: "SA",
+      });
+      
       toast.showToast(
         "Cảm ơn bạn! Chúng tôi sẽ liên hệ xác nhận đặt bàn trong thời gian sớm nhất.",
-        2500
+        3000,
+        "success"
       );
     } catch (err) {
       toast.showToast(
         "Đặt bàn thất bại: " + (err instanceof Error ? err.message : "Lỗi không xác định"),
-        3000
+        3500,
+        "error"
       );
     }
   };

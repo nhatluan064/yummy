@@ -9,9 +9,7 @@ export interface MenuItem {
   description?: string;
   image?: string;
   available: boolean;
-  popular?: boolean;
   bestSeller?: boolean;
-  prepTime?: string;
   rating?: number;
   reviewCount?: number;
   reviews?: Review[];

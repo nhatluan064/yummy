@@ -6,6 +6,7 @@ import { orderService } from "@/lib/order.service";
 import { feedbackService } from "@/lib/feedback.service";
 import { reservationService } from "@/lib/reservation.service";
 import { contactService } from "@/lib/contact.service";
+import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import type { WithId } from "@/lib/firestore.service";
 import type { Bill, Order, Feedback, TableReservation, Contact } from "@/lib/types";
 
@@ -199,6 +200,33 @@ export default function AdminDashboard() {
     });
   }, [bills]);
 
+  // Chart data - Daily revenue
+  const dailyRevenueData = useMemo(() => {
+    const revenueByDay: Record<string, number> = {};
+    bills.forEach((bill) => {
+      const ts = (bill.completedAt as unknown as { toDate?: () => Date })?.toDate?.();
+      if (ts) {
+        const dateKey = ts.toLocaleDateString("vi-VN", { day: '2-digit', month: '2-digit' });
+        revenueByDay[dateKey] = (revenueByDay[dateKey] || 0) + (bill.totalAmount || 0);
+      }
+    });
+    return Object.entries(revenueByDay)
+      .map(([date, revenue]) => ({ date, revenue }))
+      .slice(-7); // Last 7 days
+  }, [bills]);
+
+  // Pie chart data - Stats distribution (no menu items)
+  const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444'];
+  const statsData = [
+    { name: 'Đơn hàng', value: metrics.totalOrders, color: COLORS[0] },
+    { name: 'Feedback', value: metrics.totalFeedbacks, color: COLORS[1] },
+    { name: 'Đặt bàn', value: metrics.totalReservations, color: COLORS[2] },
+    { name: 'Liên hệ', value: metrics.totalContacts, color: COLORS[3] },
+  ].filter(item => item.value > 0); // Only show items with values
+  
+  // Calculate total for percentage
+  const totalStats = statsData.reduce((sum, item) => sum + item.value, 0);
+
   return (
     <div className="space-y-4 md:space-y-6">
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
@@ -253,72 +281,154 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-        <div className="card p-4 md:p-6 bg-gradient-to-br from-primary-50 to-primary-100 border-primary-200">
-          <div className="flex items-center justify-between mb-2">
-            <p className="text-xs md:text-sm text-primary-700 font-medium">
-              {metrics.revenueLabel}
-            </p>
-            <svg className="w-8 h-8 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
+      {/* Metrics Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Revenue Card */}
+        <div className="card p-5 bg-gradient-to-br from-primary-50 to-primary-100 border-primary-200 hover:shadow-lg transition-shadow">
+          <div className="flex items-center justify-between mb-3">
+            <div className="w-12 h-12 rounded-full bg-primary-500 flex items-center justify-center">
+              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
           </div>
-          <p className="text-2xl md:text-3xl font-bold text-primary-900 mb-1">
-            {metrics.revenue.toLocaleString()}₫
+          <p className="text-sm text-primary-700 font-medium mb-1">Doanh Thu</p>
+          <p className="text-2xl font-bold text-primary-900 mb-1">
+            {(metrics.revenue / 1000).toFixed(0)}K₫
           </p>
-          <p className="text-xs text-primary-600">{bills.length} đơn hoàn tất</p>
+          <p className="text-xs text-primary-600">{bills.length} đơn</p>
         </div>
-        
-        <div className="card p-4 md:p-6 bg-gradient-to-br from-green-50 to-green-100 border-green-200">
-          <div className="flex items-center justify-between mb-2">
-            <p className="text-xs md:text-sm text-green-700 font-medium">
-              Đơn Hàng
-            </p>
-            <svg className="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-            </svg>
+
+        {/* Orders Card */}
+        <div className="card p-5 bg-gradient-to-br from-green-50 to-green-100 border-green-200 hover:shadow-lg transition-shadow">
+          <div className="flex items-center justify-between mb-3">
+            <div className="w-12 h-12 rounded-full bg-green-500 flex items-center justify-center">
+              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+              </svg>
+            </div>
           </div>
-          <p className="text-2xl md:text-3xl font-bold text-green-900 mb-1">
-            {metrics.totalOrders}
-          </p>
-          <p className="text-xs text-green-600">Tổng đơn hàng</p>
+          <p className="text-sm text-green-700 font-medium mb-1">Đơn Hàng</p>
+          <p className="text-2xl font-bold text-green-900 mb-1">{metrics.totalOrders}</p>
+          <p className="text-xs text-green-600">Tổng đơn</p>
         </div>
-        
-        <div className="card p-4 md:p-6 bg-gradient-to-br from-amber-50 to-amber-100 border-amber-200">
-          <div className="flex items-center justify-between mb-2">
-            <p className="text-xs md:text-sm text-amber-700 font-medium">
-              Feedback
-            </p>
-            <svg className="w-8 h-8 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-            </svg>
+
+        {/* Feedback Card */}
+        <div className="card p-5 bg-gradient-to-br from-amber-50 to-amber-100 border-amber-200 hover:shadow-lg transition-shadow">
+          <div className="flex items-center justify-between mb-3">
+            <div className="w-12 h-12 rounded-full bg-amber-500 flex items-center justify-center">
+              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+              </svg>
+            </div>
           </div>
-          <p className="text-2xl md:text-3xl font-bold text-amber-900 mb-1">
-            {metrics.totalFeedbacks}
-          </p>
-          <p className="text-xs text-amber-600">Phản hồi khách hàng</p>
+          <p className="text-sm text-amber-700 font-medium mb-1">Feedback</p>
+          <p className="text-2xl font-bold text-amber-900 mb-1">{metrics.totalFeedbacks}</p>
+          <p className="text-xs text-amber-600">Phản hồi</p>
         </div>
-        
-        <div className="card p-4 md:p-6 bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
-          <div className="flex items-center justify-between mb-2">
-            <p className="text-xs md:text-sm text-blue-700 font-medium">
-              Đặt Bàn & Liên Hệ
-            </p>
-            <svg className="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
+
+        {/* Reservations Card */}
+        <div className="card p-5 bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200 hover:shadow-lg transition-shadow">
+          <div className="flex items-center justify-between mb-3">
+            <div className="w-12 h-12 rounded-full bg-blue-500 flex items-center justify-center">
+              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+            </div>
           </div>
-          <p className="text-2xl md:text-3xl font-bold text-blue-900 mb-1">
-            {metrics.totalReservations + metrics.totalContacts}
-          </p>
-          <p className="text-xs text-blue-600">{metrics.totalReservations} đặt bàn, {metrics.totalContacts} liên hệ</p>
+          <p className="text-sm text-blue-700 font-medium mb-1">Đặt Bàn</p>
+          <p className="text-2xl font-bold text-blue-900 mb-1">{metrics.totalReservations}</p>
+          <p className="text-xs text-blue-600">Lịch đặt</p>
         </div>
       </div>
 
+      {/* Charts Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Bar Chart - Daily Revenue */}
+        <div className="card p-6">
+          <h3 className="text-lg font-bold text-neutral-800 mb-4">📊 Doanh Thu Theo Ngày</h3>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={dailyRevenueData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+              <XAxis dataKey="date" tick={{ fontSize: 12 }} stroke="#6b7280" />
+              <YAxis tick={{ fontSize: 12 }} stroke="#6b7280" />
+              <Tooltip 
+                contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: '8px' }}
+                formatter={(value: number) => `${value.toLocaleString()}₫`}
+              />
+              <Bar dataKey="revenue" fill="#3b82f6" radius={[8, 8, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* Pie Chart - Stats Distribution */}
+        <div className="card p-6">
+          <h3 className="text-lg font-bold text-neutral-800 mb-4">🥧 Phân Bổ Hoạt Động</h3>
+          <ResponsiveContainer width="100%" height={300}>
+            <PieChart>
+              <Pie
+                data={statsData}
+                cx="50%"
+                cy="50%"
+                labelLine={{
+                  stroke: '#9ca3af',
+                  strokeWidth: 1,
+                }}
+                label={({ cx, cy, midAngle, innerRadius, outerRadius, percent, name }: any) => {
+                  const RADIAN = Math.PI / 180;
+                  const radius = outerRadius + 30;
+                  const x = cx + radius * Math.cos(-midAngle * RADIAN);
+                  const y = cy + radius * Math.sin(-midAngle * RADIAN);
+                  
+                  return (
+                    <text 
+                      x={x} 
+                      y={y} 
+                      fill="#374151"
+                      textAnchor={x > cx ? 'start' : 'end'} 
+                      dominantBaseline="central"
+                      className="text-sm font-semibold"
+                    >
+                      {`${name}: ${(percent * 100).toFixed(1)}%`}
+                    </text>
+                  );
+                }}
+                outerRadius={90}
+                fill="#8884d8"
+                dataKey="value"
+              >
+                {statsData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.color} />
+                ))}
+              </Pie>
+              <Tooltip 
+                formatter={(value: number) => [value, 'Số lượng']}
+                contentStyle={{ 
+                  backgroundColor: '#fff', 
+                  border: '1px solid #e5e7eb', 
+                  borderRadius: '8px',
+                  padding: '8px 12px'
+                }}
+              />
+              <Legend 
+                verticalAlign="bottom" 
+                height={36}
+                iconType="circle"
+                formatter={(value: string) => {
+                  const item = statsData.find(d => d.name === value);
+                  return `${value} (${item?.value || 0})`;
+                }}
+              />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      {/* Orders List */}
       <div className="card p-4 md:p-6">
         <div className="flex items-center justify-between mb-4 md:mb-6">
           <h3 className="text-base md:text-lg font-bold text-neutral-800">
-            {selectedDate 
+            📦 {selectedDate 
               ? `Đơn Hàng Ngày ${new Date(selectedDate).toLocaleDateString("vi-VN")}`
               : timeRange === "today"
               ? "Đơn Hàng Hôm Nay"

@@ -103,7 +103,7 @@ export default function ProtectedAdminLayout({
       href: "/admin/dashboard",
       icon: (
         <svg
-          className="w-5 h-5"
+          className="w-4 h-4"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -122,7 +122,7 @@ export default function ProtectedAdminLayout({
       href: "/admin/orders",
       icon: (
         <svg
-          className="w-5 h-5"
+          className="w-4 h-4"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -141,7 +141,7 @@ export default function ProtectedAdminLayout({
       href: "/admin/menu",
       icon: (
         <svg
-          className="w-5 h-5"
+          className="w-4 h-4"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -160,7 +160,7 @@ export default function ProtectedAdminLayout({
       href: "/admin/feedback",
       icon: (
         <svg
-          className="w-5 h-5"
+          className="w-4 h-4"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -179,7 +179,7 @@ export default function ProtectedAdminLayout({
       href: "/admin/reservations",
       icon: (
         <svg
-          className="w-5 h-5"
+          className="w-4 h-4"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -198,7 +198,7 @@ export default function ProtectedAdminLayout({
       href: "/admin/quan-ly-ban",
       icon: (
         <svg
-          className="w-5 h-5"
+          className="w-4 h-4"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -217,7 +217,7 @@ export default function ProtectedAdminLayout({
       href: "/admin/kitchen",
       icon: (
         <svg
-          className="w-5 h-5"
+          className="w-4 h-4"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -242,7 +242,7 @@ export default function ProtectedAdminLayout({
       href: "/admin/data-management",
       icon: (
         <svg
-          className="w-5 h-5"
+          className="w-4 h-4"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -261,7 +261,7 @@ export default function ProtectedAdminLayout({
       href: "/admin/data-cleanup",
       icon: (
         <svg
-          className="w-5 h-5"
+          className="w-4 h-4"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -292,55 +292,55 @@ export default function ProtectedAdminLayout({
         )}
         {/* Sidebar */}
         <aside
-          className={`fixed top-0 left-0 z-40 h-screen transition-transform w-64 bg-gradient-to-b from-secondary-600 to-secondary-700 shadow-2xl md:translate-x-0 ${
+          className={`fixed top-0 left-0 z-40 h-screen transition-transform w-56 bg-gradient-to-b from-secondary-600 to-secondary-700 shadow-2xl md:translate-x-0 ${
             sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
           } flex flex-col`}
         >
           {/* Logo */}
-          <div className="p-6 border-b border-secondary-500">
+          <div className="p-4 border-b border-secondary-500">
             <Link
               href="/admin/dashboard"
-              className="flex flex-col items-center space-y-2"
+              className="flex flex-col items-center space-y-1.5"
             >
-              <div className="w-16 h-16 aspect-square bg-primary-500 rounded-full flex items-center justify-center overflow-hidden shadow-lg">
-                <span className="text-white font-bold text-3xl">🍜</span>
+              <div className="w-12 h-12 aspect-square bg-primary-500 rounded-full flex items-center justify-center overflow-hidden shadow-lg">
+                <span className="text-white font-bold text-2xl">🍜</span>
               </div>
               <div className="text-center">
-                <h1 className="text-white font-bold text-xl">Mi cay yummy</h1>
-                <p className="text-accent-200 text-xs mt-1">Quản lý nhà hàng</p>
+                <h1 className="text-white font-bold text-base">Mi cay yummy</h1>
+                <p className="text-accent-200 text-[10px] mt-0.5">Quản lý nhà hàng</p>
               </div>
             </Link>
           </div>
 
           {/* Clock */}
-          <div className="px-6 py-3 border-b border-secondary-500">
-            <div className="text-accent-100 text-sm text-center font-medium">
+          <div className="px-4 py-2 border-b border-secondary-500">
+            <div className="text-accent-100 text-xs text-center font-medium">
               {clock}
             </div>
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 overflow-y-auto p-4 space-y-2">
+          <nav className="flex-1 overflow-y-auto p-3 space-y-1.5">
             {/* Link quay lại trang chủ */}
             <Link
-              href="/admin/trang-chu"
-              className="flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 group bg-accent-600 hover:bg-accent-700 text-white mb-3"
+              href="/user/thuc-don"
+              className="flex items-center space-x-2.5 px-3 py-2 rounded-lg transition-all duration-200 group bg-accent-600 hover:bg-accent-700 text-white mb-2"
               onClick={() => setSidebarOpen(false)}
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
               </svg>
-              <span className="font-medium">Xem Website</span>
+              <span className="font-medium text-sm">Xem Website</span>
             </Link>
 
             {/* Separator */}
-            <div className="border-t border-secondary-500 my-3"></div>
+            <div className="border-t border-secondary-500 my-2"></div>
 
             {navigation.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}
-                className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 group ${
+                className={`flex items-center space-x-2.5 px-3 py-2 rounded-lg transition-all duration-200 group ${
                   isActive(item.href)
                     ? "bg-primary-500 text-white shadow-lg shadow-primary-500/50"
                     : "text-accent-100 hover:bg-secondary-500 hover:text-white"
@@ -356,21 +356,21 @@ export default function ProtectedAdminLayout({
                 >
                   {item.icon}
                 </span>
-                <span className="font-medium">{item.name}</span>
+                <span className="font-medium text-sm">{item.name}</span>
               </Link>
             ))}
           </nav>
 
           {/* User Info + Logout */}
-          <div className="p-4 border-t border-secondary-500">
-            <div className="flex items-center space-x-3 px-3 py-3 mb-3">
-              <div className="w-10 h-10 bg-primary-500 rounded-full flex items-center justify-center border-2 border-primary-300 shadow-lg">
-                <span className="text-white font-bold text-lg">
+          <div className="p-3 border-t border-secondary-500">
+            <div className="flex items-center space-x-2 px-2 py-2 mb-2">
+              <div className="w-8 h-8 bg-primary-500 rounded-full flex items-center justify-center border-2 border-primary-300 shadow-lg">
+                <span className="text-white font-bold text-sm">
                   {adminUser?.email?.[0]?.toUpperCase() || "A"}
                 </span>
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-accent-100 text-sm truncate">
+                <p className="text-accent-100 text-xs truncate">
                   {adminUser?.email || "admin@restaurant.com"}
                 </p>
               </div>
@@ -381,7 +381,7 @@ export default function ProtectedAdminLayout({
 
         {/* Main Content */}
         <div
-          className={`transition-all duration-300 md:ml-64 ${
+          className={`transition-all duration-300 md:ml-56 ${
             sidebarOpen ? "overflow-hidden" : ""
           } min-h-screen bg-neutral-50`}
         >
@@ -435,12 +435,12 @@ export default function ProtectedAdminLayout({
             }, 1800);
           }
         }}
-        className="flex items-center justify-center space-x-2 w-full px-4 py-3 bg-primary-600 text-white rounded-lg transition-transform duration-200 font-medium shadow-lg shadow-primary-500/30 hover:scale-105"
+        className="flex items-center justify-center space-x-2 w-full px-3 py-2 bg-primary-600 text-white rounded-lg transition-transform duration-200 font-medium text-sm shadow-lg shadow-primary-500/30 hover:scale-105"
         title="Đăng xuất"
         aria-label="Đăng xuất"
       >
         <svg
-          className="w-5 h-5"
+          className="w-4 h-4"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -452,7 +452,7 @@ export default function ProtectedAdminLayout({
             d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
           />
         </svg>
-        <span>Đăng xuất</span>
+        <span className="text-sm">Đăng xuất</span>
       </button>
     );
   }

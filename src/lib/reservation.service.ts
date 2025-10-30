@@ -21,6 +21,9 @@ class ReservationService extends FirestoreService<TableReservation> {
   async cancel(id: string) {
     return this.update(id, { status: "cancelled" });
   }
+  async deleteReservation(id: string) {
+    return this.delete(id);
+  }
 
   async getByTableId(tableId: string) {
     const list = await this.getAll([this.by("tableNumber", "==", tableId)]);

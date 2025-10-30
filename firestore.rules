@@ -14,9 +14,16 @@ service cloud.firestore {
       allow write: if request.auth != null;
     }
     
-    // Orders - CHỈ ADMIN, khách KHÔNG được tạo order trực tiếp
+    // Orders - Cho phép khách tạo order (gọi món), admin có thể read/write/update
     match /orders/{orderId} {
-      allow read, write: if request.auth != null;
+      allow read: if request.auth != null; // Admin đọc
+      allow create: if true; // Khách có thể tạo order mới (gọi món)
+      allow update, delete: if request.auth != null; // Chỉ admin update/delete
+    }
+    
+    // Meta collection - Cho phép write để tạo mã đơn tự động
+    match /_meta/{docId} {
+      allow read, write: if true; // Cho phép tất cả để tạo mã order/bill tự động
     }
     
     // Bills - CHỈ ADMIN

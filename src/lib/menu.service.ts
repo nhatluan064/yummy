@@ -15,9 +15,10 @@ class MenuService extends FirestoreService<MenuItem> {
   }
 
   async listAvailable(category?: string) {
-    const filters = [this.by('available', '==', true), this.sortBy('name', 'asc')];
-    if (category) filters.unshift(this.by('category', '==', category));
-    return this.getAll(filters);
+    const filters = [this.by('available', '==', true)];
+    if (category) filters.push(this.by('category', '==', category));
+    const items = await this.getAll(filters);
+    return items.sort((a, b) => a.name.localeCompare(b.name));
   }
 }
 

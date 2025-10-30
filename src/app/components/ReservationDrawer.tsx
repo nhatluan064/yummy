@@ -18,10 +18,6 @@ export default function ReservationDrawer() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      toast.showToast(
-        "🎉 Đặt bàn thành công! Chúng tôi sẽ liên hệ với bạn sớm nhất.",
-        3500
-      );
       setFormData({
         name: "",
         email: "",
@@ -31,11 +27,17 @@ export default function ReservationDrawer() {
         guests: "2",
         notes: "",
       });
+      toast.showToast(
+        "Đặt bàn thành công! Chúng tôi sẽ liên hệ với bạn sớm nhất.",
+        3000,
+        "success"
+      );
     } catch (err) {
       toast.showToast(
-        "❌ Đặt bàn thất bại: " +
+        "Đặt bàn thất bại: " +
           (err instanceof Error ? err.message : "Lỗi không xác định"),
-        3500
+        3500,
+        "error"
       );
     }
   };
