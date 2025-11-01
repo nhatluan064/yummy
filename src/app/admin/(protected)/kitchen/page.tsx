@@ -53,6 +53,27 @@ export default function KitchenPage() {
 
   async function updateStatus(id: string, status: Order["status"]) {
     await orderService.updateStatus(id, status);
+    
+    // If completed, create bill snapshot
+    if (status === "completed") {
+      const order = orders.find(o => o.id === id);
+      if (order) {
+        try {
+          const { billService } = await import("@/lib/sdk");
+          await billService.ensureForOrder({
+            id: order.id!,
+            orderCode: order.orderCode,
+            customerName: order.customerName || "",
+            tableNumber: order.tableNumber,
+            items: order.items,
+            totalAmount: order.totalAmount,
+          });
+        } catch (e) {
+          console.warn("Persist bill failed:", e);
+        }
+      }
+    }
+    
     await load();
   }
 
@@ -153,6 +174,9 @@ export default function KitchenPage() {
           )}
           {o.status === "preparing" && (
             <button className="btn-primary flex-1 text-sm py-1" onClick={() => updateStatus(o.id!, "ready")}>Đã xong</button>
+          )}
+          {o.status === "ready" && (
+            <button className="bg-green-600 hover:bg-green-700 text-white font-bold text-sm py-1 px-4 rounded-lg transition-colors flex-1" onClick={() => updateStatus(o.id!, "completed")}>💵 Thanh toán</button>
           )}
           <button 
             className="bg-red-600 hover:bg-red-700 text-white font-bold text-sm py-1 px-3 rounded-lg transition-colors"

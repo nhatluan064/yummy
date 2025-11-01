@@ -62,8 +62,11 @@ export default function OrdersPage() {
         yesterday.setDate(yesterday.getDate() - 1);
         return orderDate.toDateString() === yesterday.toDateString();
       case "this-week":
+        // Bắt đầu từ Thứ 2 (Monday)
         const weekStart = new Date(now);
-        weekStart.setDate(now.getDate() - now.getDay());
+        const dayOfWeek = now.getDay(); // 0 (CN) -> 6 (T7)
+        const daysToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1; // Nếu CN thì lùi 6 ngày, còn lại lùi (dayOfWeek - 1) ngày
+        weekStart.setDate(now.getDate() - daysToMonday);
         weekStart.setHours(0, 0, 0, 0);
         return orderDate >= weekStart;
       case "this-month":

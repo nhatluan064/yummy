@@ -12,7 +12,7 @@ import type { Bill, Order, Feedback, TableReservation, Contact } from "@/lib/typ
 
 export default function AdminDashboard() {
   const [timeRange, setTimeRange] = useState<
-    "today" | "week" | "month" | "year"
+    "today" | "yesterday" | "week" | "last-week" | "month" | "last-month" | "year" | "last-year"
   >("month");
   const [bills, setBills] = useState<WithId<Bill>[]>([]);
   const [orders, setOrders] = useState<WithId<Order>[]>([]);
@@ -20,20 +20,43 @@ export default function AdminDashboard() {
   const [reservations, setReservations] = useState<WithId<TableReservation>[]>([]);
   const [contacts, setContacts] = useState<WithId<Contact>[]>([]);
   const [selectedDate, setSelectedDate] = useState<string>(""); // yyyy-mm-dd
+  
+  // Drill-down history for back button
+  const [drillHistory, setDrillHistory] = useState<Array<{timeRange: string, selectedDate: string}>>([]);
+  
+  // Handle back navigation
+  const handleBack = () => {
+    if (drillHistory.length > 0) {
+      const previous = drillHistory[drillHistory.length - 1];
+      setTimeRange(previous.timeRange as any);
+      setSelectedDate(previous.selectedDate);
+      setDrillHistory(drillHistory.slice(0, -1));
+    }
+  };
 
   useEffect(() => {
     const now = new Date();
     let start: Date;
     let end: Date | undefined = undefined;
     if (selectedDate) {
-      // Nếu chọn ngày cụ thể, lọc đúng ngày đó
+      // Nếu chọn ngày cụ thể
       start = new Date(selectedDate);
-      end = new Date(selectedDate);
-      end.setDate(end.getDate() + 1);
+      
+      // Nếu là ngày 1 của tháng, query cả tháng đó
+      if (start.getDate() === 1) {
+        end = new Date(start.getFullYear(), start.getMonth() + 1, 1);
+      } else {
+        // Nếu không, query chỉ ngày đó
+        end = new Date(selectedDate);
+        end.setDate(end.getDate() + 1);
+      }
     } else {
       if (timeRange === "today") {
         start = new Date(now.getFullYear(), now.getMonth(), now.getDate());
         end = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+      } else if (timeRange === "yesterday") {
+        start = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
+        end = new Date(now.getFullYear(), now.getMonth(), now.getDate());
       } else if (timeRange === "week") {
         const day = now.getDay() || 7;
         start = new Date(
@@ -42,12 +65,30 @@ export default function AdminDashboard() {
           now.getDate() - day + 1
         );
         end = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+      } else if (timeRange === "last-week") {
+        const day = now.getDay() || 7;
+        start = new Date(
+          now.getFullYear(),
+          now.getMonth(),
+          now.getDate() - day - 6
+        );
+        end = new Date(
+          now.getFullYear(),
+          now.getMonth(),
+          now.getDate() - day + 1
+        );
       } else if (timeRange === "month") {
         start = new Date(now.getFullYear(), now.getMonth(), 1);
         end = new Date(now.getFullYear(), now.getMonth() + 1, 1);
-      } else {
+      } else if (timeRange === "last-month") {
+        start = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+        end = new Date(now.getFullYear(), now.getMonth(), 1);
+      } else if (timeRange === "year") {
         start = new Date(now.getFullYear(), 0, 1);
         end = new Date(now.getFullYear() + 1, 0, 1);
+      } else {
+        start = new Date(now.getFullYear() - 1, 0, 1);
+        end = new Date(now.getFullYear(), 0, 1);
       }
     }
     // Query theo khoảng [start, end)
@@ -59,7 +100,7 @@ export default function AdminDashboard() {
     const orderConstraints = [
       orderService.by("createdAt", ">=", start),
       orderService.by("createdAt", "<", end),
-      orderService.take(50),
+      orderService.take(200),
     ];
     const feedbackConstraints = [
       feedbackService.by("createdAt", ">=", start),
@@ -85,7 +126,9 @@ export default function AdminDashboard() {
       contactService.getAll(contactConstraints),
     ]).then(([billsData, ordersData, feedbacksData, reservationsData, contactsData]) => {
       setBills(billsData);
-      setOrders(ordersData);
+      // Filter orders to only show completed ones
+      const completedOrders = ordersData.filter(o => o.status === "completed");
+      setOrders(completedOrders);
       setFeedbacks(feedbacksData);
       setReservations(reservationsData);
       setContacts(contactsData);
@@ -136,6 +179,21 @@ export default function AdminDashboard() {
           })
           .reduce((sum, b) => sum + (b.totalAmount || 0), 0);
         label = "Doanh Thu Hôm Nay";
+      } else if (timeRange === "yesterday") {
+        const yesterday = new Date(now);
+        yesterday.setDate(yesterday.getDate() - 1);
+        const isSameDay = (d: Date, e: Date) =>
+          d.toDateString() === e.toDateString();
+        revenue = bills
+          .filter((b) => {
+            const ts = (
+              b.completedAt as unknown as { toDate?: () => Date }
+            )?.toDate?.();
+            if (!ts) return false;
+            return isSameDay(ts, yesterday);
+          })
+          .reduce((sum, b) => sum + (b.totalAmount || 0), 0);
+        label = "Doanh Thu Hôm Qua";
       } else if (timeRange === "week") {
         // Tuần này
         const firstDayOfWeek = new Date(
@@ -155,6 +213,29 @@ export default function AdminDashboard() {
           })
           .reduce((sum, b) => sum + (b.totalAmount || 0), 0);
         label = "Doanh Thu Tuần này";
+      } else if (timeRange === "last-week") {
+        // Tuần trước
+        const day = now.getDay() || 7;
+        const firstDayOfLastWeek = new Date(
+          now.getFullYear(),
+          now.getMonth(),
+          now.getDate() - day - 6
+        );
+        const lastDayOfLastWeek = new Date(
+          now.getFullYear(),
+          now.getMonth(),
+          now.getDate() - day + 1
+        );
+        revenue = bills
+          .filter((b) => {
+            const ts = (
+              b.completedAt as unknown as { toDate?: () => Date }
+            )?.toDate?.();
+            if (!ts) return false;
+            return ts >= firstDayOfLastWeek && ts < lastDayOfLastWeek;
+          })
+          .reduce((sum, b) => sum + (b.totalAmount || 0), 0);
+        label = "Doanh Thu Tuần trước";
       } else if (timeRange === "month") {
         // Tháng này
         const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -169,6 +250,20 @@ export default function AdminDashboard() {
           })
           .reduce((sum, b) => sum + (b.totalAmount || 0), 0);
         label = "Doanh Thu Tháng này";
+      } else if (timeRange === "last-month") {
+        // Tháng trước
+        const firstDayOfLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+        const firstDayOfThisMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+        revenue = bills
+          .filter((b) => {
+            const ts = (
+              b.completedAt as unknown as { toDate?: () => Date }
+            )?.toDate?.();
+            if (!ts) return false;
+            return ts >= firstDayOfLastMonth && ts < firstDayOfThisMonth;
+          })
+          .reduce((sum, b) => sum + (b.totalAmount || 0), 0);
+        label = "Doanh Thu Tháng trước";
       } else if (timeRange === "year") {
         // Năm này
         const firstDayOfYear = new Date(now.getFullYear(), 0, 1);
@@ -183,6 +278,20 @@ export default function AdminDashboard() {
           })
           .reduce((sum, b) => sum + (b.totalAmount || 0), 0);
         label = "Doanh Thu Năm này";
+      } else if (timeRange === "last-year") {
+        // Năm trước
+        const firstDayOfLastYear = new Date(now.getFullYear() - 1, 0, 1);
+        const firstDayOfThisYear = new Date(now.getFullYear(), 0, 1);
+        revenue = bills
+          .filter((b) => {
+            const ts = (
+              b.completedAt as unknown as { toDate?: () => Date }
+            )?.toDate?.();
+            if (!ts) return false;
+            return ts >= firstDayOfLastYear && ts < firstDayOfThisYear;
+          })
+          .reduce((sum, b) => sum + (b.totalAmount || 0), 0);
+        label = "Doanh Thu Năm trước";
       }
     }
     return {
@@ -210,18 +319,53 @@ export default function AdminDashboard() {
 
   // Chart data - Revenue by time range
   const revenueChartData = useMemo(() => {
-    if (timeRange === 'today' || selectedDate) {
+    console.log('Calculating chart data. timeRange:', timeRange, 'selectedDate:', selectedDate, 'bills:', bills.length);
+    
+    // Nếu selectedDate là ngày 1, hiển thị tất cả ngày trong tháng đó
+    if (selectedDate) {
+      const targetDate = new Date(selectedDate);
+      console.log('Target date:', targetDate, 'Is day 1:', targetDate.getDate() === 1);
+      
+      if (targetDate.getDate() === 1) {
+        // Hiển thị tất cả ngày trong tháng
+        const daysInMonth = new Date(targetDate.getFullYear(), targetDate.getMonth() + 1, 0).getDate();
+        const revenueByDay: Record<string, number> = {};
+        bills.forEach((bill) => {
+          const ts = (bill.completedAt as unknown as { toDate?: () => Date })?.toDate?.();
+          if (ts) {
+            const dateKey = ts.toLocaleDateString("vi-VN", { day: '2-digit', month: '2-digit' });
+            revenueByDay[dateKey] = (revenueByDay[dateKey] || 0) + (bill.totalAmount || 0);
+          }
+        });
+        return Array.from({ length: daysInMonth }, (_, i) => {
+          const day = new Date(targetDate.getFullYear(), targetDate.getMonth(), i + 1);
+          const dateKey = day.toLocaleDateString("vi-VN", { day: '2-digit', month: '2-digit' });
+          return { date: dateKey, revenue: revenueByDay[dateKey] || 0 };
+        });
+      } else {
+        // Hiển thị 1 ngày
+        const dateKey = targetDate.toLocaleDateString("vi-VN", { day: '2-digit', month: '2-digit' });
+        const revenue = bills.reduce((sum, b) => sum + (b.totalAmount || 0), 0);
+        return [{ date: dateKey, revenue }];
+      }
+    }
+    
+    if (timeRange === 'today' || timeRange === 'yesterday') {
       // Show single day
-      const targetDate = selectedDate ? new Date(selectedDate) : new Date();
+      const targetDate = timeRange === 'yesterday'
+        ? new Date(new Date().setDate(new Date().getDate() - 1))
+        : new Date();
       const dateKey = targetDate.toLocaleDateString("vi-VN", { day: '2-digit', month: '2-digit' });
       const revenue = bills.reduce((sum, b) => sum + (b.totalAmount || 0), 0);
       return [{ date: dateKey, revenue }];
-    } else if (timeRange === 'week') {
-      // Show last 7 days
+    } else if (timeRange === 'week' || timeRange === 'last-week') {
+      // Show 7 days of selected week
       const now = new Date();
-      const last7Days = Array.from({ length: 7 }, (_, i) => {
+      const dayOfWeek = now.getDay() || 7;
+      const offset = timeRange === 'last-week' ? 7 : 0;
+      const weekDays = Array.from({ length: 7 }, (_, i) => {
         const d = new Date(now);
-        d.setDate(now.getDate() - (6 - i));
+        d.setDate(now.getDate() - dayOfWeek - offset + i + 1);
         return d;
       });
       const revenueByDay: Record<string, number> = {};
@@ -232,18 +376,38 @@ export default function AdminDashboard() {
           revenueByDay[dateKey] = (revenueByDay[dateKey] || 0) + (bill.totalAmount || 0);
         }
       });
-      return last7Days.map(d => {
+      return weekDays.map(d => {
         const dateKey = d.toLocaleDateString("vi-VN", { day: '2-digit', month: '2-digit' });
         return { date: dateKey, revenue: revenueByDay[dateKey] || 0 };
       });
-    } else if (timeRange === 'month') {
+    } else if (timeRange === 'month' || timeRange === 'last-month') {
+      // Show days in selected month
+      const now = new Date();
+      const targetMonth = timeRange === 'month' 
+        ? new Date(now.getFullYear(), now.getMonth(), 1)
+        : new Date(now.getFullYear(), now.getMonth() - 1, 1);
+      const daysInMonth = new Date(targetMonth.getFullYear(), targetMonth.getMonth() + 1, 0).getDate();
+      const revenueByDay: Record<string, number> = {};
+      bills.forEach((bill) => {
+        const ts = (bill.completedAt as unknown as { toDate?: () => Date })?.toDate?.();
+        if (ts) {
+          const dateKey = ts.toLocaleDateString("vi-VN", { day: '2-digit', month: '2-digit' });
+          revenueByDay[dateKey] = (revenueByDay[dateKey] || 0) + (bill.totalAmount || 0);
+        }
+      });
+      return Array.from({ length: daysInMonth }, (_, i) => {
+        const day = new Date(targetMonth.getFullYear(), targetMonth.getMonth(), i + 1);
+        const dateKey = day.toLocaleDateString("vi-VN", { day: '2-digit', month: '2-digit' });
+        return { date: dateKey, revenue: revenueByDay[dateKey] || 0 };
+      });
+    } else if (timeRange === 'year' || timeRange === 'last-year') {
       // Show all 12 months
       const now = new Date();
-      const currentYear = now.getFullYear();
+      const targetYear = timeRange === 'year' ? now.getFullYear() : now.getFullYear() - 1;
       const revenueByMonth: Record<number, number> = {};
       bills.forEach((bill) => {
         const ts = (bill.completedAt as unknown as { toDate?: () => Date })?.toDate?.();
-        if (ts && ts.getFullYear() === currentYear) {
+        if (ts && ts.getFullYear() === targetYear) {
           const month = ts.getMonth();
           revenueByMonth[month] = (revenueByMonth[month] || 0) + (bill.totalAmount || 0);
         }
@@ -276,16 +440,40 @@ export default function AdminDashboard() {
 
   // Max value and chart title based on timeRange
   const chartConfig = useMemo(() => {
-    if (timeRange === 'today' || selectedDate) {
+    if (timeRange === 'today') {
       return { max: 2000000, title: 'Doanh Thu Hôm Nay', threshold: 2000000 };
     }
+    if (timeRange === 'yesterday') {
+      return { max: 2000000, title: 'Doanh Thu Hôm Qua', threshold: 2000000 };
+    }
     if (timeRange === 'week') {
-      return { max: 15000000, title: 'Doanh Thu Tuần Này', threshold: 2000000 }; // 2tr/ngày
+      return { max: 15000000, title: 'Doanh Thu Tuần Này', threshold: 2000000 };
+    }
+    if (timeRange === 'last-week') {
+      return { max: 15000000, title: 'Doanh Thu Tuần Trước', threshold: 2000000 };
     }
     if (timeRange === 'month') {
-      return { max: 50000000, title: 'Doanh Thu Tháng Này', threshold: 50000000 }; // 50tr/tháng
+      return { max: 50000000, title: 'Doanh Thu Tháng Này', threshold: 50000000 };
     }
-    return { max: undefined, title: 'Doanh Thu 5 Năm Gần Nhất', threshold: 50000000 * 12 }; // 600tr/năm
+    if (timeRange === 'last-month') {
+      return { max: 50000000, title: 'Doanh Thu Tháng Trước', threshold: 50000000 };
+    }
+    if (timeRange === 'year') {
+      return { max: undefined, title: 'Doanh Thu Năm Nay', threshold: 50000000 * 12 };
+    }
+    if (timeRange === 'last-year') {
+      return { max: undefined, title: 'Doanh Thu Năm Trước', threshold: 50000000 * 12 };
+    }
+    if (selectedDate) {
+      const date = new Date(selectedDate);
+      // Nếu là ngày 1, hiển thị tên tháng
+      if (date.getDate() === 1) {
+        const monthName = date.toLocaleDateString('vi-VN', { month: 'long', year: 'numeric' });
+        return { max: 50000000, title: `Doanh Thu ${monthName}`, threshold: 50000000 };
+      }
+      return { max: 2000000, title: `Doanh Thu ${date.toLocaleDateString('vi-VN')}`, threshold: 2000000 };
+    }
+    return { max: undefined, title: 'Doanh Thu', threshold: 50000000 * 12 };
   }, [timeRange, selectedDate]);
 
   // Pie chart data - Orders by type distribution
@@ -311,30 +499,58 @@ export default function AdminDashboard() {
           </p>
         </div>
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+          {/* Ngày */}
           <select
-            aria-label="Chọn khoảng thời gian"
-            value={timeRange}
-            onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-              setTimeRange(
-                e.target.value as "today" | "week" | "month" | "year"
-              );
-              setSelectedDate(""); // reset date khi chọn lại dropdown
-            }}
-            className="px-3 py-2 text-sm border border-neutral-300 rounded-lg bg-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500 w-full sm:w-auto"
+            value={["today", "yesterday"].includes(timeRange) ? timeRange : ""}
+            onChange={(e) => { if (e.target.value) { setTimeRange(e.target.value as any); setSelectedDate(""); setDrillHistory([]); } }}
+            className="px-3 py-2 text-sm border border-neutral-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           >
+            <option value="" disabled>Ngày</option>
             <option value="today">Hôm nay</option>
-            <option value="week">Tuần này</option>
-            <option value="month">Tháng này</option>
-            <option value="year">Năm này</option>
+            <option value="yesterday">Hôm qua</option>
           </select>
+
+          {/* Tuần */}
+          <select
+            value={["week", "last-week"].includes(timeRange) ? timeRange : ""}
+            onChange={(e) => { if (e.target.value) { setTimeRange(e.target.value as any); setSelectedDate(""); setDrillHistory([]); } }}
+            className="px-3 py-2 text-sm border border-neutral-300 rounded-lg bg-white focus:ring-2 focus:ring-green-500 focus:border-green-500"
+          >
+            <option value="" disabled>Tuần</option>
+            <option value="week">Tuần này</option>
+            <option value="last-week">Tuần trước</option>
+          </select>
+
+          {/* Tháng */}
+          <select
+            value={["month", "last-month"].includes(timeRange) ? timeRange : ""}
+            onChange={(e) => { if (e.target.value) { setTimeRange(e.target.value as any); setSelectedDate(""); setDrillHistory([]); } }}
+            className="px-3 py-2 text-sm border border-neutral-300 rounded-lg bg-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+          >
+            <option value="" disabled>Tháng</option>
+            <option value="month">Tháng này</option>
+            <option value="last-month">Tháng trước</option>
+          </select>
+
+          {/* Năm */}
+          <select
+            value={["year", "last-year"].includes(timeRange) ? timeRange : ""}
+            onChange={(e) => { if (e.target.value) { setTimeRange(e.target.value as any); setSelectedDate(""); setDrillHistory([]); } }}
+            className="px-3 py-2 text-sm border border-neutral-300 rounded-lg bg-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+          >
+            <option value="" disabled>Năm</option>
+            <option value="year">Năm này</option>
+            <option value="last-year">Năm trước</option>
+          </select>
+
           <input
             type="date"
             value={selectedDate}
             onChange={(e) => setSelectedDate(e.target.value)}
-            className="px-3 py-2 text-sm border border-neutral-300 rounded-lg bg-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500 w-full sm:w-auto"
+            className="px-3 py-2 text-sm border border-neutral-300 rounded-lg bg-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
             max={new Date().toISOString().slice(0, 10)}
           />
-          <button className="btn-primary text-sm px-4 py-2 w-full sm:w-auto">
+          <button className="btn-primary text-sm px-4 py-2">
             <svg
               className="w-4 h-4 inline mr-2"
               fill="none"
@@ -442,11 +658,42 @@ export default function AdminDashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Bar Chart - Revenue */}
         <div className="card p-6">
-          <h3 className="text-lg font-bold text-neutral-800 mb-4">📊 {chartConfig.title}</h3>
+          <div className="mb-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-bold text-neutral-800">📊 {chartConfig.title}</h3>
+              {drillHistory.length > 0 && (
+                <button
+                  onClick={handleBack}
+                  className="flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-neutral-700 bg-neutral-100 hover:bg-neutral-200 rounded-lg transition-colors"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                  </svg>
+                  Quay lại
+                </button>
+              )}
+            </div>
+            {(timeRange === 'year' || timeRange === 'last-year') && (
+              <p className="text-xs text-neutral-500 mt-1">💡 Click vào tháng để xem chi tiết các ngày</p>
+            )}
+            {(timeRange === 'month' || timeRange === 'last-month' || (selectedDate && new Date(selectedDate).getDate() === 1)) && (
+              <p className="text-xs text-neutral-500 mt-1">💡 Click vào ngày để xem chi tiết ngày đó</p>
+            )}
+          </div>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={revenueChartData} barSize={60}>
+            <BarChart 
+              data={revenueChartData} 
+              barSize={60}
+            >
               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-              <XAxis dataKey="date" tick={{ fontSize: 12 }} stroke="#6b7280" />
+              <XAxis 
+                dataKey="date" 
+                tick={{ fontSize: 10 }} 
+                stroke="#6b7280"
+                angle={-45}
+                textAnchor="end"
+                height={80}
+              />
               <YAxis 
                 tick={{ fontSize: 11 }} 
                 stroke="#6b7280"
@@ -461,9 +708,63 @@ export default function AdminDashboard() {
                 dataKey="revenue" 
                 radius={[8, 8, 0, 0]}
                 fill="#3b82f6"
+                cursor="pointer"
+                onClick={(data: any) => {
+                  console.log('Bar clicked!', data);
+                  if (data && data.date) {
+                    const clickedDate = data.date;
+                    
+                    // Nếu đang lọc theo năm (hiển thị tháng), click vào tháng để xem chi tiết tháng đó
+                    if (timeRange === 'year' || timeRange === 'last-year') {
+                      const monthMatch = clickedDate.match(/Tháng (\d+)/);
+                      if (monthMatch) {
+                        const monthNum = parseInt(monthMatch[1]);
+                        const now = new Date();
+                        const currentYear = now.getFullYear();
+                        const clickedYear = timeRange === 'year' ? currentYear : currentYear - 1;
+                        
+                        // Save current state to history
+                        const newHistory = [...drillHistory, { timeRange, selectedDate }];
+                        
+                        // Set ngày đầu tháng để trigger xem tháng đó
+                        const targetDate = new Date(clickedYear, monthNum - 1, 1);
+                        const dateStr = targetDate.toISOString().slice(0, 10);
+                        console.log('Drilling into month:', monthNum, 'Date:', dateStr);
+                        
+                        // Update both states together
+                        setDrillHistory(newHistory);
+                        setSelectedDate(dateStr);
+                      }
+                    }
+                    // Nếu đang lọc theo tháng (hiển thị ngày), click vào ngày để xem chi tiết ngày đó
+                    else if (timeRange === 'month' || timeRange === 'last-month' || (selectedDate && new Date(selectedDate).getDate() === 1)) {
+                      // clickedDate format: "01/11" -> convert to full date
+                      const [day, month] = clickedDate.split('/');
+                      if (day && month) {
+                        // Save current state to history
+                        const newHistory = [...drillHistory, { timeRange, selectedDate }];
+                        
+                        const year = timeRange === 'month' 
+                          ? new Date().getFullYear()
+                          : timeRange === 'last-month'
+                          ? new Date().getMonth() === 0 ? new Date().getFullYear() - 1 : new Date().getFullYear()
+                          : selectedDate ? new Date(selectedDate).getFullYear() : new Date().getFullYear();
+                        const targetDate = new Date(year, parseInt(month) - 1, parseInt(day));
+                        const dateStr = targetDate.toISOString().slice(0, 10);
+                        console.log('Drilling into day:', day, '/', month, 'Date:', dateStr);
+                        
+                        setDrillHistory(newHistory);
+                        setSelectedDate(dateStr);
+                      }
+                    }
+                  }
+                }}
               >
                 {revenueChartData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.revenue >= chartConfig.threshold ? '#10b981' : '#3b82f6'} />
+                  <Cell 
+                    key={`cell-${index}`} 
+                    fill={entry.revenue >= chartConfig.threshold ? '#10b981' : '#3b82f6'}
+                  />
                 ))}
               </Bar>
             </BarChart>
@@ -547,11 +848,19 @@ export default function AdminDashboard() {
               ? `Đơn Hàng Ngày ${new Date(selectedDate).toLocaleDateString("vi-VN")}`
               : timeRange === "today"
               ? "Đơn Hàng Hôm Nay"
+              : timeRange === "yesterday"
+              ? "Đơn Hàng Hôm Qua"
               : timeRange === "week"
               ? "Đơn Hàng Tuần Này"
+              : timeRange === "last-week"
+              ? "Đơn Hàng Tuần Trước"
               : timeRange === "month"
               ? "Đơn Hàng Tháng Này"
-              : "Đơn Hàng Năm Này"}
+              : timeRange === "last-month"
+              ? "Đơn Hàng Tháng Trước"
+              : timeRange === "year"
+              ? "Đơn Hàng Năm Này"
+              : "Đơn Hàng Năm Trước"}
           </h3>
         </div>
         <div className="space-y-4">

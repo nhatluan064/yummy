@@ -203,6 +203,21 @@ export default function ManageOrdersPage() {
   // Get unique categories
   const categories = ["all", ...Array.from(new Set(menuItems.map(item => item.category)))];
   
+  // Map category code to Vietnamese name
+  const getCategoryName = (cat: string) => {
+    const categoryMap: Record<string, string> = {
+      "all": "Tất cả",
+      "an-vat": "Ăn vặt",
+      "coffee": "Coffee",
+      "hu-tieu": "Hủ tiếu",
+      "mi-cay": "Mì cay",
+      "milk-tea": "Trà - Trà sữa",
+      "nuoc-giai-khat": "Nước giải khát",
+      "rau-an-kem": "Rau ăn kèm"
+    };
+    return categoryMap[cat] || cat;
+  };
+  
   // Add item to cart
   const addToCart = (menuItem: WithId<MenuItem>) => {
     const existing = cart.find(item => item.menuItemId === menuItem.id);
@@ -365,8 +380,8 @@ export default function ManageOrdersPage() {
         orderData.orderType = "takeaway";
         orderData.customerName = "Khách mang đi";
       } else if (selectedType === "delivery") {
-        if (!deliveryForm.customerName || !deliveryForm.customerPhone) {
-          showToast("Vui lòng nhập đầy đủ thông tin!", 3000, "error");
+        if (!deliveryForm.customerName || !deliveryForm.customerPhone || !deliveryForm.address) {
+          showToast("Vui lòng nhập đầy đủ thông tin (Họ tên, SDT, Địa chỉ)!", 3000, "error");
           setLoading(false);
           return;
         }
@@ -598,7 +613,7 @@ export default function ManageOrdersPage() {
                       <h3 className="font-bold text-sm mb-2">Thông tin khách</h3>
                       <input type="text" placeholder="Họ tên *" value={deliveryForm.customerName} onChange={(e) => setDeliveryForm({...deliveryForm, customerName: e.target.value})} className="input w-full text-sm" />
                       <input type="text" placeholder="Số điện thoại *" value={deliveryForm.customerPhone} onChange={(e) => setDeliveryForm({...deliveryForm, customerPhone: e.target.value})} className="input w-full text-sm" />
-                      <input type="text" placeholder="Địa chỉ" value={deliveryForm.address} onChange={(e) => setDeliveryForm({...deliveryForm, address: e.target.value})} className="input w-full text-sm" />
+                      <input type="text" placeholder="Địa chỉ *" value={deliveryForm.address} onChange={(e) => setDeliveryForm({...deliveryForm, address: e.target.value})} className="input w-full text-sm" />
                     </div>
                   )}
                 </div>
@@ -665,7 +680,7 @@ export default function ManageOrdersPage() {
                     )}
                   </div>
                   <button onClick={submitOrder} disabled={loading || cart.length === 0} className="btn-primary w-full disabled:opacity-50">
-                    {loading ? "Đang xử lý..." : selectedType === "dine-in" ? `Orders (${cart.length})` : `Tạo đơn (${cart.length})`}
+                    {loading ? "Đang xử lý..." : `Orders (${cart.length})`}
                   </button>
                 </div>
               </div>
@@ -692,11 +707,11 @@ export default function ManageOrdersPage() {
                           <button
                             key={cat}
                             onClick={() => setSelectedCategory(cat)}
-                            className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap ${
-                              selectedCategory === cat ? "bg-primary-500 text-white" : "bg-neutral-100 hover:bg-neutral-200"
+                            className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
+                              selectedCategory === cat ? "bg-purple-600 text-white" : "bg-neutral-100 hover:bg-neutral-200 text-neutral-700"
                             }`}
                           >
-                            {cat === "all" ? "Tất cả" : cat}
+                            {getCategoryName(cat)}
                           </button>
                         ))}
                       </div>
