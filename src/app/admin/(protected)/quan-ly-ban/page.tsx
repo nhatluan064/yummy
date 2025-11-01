@@ -13,23 +13,17 @@ export default function TableManagementPage() {
   
   const toast = useToast();
 
-  // Load tables
-  const loadTables = useCallback(async () => {
-    try {
-      setLoading(true);
-      const data = await tableService.getAllTables();
-      setTables(data);
-    } catch (error) {
-      console.error("Error loading tables:", error);
-      toast.showToast("Không thể tải danh sách bàn", 3000, "error");
-    } finally {
-      setLoading(false);
-    }
-  }, [toast]);
-
+  // Subscribe to real-time table updates
   useEffect(() => {
-    loadTables();
-  }, [loadTables]);
+    setLoading(true);
+    
+    const unsubscribe = tableService.subscribeToTables((updatedTables) => {
+      setTables(updatedTables);
+      setLoading(false);
+    });
+    
+    return () => unsubscribe();
+  }, []);
 
   // Tạo bàn mới
   const handleCreateTable = async () => {
@@ -49,7 +43,7 @@ export default function TableManagementPage() {
       toast.showToast(`Đã tạo bàn ${newTableNumber}`, 2000, "success");
       setNewTableNumber("");
       setShowAddModal(false);
-      loadTables();
+      // No need to reload, subscription will auto-update
     } catch (error) {
       console.error("Error creating table:", error);
       toast.showToast("Không thể tạo bàn", 3000, "error");
@@ -64,7 +58,7 @@ export default function TableManagementPage() {
       if (table.id) {
         await tableService.deleteTable(table.id);
         toast.showToast(`Đã xóa ${table.tableNumber}`, 2000, "success");
-        loadTables();
+        // No need to reload, subscription will auto-update
       }
     } catch (error) {
       console.error("Error deleting table:", error);
@@ -91,7 +85,7 @@ export default function TableManagementPage() {
       toast.showToast("Đã cập nhật số bàn", 2000, "success");
       setEditingTable(null);
       setEditTableNumber("");
-      loadTables();
+      // No need to reload, subscription will auto-update
     } catch (error) {
       console.error("Error updating table:", error);
       toast.showToast("Không thể cập nhật bàn", 3000, "error");

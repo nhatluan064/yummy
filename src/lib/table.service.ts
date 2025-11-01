@@ -8,6 +8,7 @@ import {
   Timestamp,
   query,
   orderBy,
+  onSnapshot,
 } from "firebase/firestore";
 import { db } from "./firebase";
 
@@ -40,10 +41,40 @@ export const tableService = {
   async getAllTables(): Promise<Table[]> {
     const q = query(collection(db, COLLECTION_NAME), orderBy("tableNumber", "asc"));
     const snapshot = await getDocs(q);
-    return snapshot.docs.map((doc) => ({
+    const tables = snapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
     })) as Table[];
+    
+    // Sort by number extracted from tableNumber
+    return tables.sort((a, b) => {
+      const numA = parseInt(a.tableNumber.replace(/\D/g, ''), 10) || 0;
+      const numB = parseInt(b.tableNumber.replace(/\D/g, ''), 10) || 0;
+      return numA - numB;
+    });
+  },
+
+  // Subscribe to real-time updates for all tables
+  subscribeToTables(callback: (tables: Table[]) => void): () => void {
+    const q = query(collection(db, COLLECTION_NAME), orderBy("tableNumber", "asc"));
+    
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const tables = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      })) as Table[];
+      
+      // Sort by number extracted from tableNumber
+      const sortedTables = tables.sort((a, b) => {
+        const numA = parseInt(a.tableNumber.replace(/\D/g, ''), 10) || 0;
+        const numB = parseInt(b.tableNumber.replace(/\D/g, ''), 10) || 0;
+        return numA - numB;
+      });
+      
+      callback(sortedTables);
+    });
+    
+    return unsubscribe;
   },
 
   // Cập nhật trạng thái bàn

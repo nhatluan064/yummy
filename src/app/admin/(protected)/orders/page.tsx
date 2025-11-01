@@ -319,7 +319,7 @@ export default function OrdersPage() {
           return (
           <div key={dateKey} className="space-y-4">
             {/* Date Header */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3">
               <button
                 onClick={() => toggleDateExpand(dateKey)}
                 className="p-1 hover:bg-neutral-100 rounded transition-colors"
@@ -334,15 +334,15 @@ export default function OrdersPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
               </button>
-              <h2 className="text-xl font-bold text-neutral-800">
+              <h2 className="text-sm sm:text-base font-bold text-neutral-800">
                 {formatDateHeader(dateKey)}
               </h2>
               <div className="flex-1 h-px bg-neutral-200"></div>
-              <div className="flex items-center gap-3">
-                <span className="text-sm text-neutral-500 bg-neutral-100 px-3 py-1.5 rounded-full">
+              <div className="flex items-center gap-1.5 sm:gap-3">
+                <span className="text-[10px] sm:text-xs text-neutral-500 bg-neutral-100 px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-full whitespace-nowrap">
                   {groupedOrders[dateKey].length} đơn hàng
                 </span>
-                <span className="text-base font-bold text-primary-600 bg-primary-50 px-4 py-1.5 rounded-full border border-primary-200">
+                <span className="text-xs sm:text-sm font-bold text-primary-600 bg-primary-50 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full border border-primary-200 whitespace-nowrap">
                   {dateTotal.toLocaleString()}₫
                 </span>
               </div>

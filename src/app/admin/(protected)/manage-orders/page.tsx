@@ -59,9 +59,16 @@ export default function ManageOrdersPage() {
     address: ""
   });
 
-  // Load tables and menu
+  // Load menu and subscribe to tables
   useEffect(() => {
-    loadData();
+    loadMenu();
+    
+    // Subscribe to real-time table updates
+    const unsubscribe = tableService.subscribeToTables((updatedTables) => {
+      setTables(updatedTables);
+    });
+    
+    return () => unsubscribe();
   }, []);
   
   // Persist draftOrders to localStorage whenever it changes
@@ -71,16 +78,12 @@ export default function ManageOrdersPage() {
     }
   }, [draftOrders]);
   
-  const loadData = async () => {
+  const loadMenu = async () => {
     try {
-      const [tablesData, menuData] = await Promise.all([
-        tableService.getAllTables(),
-        menuService.getAll()
-      ]);
-      setTables(tablesData);
+      const menuData = await menuService.getAll();
       setMenuItems(menuData);
     } catch (error) {
-      console.error("Error loading data:", error);
+      console.error("Error loading menu:", error);
     }
   };
   
