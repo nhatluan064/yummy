@@ -38,7 +38,7 @@ export default function MenuPage() {
     "all" | "bestSeller" | "new"
   >("all");
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 9;
+  const itemsPerPage = 15;
   const [showFilters, setShowFilters] = useState(false);
 
   // Review Modal State
@@ -91,7 +91,7 @@ export default function MenuPage() {
 
   // Filter, search, sort menuData
   useEffect(() => {
-    let filtered = menuData.filter((item) => item.available);
+    let filtered = menuData; // Show all items including out of stock
     if (selectedCategory !== "all") {
       filtered = filtered.filter((item) => item.category === selectedCategory);
     }
@@ -229,12 +229,12 @@ export default function MenuPage() {
                 onChange={(e) => setSelectedCategory(e.target.value)}
                 className="px-3 py-2 text-sm border border-neutral-200 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white font-medium"
               >
-              <option value="all">📂 Tất cả danh mục ({menuData.filter(i => i.available).length})</option>
+              <option value="all">📂 Tất cả danh mục ({menuData.length})</option>
               <optgroup label="🍜 Đồ Ăn">
                 {categories
                   .filter((cat) => ["mi-cay", "an-vat", "hu-tieu", "rau-an-kem"].includes(cat.id))
                   .map((cat) => {
-                    const count = menuData.filter(i => i.available && i.category === cat.id).length;
+                    const count = menuData.filter(i => i.category === cat.id).length;
                     return (
                       <option key={cat.id} value={cat.id}>
                         {cat.icon} {cat.name} ({count})
@@ -246,7 +246,7 @@ export default function MenuPage() {
                 {categories
                   .filter((cat) => ["coffee", "milk-tea", "sua-chua", "nuoc-giai-khat"].includes(cat.id))
                   .map((cat) => {
-                    const count = menuData.filter(i => i.available && i.category === cat.id).length;
+                    const count = menuData.filter(i => i.category === cat.id).length;
                     return (
                       <option key={cat.id} value={cat.id}>
                         {cat.icon} {cat.name} ({count})
@@ -315,7 +315,7 @@ export default function MenuPage() {
         <div className="container-custom">
           {filteredMenuData.length > 0 ? (
             <>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
                 {filteredMenuData
                   .slice(
                     (currentPage - 1) * itemsPerPage,

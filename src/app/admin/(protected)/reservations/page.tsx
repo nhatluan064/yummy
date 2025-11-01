@@ -65,7 +65,7 @@ export default function AdminReservationsPage() {
       <div className="flex items-center justify-between mb-4">
         <div>
           <h1 className="text-2xl font-bold text-neutral-800">
-            Quản Lý Đặt Bàn
+            Quản lý Đặt bàn & Liên hệ
           </h1>
           <p className="text-neutral-600 mt-1">
             Xem và quản lý các đơn đặt bàn của khách hàng

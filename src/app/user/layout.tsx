@@ -1,5 +1,6 @@
 // src/app/user/layout.tsx
 import Header from "@/app/components/Header";
+import Footer from "@/app/components/Footer";
 import { ToastProvider } from "@/app/components/Toast";
 
 export default function UserLayout({
@@ -11,6 +12,7 @@ export default function UserLayout({
     <ToastProvider>
       <Header mode="user" />
       <main>{children}</main>
+      <Footer />
     </ToastProvider>
   );
 }

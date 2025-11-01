@@ -12,7 +12,7 @@ export default function UserLocationPage() {
   }, []);
 
   return (
-    <div className="fixed inset-0 top-20 w-full h-[calc(100vh-5rem)] overflow-hidden">
+    <div className="relative w-full h-[calc(100vh-73px)] -mb-px">
       {/* Full Screen Google Maps - Pushed right to accommodate sidebar */}
       <div className="absolute inset-0 w-full h-full md:pl-[300px]">
         <iframe
@@ -28,7 +28,7 @@ export default function UserLocationPage() {
       </div>
 
       {/* Fixed Info Sidebar - Left Side, Below Header */}
-      <div className="fixed left-0 top-20 z-10 bg-white shadow-2xl h-[calc(100vh-5rem)] w-full md:w-[300px] overflow-y-auto p-4">
+      <div className="absolute left-0 top-0 z-10 bg-white shadow-2xl h-full w-full md:w-[300px] overflow-y-auto p-4">
         {/* Restaurant Image Section */}
         <div className="mb-4 -mx-4 -mt-4">
           <div className="relative w-full h-48 overflow-hidden">
@@ -46,7 +46,7 @@ export default function UserLocationPage() {
         {/* Location Section */}
         <div className="mb-4">
           <div className="flex items-center gap-2 mb-3">
-            <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-600 rounded-full flex items-center justify-center shadow-lg">
+            <div className="w-12 h-12 rounded-full flex items-center justify-center shadow-lg" style={{ backgroundColor: '#8B7CF6' }}>
               <svg
                 className="w-6 h-6 text-white"
                 fill="currentColor"
@@ -70,7 +70,7 @@ export default function UserLocationPage() {
         {/* Opening Hours Section */}
         <div className="mb-4">
           <div className="flex items-center gap-2 mb-3">
-            <div className="w-12 h-12 bg-gradient-to-br from-secondary-500 to-secondary-600 rounded-full flex items-center justify-center shadow-lg">
+            <div className="w-12 h-12 rounded-full flex items-center justify-center shadow-lg" style={{ backgroundColor: '#8B7CF6' }}>
               <svg
                 className="w-6 h-6 text-white"
                 fill="currentColor"
@@ -84,11 +84,11 @@ export default function UserLocationPage() {
           <div className="space-y-2 pl-15">
             <div className="flex justify-between items-center">
               <span className="text-neutral-700 font-medium text-sm">Thứ 2 - Chủ Nhật:</span>
-              <span className="text-primary-600 font-bold text-sm">7:30 - 20:30</span>
+              <span className="font-bold text-sm" style={{ color: '#8B7CF6' }}>7:30 - 20:30</span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-neutral-700 font-medium text-sm">Các ngày lễ:</span>
-              <span className="text-primary-600 font-bold text-sm">7:30 - 20:30</span>
+              <span className="font-bold text-sm" style={{ color: '#8B7CF6' }}>7:30 - 20:30</span>
             </div>
           </div>
         </div>
@@ -99,7 +99,7 @@ export default function UserLocationPage() {
         {/* Contact Info */}
         <div>
           <div className="flex items-center gap-2 mb-3">
-            <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center shadow-lg">
+            <div className="w-12 h-12 rounded-full flex items-center justify-center shadow-lg" style={{ backgroundColor: '#8B7CF6' }}>
               <svg
                 className="w-6 h-6 text-white"
                 fill="currentColor"
@@ -115,14 +115,15 @@ export default function UserLocationPage() {
               <p className="text-neutral-700 font-medium mb-1 text-sm">Số điện thoại (Di động) - (Zalo):</p>
               <a
                 href="tel:0988994799"
-                className="text-base font-bold text-primary-600 hover:text-primary-700 transition-colors"
+                className="text-base font-bold hover:underline transition-colors"
+                style={{ color: '#8B7CF6' }}
               >
                 0988 994 799
               </a>
             </div>
             <div>
               <p className="text-neutral-700 font-medium mb-1 text-sm">Facebook:</p>
-              <a href="https://www.facebook.com/dieu.hien.169" target="_blank" rel="noopener noreferrer" className="text-primary-600 text-base font-bold hover:text-primary-700">Diệu Hiền</a>
+              <a href="https://www.facebook.com/dieu.hien.169" target="_blank" rel="noopener noreferrer" className="text-base font-bold hover:underline" style={{ color: '#1877F2' }}>Diệu Hiền</a>
             </div>
           </div>
         </div>

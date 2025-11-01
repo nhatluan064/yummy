@@ -355,7 +355,7 @@ export default function MenuManagementPage() {
     <div className="space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-bold text-neutral-800">Quản Lý Dữ Liệu</h1>
+        <h1 className="text-xl font-bold text-neutral-800">Quản lý thực đơn</h1>
         <button
           onClick={activeTab === "menu" ? openAddModal : openAddCategoryModal}
           className="btn-primary px-3 py-2 text-sm"
@@ -460,14 +460,14 @@ export default function MenuManagementPage() {
           </div>
 
           {/* Menu Items Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3">
             {filteredItems.map((item) => (
               <div
                 key={item.id}
                 className="card overflow-hidden hover:shadow-xl transition-all duration-300 group"
               >
                 {/* Image */}
-                <div className="relative h-48 overflow-hidden bg-neutral-200">
+                <div className="relative h-32 overflow-hidden bg-neutral-200">
                   <Image
                     src={
                       item.image ||
@@ -479,19 +479,12 @@ export default function MenuManagementPage() {
                     unoptimized
                   />
                   {item.bestSeller && (
-                    <div className="absolute top-12 left-3 bg-yellow-500 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center space-x-1">
-                      <svg
-                        className="w-3 h-3"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
-                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                      </svg>
-                      <span>Best Seller</span>
+                    <div className="absolute top-2 left-2 bg-yellow-500 text-white px-2 py-0.5 rounded-full text-[10px] font-bold flex items-center space-x-0.5">
+                      <span>⭐</span>
                     </div>
                   )}
                   <div
-                    className={`absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-bold ${
+                    className={`absolute top-2 right-2 px-2 py-0.5 rounded-full text-[10px] font-bold ${
                       item.available
                         ? "bg-green-500 text-white"
                         : "bg-neutral-500 text-white"
@@ -500,48 +493,41 @@ export default function MenuManagementPage() {
                     {item.available ? "Còn món" : "Hết món"}
                   </div>
                   {item.isNew && (
-                    <div className="absolute top-12 right-3 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center space-x-1">
-                      <svg
-                        className="w-3 h-3"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
-                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                      <span>Mới</span>
+                    <div className="absolute top-8 right-2 bg-green-500 text-white px-2 py-0.5 rounded-full text-[10px] font-bold flex items-center space-x-0.5">
+                      <span>✨</span>
                     </div>
                   )}
                 </div>
 
                 {/* Content */}
-                <div className="p-4">
+                <div className="p-2.5">
                   <div className="flex items-start justify-between mb-2">
                     <div className="flex-1">
-                      <h3 className="text-lg font-bold text-neutral-800 mb-1">
+                      <h3 className="text-sm font-bold text-neutral-800 mb-1 line-clamp-1">
                         {item.name}
                       </h3>
-                      <span className="text-xs text-neutral-500 bg-neutral-100 px-2 py-1 rounded">
+                      <span className="text-[10px] text-neutral-500 bg-neutral-100 px-1.5 py-0.5 rounded">
                         {item.categoryName || item.category}
                       </span>
                     </div>
                   </div>
 
-                  <p className="text-sm text-neutral-600 mb-3 line-clamp-2">
+                  <p className="text-xs text-neutral-600 mb-1.5 line-clamp-1">
                     {item.description || ""}
                   </p>
 
-                  <div className="flex items-center justify-between pt-3 border-t border-neutral-200">
-                    <span className="text-xl font-bold text-primary-600">
+                  <div className="flex items-center justify-between pt-1.5 border-t border-neutral-200">
+                    <span className="text-base font-bold text-primary-600">
                       {item.price.toLocaleString()}₫
                     </span>
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center space-x-1">
                       <button
                         onClick={() => openEditModal(item)}
-                        className="p-2 hover:bg-primary-50 text-primary-600 rounded-lg transition-colors"
+                        className="p-1.5 hover:bg-primary-50 text-primary-600 rounded-lg transition-colors"
                         title="Sửa"
                       >
                         <svg
-                          className="w-5 h-5"
+                          className="w-4 h-4"
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
@@ -556,7 +542,7 @@ export default function MenuManagementPage() {
                       </button>
                       <button
                         onClick={() => toggleAvailability(item.id)}
-                        className={`p-2 rounded-lg transition-colors ${
+                        className={`p-1.5 rounded-lg transition-colors ${
                           item.available
                             ? "hover:bg-red-50 text-red-600"
                             : "hover:bg-green-50 text-green-600"
@@ -568,7 +554,7 @@ export default function MenuManagementPage() {
                         }
                       >
                         <svg
-                          className="w-5 h-5"
+                          className="w-4 h-4"
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
@@ -592,11 +578,11 @@ export default function MenuManagementPage() {
                       </button>
                       <button
                         onClick={() => deleteDish(item.id)}
-                        className="p-2 hover:bg-red-50 text-red-600 rounded-lg transition-colors"
+                        className="p-1.5 hover:bg-red-50 text-red-600 rounded-lg transition-colors"
                         title="Xóa"
                       >
                         <svg
-                          className="w-5 h-5"
+                          className="w-4 h-4"
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"

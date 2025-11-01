@@ -12,6 +12,7 @@ export default function ProtectedAdminLayout({
   children: React.ReactNode;
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [advancedMenuOpen, setAdvancedMenuOpen] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
   const [adminUser, setAdminUser] = useState<{
@@ -97,7 +98,7 @@ export default function ProtectedAdminLayout({
     return () => clearInterval(interval);
   }, []);
 
-  const navigation = [
+  const mainNavigation = [
     {
       name: "Tổng quan",
       href: "/admin/dashboard",
@@ -137,8 +138,8 @@ export default function ProtectedAdminLayout({
       ),
     },
     {
-      name: "Quản lý thực đơn",
-      href: "/admin/menu",
+      name: "Quản lý Orders",
+      href: "/admin/manage-orders",
       icon: (
         <svg
           className="w-4 h-4"
@@ -150,70 +151,13 @@ export default function ProtectedAdminLayout({
             strokeLinecap="round"
             strokeLinejoin="round"
             strokeWidth={2}
-            d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"
           />
         </svg>
       ),
     },
     {
-      name: "Quản lý Feedback",
-      href: "/admin/feedback",
-      icon: (
-        <svg
-          className="w-4 h-4"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
-          />
-        </svg>
-      ),
-    },
-    {
-      name: "Quản lý Đặt bàn & Liên hệ",
-      href: "/admin/reservations",
-      icon: (
-        <svg
-          className="w-4 h-4"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-          />
-        </svg>
-      ),
-    },
-    {
-      name: "Quản lý Tạo bàn",
-      href: "/admin/quan-ly-ban",
-      icon: (
-        <svg
-          className="w-4 h-4"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
-          />
-        </svg>
-      ),
-    },
-    {
-      name: "Quản lý Orders gửi Bếp",
+      name: "Quản lý Bill gửi Bếp",
       href: "/admin/kitchen",
       icon: (
         <svg
@@ -237,41 +181,43 @@ export default function ProtectedAdminLayout({
         </svg>
       ),
     },
+  ];
+
+  // Advanced navigation items (grouped under dropdown)
+  const advancedNavigation = [
     {
-      name: "Quản lý Nâng cao",
-      href: "/admin/data-management",
+      name: "Quản lý thực đơn",
+      href: "/admin/menu",
       icon: (
-        <svg
-          className="w-4 h-4"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"
-          />
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
         </svg>
       ),
     },
     {
-      name: "Quản lý Dữ liệu",
-      href: "/admin/data-cleanup",
+      name: "Quản lý Feedback",
+      href: "/admin/feedback",
       icon: (
-        <svg
-          className="w-4 h-4"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-          />
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+        </svg>
+      ),
+    },
+    {
+      name: "Quản lý Đặt bàn & Liên hệ",
+      href: "/admin/reservations",
+      icon: (
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
+      ),
+    },
+    {
+      name: "Quản lý Tạo bàn",
+      href: "/admin/quan-ly-ban",
+      icon: (
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
         </svg>
       ),
     },
@@ -292,22 +238,26 @@ export default function ProtectedAdminLayout({
         )}
         {/* Sidebar */}
         <aside
-          className={`fixed top-0 left-0 z-40 h-screen transition-transform w-56 bg-gradient-to-b from-secondary-600 to-secondary-700 shadow-2xl md:translate-x-0 ${
+          className={`fixed top-0 left-0 z-40 h-screen transition-transform w-64 bg-gradient-to-b from-secondary-600 to-secondary-700 shadow-2xl md:translate-x-0 ${
             sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
           } flex flex-col`}
         >
           {/* Logo */}
           <div className="p-4 border-b border-secondary-500">
             <Link
-              href="/admin/dashboard"
+              href="/admin/manage-orders"
               className="flex flex-col items-center space-y-1.5"
             >
               <div className="w-12 h-12 aspect-square bg-primary-500 rounded-full flex items-center justify-center overflow-hidden shadow-lg">
                 <span className="text-white font-bold text-2xl">🍜</span>
               </div>
               <div className="text-center">
-                <h1 className="text-white font-bold text-base">Mi cay yummy</h1>
-                <p className="text-accent-200 text-[10px] mt-0.5">Quản lý nhà hàng</p>
+                <h1 className="text-white font-bold text-base">Mì cay Yummy</h1>
+                <p className="text-accent-200 text-[9px] mt-0.5 leading-tight">
+                  588/6 Cách Mạng Tháng 8<br />
+                  Phường Bà Rịa, TP.HCM<br />
+                  Việt Nam
+                </p>
               </div>
             </Link>
           </div>
@@ -330,13 +280,14 @@ export default function ProtectedAdminLayout({
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
               </svg>
-              <span className="font-medium text-sm">Xem Website</span>
+              <span className="font-medium text-xs">Xem Website</span>
             </Link>
 
             {/* Separator */}
             <div className="border-t border-secondary-500 my-2"></div>
 
-            {navigation.map((item) => (
+            {/* Main Navigation */}
+            {mainNavigation.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}
@@ -348,7 +299,7 @@ export default function ProtectedAdminLayout({
                 onClick={() => setSidebarOpen(false)}
               >
                 <span
-                  className={`$${
+                  className={`${
                     isActive(item.href)
                       ? "text-white"
                       : "text-accent-200 group-hover:text-white"
@@ -356,9 +307,65 @@ export default function ProtectedAdminLayout({
                 >
                   {item.icon}
                 </span>
-                <span className="font-medium text-sm">{item.name}</span>
+                <span className="font-medium text-xs">{item.name}</span>
               </Link>
             ))}
+
+            {/* Advanced Menu Dropdown */}
+            <div className="mt-1">
+              <button
+                onClick={() => setAdvancedMenuOpen(!advancedMenuOpen)}
+                className={`w-full flex items-center justify-between px-3 py-2 rounded-lg transition-all duration-200 group ${
+                  advancedNavigation.some(item => isActive(item.href))
+                    ? "bg-primary-500 text-white shadow-lg shadow-primary-500/50"
+                    : "text-accent-100 hover:bg-secondary-500 hover:text-white"
+                }`}
+              >
+                <div className="flex items-center space-x-2.5">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                  </svg>
+                  <span className="font-medium text-xs">Chức năng nâng cao</span>
+                </div>
+                <svg
+                  className={`w-4 h-4 transition-transform duration-200 ${advancedMenuOpen ? 'rotate-180' : ''}`}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              
+              {/* Dropdown Items */}
+              {advancedMenuOpen && (
+                <div className="mt-1 ml-4 space-y-1 border-l-2 border-secondary-500 pl-2">
+                  {advancedNavigation.map((item) => (
+                    <Link
+                      key={item.name}
+                      href={item.href}
+                      className={`flex items-center space-x-2.5 px-3 py-2 rounded-lg transition-all duration-200 group ${
+                        isActive(item.href)
+                          ? "bg-primary-500 text-white shadow-lg shadow-primary-500/50"
+                          : "text-accent-100 hover:bg-secondary-500 hover:text-white"
+                      }`}
+                      onClick={() => setSidebarOpen(false)}
+                    >
+                      <span
+                        className={`${
+                          isActive(item.href)
+                            ? "text-white"
+                            : "text-accent-200 group-hover:text-white"
+                        }`}
+                      >
+                        {item.icon}
+                      </span>
+                      <span className="font-medium text-xs">{item.name}</span>
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
           </nav>
 
           {/* User Info + Logout */}
@@ -381,7 +388,7 @@ export default function ProtectedAdminLayout({
 
         {/* Main Content */}
         <div
-          className={`transition-all duration-300 md:ml-56 ${
+          className={`transition-all duration-300 md:ml-64 ${
             sidebarOpen ? "overflow-hidden" : ""
           } min-h-screen bg-neutral-50`}
         >

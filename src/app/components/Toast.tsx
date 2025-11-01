@@ -26,12 +26,29 @@ export function ToastProvider({ children }: { children?: React.ReactNode }) {
   return (
     <ToastContext.Provider value={{ showToast }}>
       {children}
-      {/* Portal container */}
-      <div className="fixed inset-0 z-[9999] flex items-center justify-center pointer-events-none">
-        {toasts.map((t) => (
+      <style>{`
+        @keyframes slideDown {
+          from {
+            opacity: 0;
+            transform: translateY(-20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      `}</style>
+      {/* Portal container - Stack toasts vertically */}
+      <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[9999] flex flex-col gap-3 pointer-events-none">
+        {toasts.map((t, index) => (
           <div
             key={t.id}
-            className={`pointer-events-auto max-w-[90vw] w-full sm:w-[450px] px-6 py-5 rounded-2xl shadow-2xl text-white text-base font-semibold animate-fade-in-up ${
+            style={{ 
+              animation: 'slideDown 0.3s ease-out',
+              animationDelay: `${index * 0.1}s`,
+              animationFillMode: 'backwards'
+            }}
+            className={`pointer-events-auto max-w-[90vw] w-full sm:w-[450px] px-6 py-5 rounded-2xl shadow-2xl text-white text-base font-semibold ${
               t.type === "success" 
                 ? "bg-gradient-to-br from-green-500 to-green-600" 
                 : "bg-gradient-to-br from-red-500 to-red-600"

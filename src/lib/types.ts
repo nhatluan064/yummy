@@ -36,6 +36,7 @@ export interface Order {
   status: "pending" | "preparing" | "ready" | "completed" | "cancelled";
   notes?: string;
   orderCode?: string; // Human-friendly sequential code like #DONHANG-ORDER-001
+  orderType?: "dine-in" | "takeaway" | "delivery"; // Type of order
   createdAt?: Timestamp;
   updatedAt?: Timestamp;
 }

@@ -97,6 +97,11 @@ export default function AdminDashboard() {
     let label = "";
     const customers = new Set(bills.map((b) => b.customerName)).size;
     const now = new Date();
+    
+    // Đếm số lượng đơn hàng theo loại
+    const dineInOrders = orders.filter(o => o.orderType === "dine-in").length;
+    const takeawayOrders = orders.filter(o => o.orderType === "takeaway").length;
+    const deliveryOrders = orders.filter(o => o.orderType === "delivery").length;
     if (selectedDate) {
       // Tính doanh thu đúng ngày đã chọn
       const target = new Date(selectedDate);
@@ -188,6 +193,9 @@ export default function AdminDashboard() {
       totalReservations: reservations.length,
       totalContacts: contacts.length,
       customers,
+      dineInOrders,
+      takeawayOrders,
+      deliveryOrders,
     };
   }, [bills, orders, feedbacks, reservations, contacts, selectedDate, timeRange]);
 
@@ -200,28 +208,92 @@ export default function AdminDashboard() {
     });
   }, [bills]);
 
-  // Chart data - Daily revenue
-  const dailyRevenueData = useMemo(() => {
-    const revenueByDay: Record<string, number> = {};
-    bills.forEach((bill) => {
-      const ts = (bill.completedAt as unknown as { toDate?: () => Date })?.toDate?.();
-      if (ts) {
-        const dateKey = ts.toLocaleDateString("vi-VN", { day: '2-digit', month: '2-digit' });
-        revenueByDay[dateKey] = (revenueByDay[dateKey] || 0) + (bill.totalAmount || 0);
-      }
-    });
-    return Object.entries(revenueByDay)
-      .map(([date, revenue]) => ({ date, revenue }))
-      .slice(-7); // Last 7 days
-  }, [bills]);
+  // Chart data - Revenue by time range
+  const revenueChartData = useMemo(() => {
+    if (timeRange === 'today' || selectedDate) {
+      // Show single day
+      const targetDate = selectedDate ? new Date(selectedDate) : new Date();
+      const dateKey = targetDate.toLocaleDateString("vi-VN", { day: '2-digit', month: '2-digit' });
+      const revenue = bills.reduce((sum, b) => sum + (b.totalAmount || 0), 0);
+      return [{ date: dateKey, revenue }];
+    } else if (timeRange === 'week') {
+      // Show last 7 days
+      const now = new Date();
+      const last7Days = Array.from({ length: 7 }, (_, i) => {
+        const d = new Date(now);
+        d.setDate(now.getDate() - (6 - i));
+        return d;
+      });
+      const revenueByDay: Record<string, number> = {};
+      bills.forEach((bill) => {
+        const ts = (bill.completedAt as unknown as { toDate?: () => Date })?.toDate?.();
+        if (ts) {
+          const dateKey = ts.toLocaleDateString("vi-VN", { day: '2-digit', month: '2-digit' });
+          revenueByDay[dateKey] = (revenueByDay[dateKey] || 0) + (bill.totalAmount || 0);
+        }
+      });
+      return last7Days.map(d => {
+        const dateKey = d.toLocaleDateString("vi-VN", { day: '2-digit', month: '2-digit' });
+        return { date: dateKey, revenue: revenueByDay[dateKey] || 0 };
+      });
+    } else if (timeRange === 'month') {
+      // Show all 12 months
+      const now = new Date();
+      const currentYear = now.getFullYear();
+      const revenueByMonth: Record<number, number> = {};
+      bills.forEach((bill) => {
+        const ts = (bill.completedAt as unknown as { toDate?: () => Date })?.toDate?.();
+        if (ts && ts.getFullYear() === currentYear) {
+          const month = ts.getMonth();
+          revenueByMonth[month] = (revenueByMonth[month] || 0) + (bill.totalAmount || 0);
+        }
+      });
+      return Array.from({ length: 12 }, (_, i) => ({
+        date: `Tháng ${i + 1}`,
+        revenue: revenueByMonth[i] || 0
+      }));
+    } else {
+      // Show last 5 years
+      const now = new Date();
+      const currentYear = now.getFullYear();
+      const last5Years = Array.from({ length: 5 }, (_, i) => currentYear - 4 + i);
+      const revenueByYear: Record<number, number> = {};
+      bills.forEach((bill) => {
+        const ts = (bill.completedAt as unknown as { toDate?: () => Date })?.toDate?.();
+        if (ts) {
+          const year = ts.getFullYear();
+          if (last5Years.includes(year)) {
+            revenueByYear[year] = (revenueByYear[year] || 0) + (bill.totalAmount || 0);
+          }
+        }
+      });
+      return last5Years.map(year => ({
+        date: `${year}`,
+        revenue: revenueByYear[year] || 0
+      }));
+    }
+  }, [bills, timeRange, selectedDate]);
 
-  // Pie chart data - Stats distribution (no menu items)
-  const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444'];
+  // Max value and chart title based on timeRange
+  const chartConfig = useMemo(() => {
+    if (timeRange === 'today' || selectedDate) {
+      return { max: 2000000, title: 'Doanh Thu Hôm Nay', threshold: 2000000 };
+    }
+    if (timeRange === 'week') {
+      return { max: 15000000, title: 'Doanh Thu Tuần Này', threshold: 2000000 }; // 2tr/ngày
+    }
+    if (timeRange === 'month') {
+      return { max: 50000000, title: 'Doanh Thu Tháng Này', threshold: 50000000 }; // 50tr/tháng
+    }
+    return { max: undefined, title: 'Doanh Thu 5 Năm Gần Nhất', threshold: 50000000 * 12 }; // 600tr/năm
+  }, [timeRange, selectedDate]);
+
+  // Pie chart data - Orders by type distribution
+  const COLORS = ['#8B5CF6', '#F97316', '#EC4899'];
   const statsData = [
-    { name: 'Đơn hàng', value: metrics.totalOrders, color: COLORS[0] },
-    { name: 'Feedback', value: metrics.totalFeedbacks, color: COLORS[1] },
-    { name: 'Đặt bàn', value: metrics.totalReservations, color: COLORS[2] },
-    { name: 'Liên hệ', value: metrics.totalContacts, color: COLORS[3] },
+    { name: 'Orders tại bàn', value: metrics.dineInOrders, color: COLORS[0] },
+    { name: 'Orders mang đi', value: metrics.takeawayOrders, color: COLORS[1] },
+    { name: 'Orders Ship', value: metrics.deliveryOrders, color: COLORS[2] },
   ].filter(item => item.value > 0); // Only show items with values
   
   // Calculate total for percentage
@@ -294,12 +366,12 @@ export default function AdminDashboard() {
           </div>
           <p className="text-sm text-primary-700 font-medium mb-1">Doanh Thu</p>
           <p className="text-2xl font-bold text-primary-900 mb-1">
-            {(metrics.revenue / 1000).toFixed(0)}K₫
+            {metrics.revenue.toLocaleString('vi-VN')} VNĐ
           </p>
           <p className="text-xs text-primary-600">{bills.length} đơn</p>
         </div>
 
-        {/* Orders Card */}
+        {/* Orders Card with breakdown */}
         <div className="card p-5 bg-gradient-to-br from-green-50 to-green-100 border-green-200 hover:shadow-lg transition-shadow">
           <div className="flex items-center justify-between mb-3">
             <div className="w-12 h-12 rounded-full bg-green-500 flex items-center justify-center">
@@ -309,8 +381,32 @@ export default function AdminDashboard() {
             </div>
           </div>
           <p className="text-sm text-green-700 font-medium mb-1">Đơn Hàng</p>
-          <p className="text-2xl font-bold text-green-900 mb-1">{metrics.totalOrders}</p>
-          <p className="text-xs text-green-600">Tổng đơn</p>
+          <p className="text-2xl font-bold text-green-900 mb-2">{metrics.totalOrders}</p>
+          
+          {/* Chi tiết 3 loại đơn hàng */}
+          <div className="space-y-1.5 mt-3 pt-3 border-t border-green-200">
+            <div className="flex items-center justify-between text-xs">
+              <span className="text-green-600 flex items-center gap-1">
+                <span className="w-2 h-2 rounded-full bg-purple-500"></span>
+                Tại bàn
+              </span>
+              <span className="font-semibold text-green-800">{metrics.dineInOrders}</span>
+            </div>
+            <div className="flex items-center justify-between text-xs">
+              <span className="text-green-600 flex items-center gap-1">
+                <span className="w-2 h-2 rounded-full bg-orange-500"></span>
+                Mang đi
+              </span>
+              <span className="font-semibold text-green-800">{metrics.takeawayOrders}</span>
+            </div>
+            <div className="flex items-center justify-between text-xs">
+              <span className="text-green-600 flex items-center gap-1">
+                <span className="w-2 h-2 rounded-full bg-pink-500"></span>
+                Ship
+              </span>
+              <span className="font-semibold text-green-800">{metrics.deliveryOrders}</span>
+            </div>
+          </div>
         </div>
 
         {/* Feedback Card */}
@@ -344,19 +440,32 @@ export default function AdminDashboard() {
 
       {/* Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Bar Chart - Daily Revenue */}
+        {/* Bar Chart - Revenue */}
         <div className="card p-6">
-          <h3 className="text-lg font-bold text-neutral-800 mb-4">📊 Doanh Thu Theo Ngày</h3>
+          <h3 className="text-lg font-bold text-neutral-800 mb-4">📊 {chartConfig.title}</h3>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={dailyRevenueData}>
+            <BarChart data={revenueChartData} barSize={60}>
               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
               <XAxis dataKey="date" tick={{ fontSize: 12 }} stroke="#6b7280" />
-              <YAxis tick={{ fontSize: 12 }} stroke="#6b7280" />
+              <YAxis 
+                tick={{ fontSize: 11 }} 
+                stroke="#6b7280"
+                domain={[0, chartConfig.max || 'auto']}
+                tickFormatter={(value: number) => `${value.toLocaleString('vi-VN')}`}
+              />
               <Tooltip 
                 contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: '8px' }}
-                formatter={(value: number) => `${value.toLocaleString()}₫`}
+                formatter={(value: number) => `${value.toLocaleString('vi-VN')}₫`}
               />
-              <Bar dataKey="revenue" fill="#3b82f6" radius={[8, 8, 0, 0]} />
+              <Bar 
+                dataKey="revenue" 
+                radius={[8, 8, 0, 0]}
+                fill="#3b82f6"
+              >
+                {revenueChartData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.revenue >= chartConfig.threshold ? '#10b981' : '#3b82f6'} />
+                ))}
+              </Bar>
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -374,7 +483,13 @@ export default function AdminDashboard() {
                   stroke: '#9ca3af',
                   strokeWidth: 1,
                 }}
-                label={({ cx, cy, midAngle, innerRadius, outerRadius, percent, name }: any) => {
+                label={(props: Record<string, unknown>) => {
+                  const cx = typeof props.cx === 'number' ? props.cx : 0;
+                  const cy = typeof props.cy === 'number' ? props.cy : 0;
+                  const midAngle = typeof props.midAngle === 'number' ? props.midAngle : 0;
+                  const outerRadius = typeof props.outerRadius === 'number' ? props.outerRadius : 0;
+                  const percent = typeof props.percent === 'number' ? props.percent : 0;
+                  const name = typeof props.name === 'string' ? props.name : '';
                   const RADIAN = Math.PI / 180;
                   const radius = outerRadius + 30;
                   const x = cx + radius * Math.cos(-midAngle * RADIAN);

@@ -69,9 +69,10 @@ export default function NewOrderPage() {
       if (data.length === 0) {
         alert("⚠️ Chưa có món ăn nào trong thực đơn.\n\nVui lòng thêm món ăn trước khi tạo đơn hàng.");
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error loading menu:", error);
-      alert("Lỗi khi tải thực đơn: " + (error.message || "Không rõ nguyên nhân"));
+      const message = error instanceof Error ? error.message : "Không rõ nguyên nhân";
+      alert("Lỗi khi tải thực đơn: " + message);
     } finally {
       setLoadingMenu(false);
     }
@@ -186,6 +187,7 @@ export default function NewOrderPage() {
         tableNumber: selectedTable.tableNumber,
         totalAmount: getTotalAmount(),
         notes,
+        orderType: "dine-in", // Đơn hàng tại bàn
       });
 
       await tableService.updateTableStatus(selectedTable.id!, "occupied");
@@ -204,8 +206,9 @@ export default function NewOrderPage() {
       setTimeout(() => {
         router.push("/admin/orders");
       }, 2000);
-    } catch (error: any) {
-      alert(error.message || "Đặt món thất bại");
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Đặt món thất bại";
+      alert(message);
     } finally {
       setLoading(false);
     }
@@ -357,7 +360,7 @@ export default function NewOrderPage() {
                 {/* Sort Dropdown */}
                 <select
                   value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value as any)}
+                  onChange={(e) => setSortBy(e.target.value as "name" | "price-asc" | "price-desc")}
                   className="px-4 py-2 border border-neutral-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
                 >
                   <option value="name">Sắp xếp: A-Z</option>

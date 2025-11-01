@@ -2,10 +2,6 @@
 import React, { useEffect, useState } from "react";
 import { ToastContainer } from "@/app/components/ToastSystem";
 import { ToastProvider } from "@/app/components/Toast";
-import { OrderProvider } from "@/app/components/OrderContext";
-import OrderDrawer from "@/app/components/OrderDrawer";
-import Header from "@/app/components/Header";
-import Footer from "@/app/components/Footer";
 import { usePathname, useRouter } from "next/navigation";
 import { getAuthClient } from "@/lib/sdk";
 
@@ -18,9 +14,10 @@ export default function AdminLayout({
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   
-  // Check authentication for ALL /admin routes except /admin/login
+  // Check authentication for ALL /admin routes except /admin/login and /admin root
   const isLoginPage = pathname === "/admin/login" || pathname === "/admin/login/";
-  const requiresAuth = pathname?.startsWith("/admin") && !isLoginPage;
+  const isAdminRoot = pathname === "/admin" || pathname === "/admin/";
+  const requiresAuth = pathname?.startsWith("/admin") && !isLoginPage && !isAdminRoot;
 
   useEffect(() => {
     if (!requiresAuth) {
@@ -37,7 +34,7 @@ export default function AdminLayout({
             setIsAuthenticated(true);
           } else {
             // Not authenticated -> redirect to login
-            const redirectUrl = `/admin/login/?redirect=${encodeURIComponent(pathname || "/admin/")}`;
+            const redirectUrl = `/admin/login/?redirect=${encodeURIComponent(pathname || "/admin/dashboard")}`;
             router.push(redirectUrl);
             setIsAuthenticated(false);
           }
@@ -76,27 +73,11 @@ export default function AdminLayout({
   if (requiresAuth && !isAuthenticated) {
     return null;
   }
-  
-  // Protected routes are dashboard management pages
-  // User-facing routes are trang-chu, thuc-don, dat-ban, dia-chi
-  const isProtectedRoute = pathname?.startsWith("/admin/") && 
-    !pathname.includes("/trang-chu") && 
-    !pathname.includes("/thuc-don") && 
-    !pathname.includes("/dat-ban") && 
-    !pathname.includes("/dia-chi") &&
-    !pathname.includes("/login") &&
-    pathname !== "/admin" &&
-    pathname !== "/admin/";
 
   return (
     <ToastContainer>
       <ToastProvider>
-        <OrderProvider>
-          {!isProtectedRoute && <Header mode="admin" />}
-          <main>{children}</main>
-          {!isProtectedRoute && <OrderDrawer />}
-          {!isProtectedRoute && <Footer />}
-        </OrderProvider>
+        <main>{children}</main>
       </ToastProvider>
     </ToastContainer>
   );

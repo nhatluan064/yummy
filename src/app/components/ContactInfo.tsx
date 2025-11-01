@@ -7,11 +7,10 @@ export default function ContactInfo() {
         <h2 className="text-2xl font-bold text-neutral-800 mb-6">Thông Tin Liên Hệ</h2>
         <div className="space-y-6">
           <div className="flex items-start space-x-4">
-            <div className="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center flex-shrink-0">
+            <div className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#8B7CF6' }}>
               {/* icon địa chỉ */}
-              <svg className="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+              <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z" />
               </svg>
             </div>
             <div>
@@ -21,50 +20,47 @@ export default function ContactInfo() {
           </div>
 
           <div className="flex items-start space-x-4">
-            <div className="w-12 h-12 bg-accent-200 rounded-full flex items-center justify-center flex-shrink-0">
+            <div className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#8B7CF6' }}>
               {/* icon điện thoại */}
-              <svg className="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+              <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M6.62 10.79a15.053 15.053 0 006.59 6.59l2.2-2.2a1 1 0 011.11-.21c1.21.49 2.53.76 3.88.76a1 1 0 011 1v3.5a1 1 0 01-1 1C7.61 22 2 16.39 2 9.5a1 1 0 011-1H6.5a1 1 0 011 1c0 1.35.27 2.67.76 3.88a1 1 0 01-.21 1.11l-2.2 2.2z" />
               </svg>
             </div>
             <div>
               <h3 className="font-bold text-neutral-800 mb-1">Hotline</h3>
-              <a href="tel:0988994799" className="text-primary-600 hover:text-primary-700">0988 994 799</a>
+              <a href="tel:0988994799" className="hover:underline" style={{ color: '#8B7CF6' }}>0988 994 799</a>
             </div>
           </div>
 
           <div className="flex items-start space-x-4">
-            <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+            <div className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#1877F2' }}>
               {/* icon Facebook */}
-              <svg className="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+              <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
               </svg>
             </div>
             <div>
               <h3 className="font-bold text-neutral-800 mb-1">Facebook</h3>
-              <a href="https://www.facebook.com/dieu.hien.169" target="_blank" rel="noopener noreferrer" className="text-primary-600 hover:text-primary-700">Diệu Hiền</a>
+              <a href="https://www.facebook.com/dieu.hien.169" target="_blank" rel="noopener noreferrer" className="hover:underline" style={{ color: '#1877F2' }}>Diệu Hiền</a>
             </div>
           </div>
 
           <div className="flex items-start space-x-4">
-            <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+            <div className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#0068FF' }}>
               {/* icon Zalo */}
-              <svg className="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 24 24">
-                <circle cx="12" cy="12" r="12" />
-                <text x="12" y="16" textAnchor="middle" fontSize="10" fill="#fff" fontFamily="Arial">Zalo</text>
-              </svg>
+              <span className="text-white text-2xl font-black" style={{ fontFamily: 'Arial Black, sans-serif' }}>Z</span>
             </div>
             <div>
               <h3 className="font-bold text-neutral-800 mb-1">Zalo</h3>
-              <a href="https://zalo.me/0988994799" className="text-primary-600 hover:text-primary-700">0988 994 799</a>
+              <a href="https://zalo.me/0988994799" className="hover:underline" style={{ color: '#0068FF' }}>0988 994 799</a>
             </div>
           </div>
 
           <div className="flex items-start space-x-4">
-            <div className="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center flex-shrink-0">
+            <div className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#8B7CF6' }}>
               {/* icon giờ hoạt động */}
-              <svg className="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.2 3.2.8-1.3-4.5-2.7V7z" />
               </svg>
             </div>
             <div>

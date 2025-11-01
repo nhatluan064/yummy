@@ -194,37 +194,37 @@ export default function TableManagementPage() {
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+        <div className="grid grid-cols-5 md:grid-cols-8 lg:grid-cols-10 xl:grid-cols-10 gap-2">
           {tables.map((table) => (
             <div
               key={table.id}
-              className={`relative group card p-6 text-center cursor-pointer transition-all hover:scale-105 ${
+              className={`relative group card aspect-square text-center cursor-pointer transition-all hover:scale-105 flex flex-col items-center justify-center ${
                 table.status === "empty"
                   ? "bg-white border-2 border-primary-200"
                   : "bg-gradient-to-br from-primary-500 to-primary-600 text-white border-2 border-primary-600"
               }`}
             >
-              <div className="text-3xl font-bold mb-2">
+              <div className="text-xl font-bold">
                 {table.tableNumber}
               </div>
-              <div className={`text-sm font-medium ${
+              <div className={`text-[10px] font-medium mt-0.5 ${
                 table.status === "empty" ? "text-neutral-600" : "text-white/90"
               }`}>
-                {table.status === "empty" ? "Bàn Trống" : "Đang Sử Dụng"}
+                {table.status === "empty" ? "Trống" : "Dùng"}
               </div>
 
               {/* Actions */}
-              <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
+              <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity flex gap-0.5">
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
                     setEditingTable(table);
                     setEditTableNumber(table.tableNumber);
                   }}
-                  className="w-8 h-8 bg-blue-500 hover:bg-blue-600 text-white rounded-full flex items-center justify-center shadow-lg"
+                  className="w-6 h-6 bg-blue-500 hover:bg-blue-600 text-white rounded-full flex items-center justify-center shadow-lg"
                   title="Sửa"
                 >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                   </svg>
                 </button>
@@ -233,10 +233,10 @@ export default function TableManagementPage() {
                     e.stopPropagation();
                     handleDeleteTable(table);
                   }}
-                  className="w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg"
+                  className="w-6 h-6 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg"
                   title="Xóa"
                 >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                   </svg>
                 </button>
