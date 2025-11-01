@@ -22,8 +22,8 @@ export default function KitchenPage() {
   async function load() {
     setLoading(true);
     const list = await orderService.getAll();
-    // show only pending or preparing, sort by createdAt ascending (FIFO - oldest first)
-    const filtered = list.filter((o) => o.status === "pending" || o.status === "preparing");
+    // show only pending, preparing, or ready - chỉ biến mất khi thanh toán (completed)
+    const filtered = list.filter((o) => o.status === "pending" || o.status === "preparing" || o.status === "ready");
     filtered.sort((a, b) => {
       let aTime: Date;
       if (typeof a.createdAt === 'object' && a.createdAt && 'toDate' in a.createdAt) {
@@ -53,70 +53,7 @@ export default function KitchenPage() {
 
   async function updateStatus(id: string, status: Order["status"]) {
     await orderService.updateStatus(id, status);
-    
-    // If completed, create bill snapshot
-    if (status === "completed") {
-      const order = orders.find(o => o.id === id);
-      if (order) {
-        try {
-          const { billService } = await import("@/lib/sdk");
-          await billService.ensureForOrder({
-            id: order.id!,
-            orderCode: order.orderCode,
-            customerName: order.customerName || "",
-            tableNumber: order.tableNumber,
-            items: order.items,
-            totalAmount: order.totalAmount,
-          });
-        } catch (e) {
-          console.warn("Persist bill failed:", e);
-        }
-      }
-    }
-    
     await load();
-  }
-
-  async function cancelOrder(order: WithId<Order>) {
-    const confirmed = confirm(
-      `Hủy đơn ${order.orderCode}?\n\nTất cả dữ liệu sẽ bị xóa vĩnh viễn. Không thể khôi phục!`
-    );
-    if (!confirmed) return;
-    
-    try {
-      await orderService.delete(order.id!);
-      
-      // Sync with draftOrders in localStorage
-      if (order.orderType === "dine-in" && order.tableNumber) {
-        const saved = localStorage.getItem("draftOrders");
-        if (saved) {
-          try {
-            const draftOrders = JSON.parse(saved) as { tableNumber: string; items: unknown[]; totalOrders: number }[];
-            const draft = draftOrders.find((d) => d.tableNumber === order.tableNumber);
-            if (draft) {
-              // Decrease totalOrders count
-              draft.totalOrders = Math.max(0, (draft.totalOrders || 1) - 1);
-              
-              // If no more orders and no pending items, remove draft
-              if (draft.totalOrders === 0 && (!draft.items || draft.items.length === 0)) {
-                const newDrafts = draftOrders.filter((d) => d.tableNumber !== order.tableNumber);
-                localStorage.setItem("draftOrders", JSON.stringify(newDrafts));
-              } else {
-                localStorage.setItem("draftOrders", JSON.stringify(draftOrders));
-              }
-            }
-          } catch (e) {
-            console.error("Error syncing draft orders:", e);
-          }
-        }
-      }
-      
-      showToast("✓ Đã hủy đơn thành công!", 3000, "success");
-      await load();
-    } catch (error) {
-      console.error("Error canceling order:", error);
-      showToast("Có lỗi xảy ra!", 3000, "error");
-    }
   }
 
   if (loading) return <div>Đang tải đơn bếp…</div>;
@@ -143,7 +80,17 @@ export default function KitchenPage() {
     <div key={o.id} className="card p-4 mb-3">
       <div className="flex items-center justify-between mb-2">
         <div className="font-bold text-sm">{o.orderCode ?? o.id}</div>
-        <span className="text-xs px-2 py-1 rounded bg-neutral-100">{o.status}</span>
+        <span className={`text-xs px-2 py-1 rounded font-medium ${
+          o.status === "pending" ? "bg-yellow-100 text-yellow-700" :
+          o.status === "preparing" ? "bg-blue-100 text-blue-700" :
+          o.status === "ready" ? "bg-green-100 text-green-700" :
+          "bg-neutral-100"
+        }`}>
+          {o.status === "pending" ? "⏳ Chờ xử lý" :
+           o.status === "preparing" ? "👨‍🍳 Đang làm" :
+           o.status === "ready" ? "✅ Đã xong" :
+           o.status}
+        </span>
       </div>
       <div className="text-xs text-neutral-500 mb-2">{dateStr} • {timeStr}</div>
       {o.orderType === "dine-in" && o.tableNumber && (
@@ -170,20 +117,20 @@ export default function KitchenPage() {
         </div>
         <div className="flex gap-2">
           {o.status === "pending" && (
-            <button className="btn-primary flex-1 text-sm py-1" onClick={() => updateStatus(o.id!, "preparing")}>Đang làm</button>
+            <button className="btn-primary flex-1 text-sm py-2" onClick={() => updateStatus(o.id!, "preparing")}>
+              👨‍🍳 Đang làm
+            </button>
           )}
           {o.status === "preparing" && (
-            <button className="btn-primary flex-1 text-sm py-1" onClick={() => updateStatus(o.id!, "ready")}>Đã xong</button>
+            <button className="bg-green-600 hover:bg-green-700 text-white font-bold flex-1 text-sm py-2 rounded-lg transition-colors" onClick={() => updateStatus(o.id!, "ready")}>
+              ✅ Đã xong
+            </button>
           )}
           {o.status === "ready" && (
-            <button className="bg-green-600 hover:bg-green-700 text-white font-bold text-sm py-1 px-4 rounded-lg transition-colors flex-1" onClick={() => updateStatus(o.id!, "completed")}>💵 Thanh toán</button>
+            <div className="flex-1 text-center py-2 bg-green-100 text-green-700 font-bold text-sm rounded-lg border-2 border-green-500">
+              ✅ Chờ thanh toán
+            </div>
           )}
-          <button 
-            className="bg-red-600 hover:bg-red-700 text-white font-bold text-sm py-1 px-3 rounded-lg transition-colors"
-            onClick={() => cancelOrder(o)}
-          >
-            Hủy
-          </button>
         </div>
       </div>
     </div>

@@ -103,7 +103,7 @@ export default function ManageOrdersPage() {
             for (const draft of drafts) {
               const orders = await orderService.getAll([
                 orderService.by("tableNumber", "==", draft.tableNumber),
-                orderService.by("status", "in", ["pending", "preparing"])
+                orderService.by("status", "in", ["pending", "preparing", "ready"])
               ]);
               // Keep draft only if it has pending items OR actual orders
               if (draft.items?.length > 0 || orders.length > 0) {
@@ -162,7 +162,7 @@ export default function ManageOrdersPage() {
     try {
       const orders = await orderService.getAll([
         orderService.by("tableNumber", "==", table.tableNumber),
-        orderService.by("status", "in", ["pending", "preparing"])
+        orderService.by("status", "in", ["pending", "preparing", "ready"])
       ]);
       setTableOrders(orders);
       
@@ -272,7 +272,7 @@ export default function ManageOrdersPage() {
       for (const draft of draftOrders) {
         const orders = await orderService.getAll([
           orderService.by("tableNumber", "==", draft.tableNumber),
-          orderService.by("status", "in", ["pending", "preparing"])
+          orderService.by("status", "in", ["pending", "preparing", "ready"])
         ]);
         
         // Keep draft only if it has pending items OR actual orders
@@ -292,7 +292,7 @@ export default function ManageOrdersPage() {
       if (selectedTable) {
         const orders = await orderService.getAll([
           orderService.by("tableNumber", "==", selectedTable.tableNumber),
-          orderService.by("status", "in", ["pending", "preparing"])
+          orderService.by("status", "in", ["pending", "preparing", "ready"])
         ]);
         setTableOrders(orders);
         
@@ -340,7 +340,7 @@ export default function ManageOrdersPage() {
         // Reload orders for this table
         const orders = await orderService.getAll([
           orderService.by("tableNumber", "==", selectedTable.tableNumber),
-          orderService.by("status", "in", ["pending", "preparing"])
+          orderService.by("status", "in", ["pending", "preparing", "ready"])
         ]);
         setTableOrders(orders);
       }
@@ -352,15 +352,59 @@ export default function ManageOrdersPage() {
     }
   };
   
-  // Payment - close table
-  const handlePayment = () => {
-    if (selectedTable) {
-      // Remove draft to close table and clear localStorage
+  // Payment - thanh toán tất cả orders của bàn
+  const handlePayment = async () => {
+    if (!selectedTable) return;
+    
+    const confirmed = confirm(
+      `Thanh toán tất cả món của ${selectedTable.tableNumber}?\n\nSẽ tạo bill và đóng bàn.`
+    );
+    if (!confirmed) return;
+    
+    setLoading(true);
+    try {
+      // 1. Lấy tất cả orders của bàn
+      const tableOrdersList = await orderService.getAll([
+        orderService.by("tableNumber", "==", selectedTable.tableNumber),
+        orderService.by("status", "in", ["pending", "preparing", "ready"])
+      ]);
+      
+      if (tableOrdersList.length === 0) {
+        showToast("Không có đơn nào để thanh toán!", 3000, "error");
+        setLoading(false);
+        return;
+      }
+      
+      // 2. Chuyển tất cả orders sang "completed" và tạo bills
+      const { billService } = await import("@/lib/sdk");
+      for (const order of tableOrdersList) {
+        // Update status
+        await orderService.updateStatus(order.id!, "completed");
+        
+        // Create bill
+        await billService.ensureForOrder({
+          id: order.id!,
+          orderCode: order.orderCode!,
+          customerName: order.customerName || "",
+          tableNumber: order.tableNumber,
+          items: order.items,
+          totalAmount: order.totalAmount,
+        });
+      }
+      
+      // 3. Xóa draft và đóng bàn
       const newDrafts = draftOrders.filter(d => d.tableNumber !== selectedTable.tableNumber);
       setDraftOrders(newDrafts);
-      showToast("✓ Đã thanh toán! Bàn đóng.", 3000, "success");
+      localStorage.setItem("draftOrders", JSON.stringify(newDrafts));
+      
+      showToast(`✓ Đã thanh toán ${tableOrdersList.length} đơn! Bàn đóng.`, 3000, "success");
       closeModal();
       router.push("/admin/orders");
+    } catch (error) {
+      console.error("Error during payment:", error);
+      showToast("Có lỗi khi thanh toán!", 3000, "error");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -640,9 +684,26 @@ export default function ManageOrdersPage() {
                     <div className="mb-4 pb-4 border-b">
                       <h3 className="font-bold text-xs text-neutral-500 mb-2">Món đã gửi bếp ({tableOrders.length} đơn)</h3>
                       {tableOrders.map((order) => (
-                        <div key={order.id} className="mb-2 p-2 bg-green-50 border border-green-200 rounded text-xs relative">
+                        <div key={order.id} className={`mb-2 p-2 border rounded text-xs relative ${
+                          order.status === "ready" ? "bg-green-50 border-green-300" :
+                          order.status === "preparing" ? "bg-blue-50 border-blue-300" :
+                          "bg-yellow-50 border-yellow-300"
+                        }`}>
                           <div className="flex items-center justify-between mb-1">
-                            <div className="font-bold text-green-700">{order.orderCode}</div>
+                            <div className="flex items-center gap-2">
+                              <span className="font-bold text-neutral-700">{order.orderCode}</span>
+                              <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${
+                                order.status === "pending" ? "bg-yellow-100 text-yellow-700" :
+                                order.status === "preparing" ? "bg-blue-100 text-blue-700" :
+                                order.status === "ready" ? "bg-green-100 text-green-700" :
+                                "bg-neutral-100"
+                              }`}>
+                                {order.status === "pending" ? "⏳ Chờ" :
+                                 order.status === "preparing" ? "👨‍🍳 Đang làm" :
+                                 order.status === "ready" ? "✅ Xong" :
+                                 order.status}
+                              </span>
+                            </div>
                             <button
                               onClick={() => cancelOrderFromHistory(order.id!, order.orderCode!)}
                               className="bg-red-500 hover:bg-red-600 text-white text-xs px-2 py-1 rounded transition-colors"
@@ -690,8 +751,14 @@ export default function ManageOrdersPage() {
                 <div className="p-4 border-t bg-neutral-50 space-y-2">
                   <div className="flex gap-2">
                     <button onClick={closeModal} className="btn-secondary flex-1">Hủy</button>
-                    {selectedType === "dine-in" && selectedTable && tableHasOrders(selectedTable.tableNumber) && (
-                      <button onClick={handlePayment} className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg flex-1">💵 Thanh toán</button>
+                    {selectedType === "dine-in" && selectedTable && tableOrders.length > 0 && (
+                      <button 
+                        onClick={handlePayment} 
+                        disabled={loading}
+                        className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg flex-1 disabled:opacity-50"
+                      >
+                        💵 Thanh toán ({tableOrders.length} đơn)
+                      </button>
                     )}
                   </div>
                   <button onClick={submitOrder} disabled={loading || cart.length === 0} className="btn-primary w-full disabled:opacity-50">
