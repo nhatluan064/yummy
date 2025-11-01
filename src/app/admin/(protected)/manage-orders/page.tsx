@@ -288,6 +288,21 @@ export default function ManageOrdersPage() {
       setDraftOrders(validDrafts);
       localStorage.setItem("draftOrders", JSON.stringify(validDrafts));
       
+      // Refetch tableOrders nếu đang có bàn được chọn
+      if (selectedTable) {
+        const orders = await orderService.getAll([
+          orderService.by("tableNumber", "==", selectedTable.tableNumber),
+          orderService.by("status", "in", ["pending", "preparing"])
+        ]);
+        setTableOrders(orders);
+        
+        // Update cart từ draft sau khi cleanup
+        const updatedDraft = validDrafts.find(d => d.tableNumber === selectedTable.tableNumber);
+        if (updatedDraft) {
+          setCart(updatedDraft.items || []);
+        }
+      }
+      
       if (cleanedCount > 0) {
         showToast(`✓ Đã làm mới! Xóa ${cleanedCount} bàn bị tréo.`, 3000, "success");
       } else {

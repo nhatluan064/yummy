@@ -193,10 +193,6 @@ export default function KitchenPage() {
   return (
     <div className="flex flex-col h-screen overflow-hidden">
       <h1 className="text-2xl font-bold p-4 flex-shrink-0">Quản lý Bill gửi Bếp</h1>
-      
-      {orders.length === 0 && (
-        <div className="card p-12 text-center m-4">Chưa có đơn nào.</div>
-      )}
 
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-4 px-4 pb-4 overflow-hidden">
         {/* Column 1: Dine-in */}
