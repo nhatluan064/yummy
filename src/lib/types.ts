@@ -71,6 +71,7 @@ export interface Feedback {
   updatedAt?: Timestamp;
   hidden?: boolean;
   dishName?: string;
+  dishImage?: string; // Image of the dish being reviewed
 }
 
 export interface Category {

@@ -13,7 +13,7 @@ import type { Bill, Order, Feedback, TableReservation, Contact } from "@/lib/typ
 export default function AdminDashboard() {
   const [timeRange, setTimeRange] = useState<
     "today" | "yesterday" | "week" | "last-week" | "month" | "last-month" | "year" | "last-year"
-  >("month");
+  >("year");
   const [bills, setBills] = useState<WithId<Bill>[]>([]);
   const [orders, setOrders] = useState<WithId<Order>[]>([]);
   const [feedbacks, setFeedbacks] = useState<WithId<Feedback>[]>([]);

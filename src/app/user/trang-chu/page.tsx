@@ -1,17 +1,125 @@
 // src/app/page.tsx
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
-import { getCategories, getAvailableMenuItems, MenuItem } from "@/lib/menuData";
+import { useEffect, useState } from "react";
+import { feedbackService } from "@/lib/feedback.service";
+import { getCategoriesFromFirestore, getMenuItemsFromFirestore } from "@/lib/firestoreMenu";
+import type { WithId } from "@/lib/firestore.service";
+import type { Feedback } from "@/lib/types";
+import type { MenuItem, Category } from "@/lib/menuData";
 
 export default function HomePage() {
-  const categories = getCategories();
-  const availableItems = getAvailableMenuItems();
+  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
+  const [feedbacks, setFeedbacks] = useState<WithId<Feedback>[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [itemsPerSlide, setItemsPerSlide] = useState(3);
+  const [currentFeedbackSlide, setCurrentFeedbackSlide] = useState(0);
+  const [feedbackItemsPerSlide, setFeedbackItemsPerSlide] = useState(3);
 
+  // Load data from Firestore
+  useEffect(() => {
+    Promise.all([
+      getCategoriesFromFirestore(),
+      getMenuItemsFromFirestore(),
+      feedbackService.getAll()
+    ]).then(([, items, fbs]) => {
+      setMenuItems(items as unknown as MenuItem[]);
+      setFeedbacks(fbs);
+      setLoading(false);
+    });
+  }, []);
+
+  // Detect screen size and adjust items per slide (for menu items)
+  useEffect(() => {
+    const handleResize = () => {
+      const newItemsPerSlide = window.innerWidth < 768 ? 1 : window.innerWidth < 1024 ? 2 : 3;
+      if (newItemsPerSlide !== itemsPerSlide) {
+        setItemsPerSlide(newItemsPerSlide);
+        setCurrentSlide(0); // Reset to first slide when changing layout
+      }
+    };
+    
+    handleResize(); // Set initial value
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [itemsPerSlide]);
+
+  // Detect screen size and adjust items per slide (for feedbacks)
+  useEffect(() => {
+    const handleResize = () => {
+      const newItemsPerSlide = window.innerWidth < 768 ? 1 : window.innerWidth < 1024 ? 2 : 3;
+      if (newItemsPerSlide !== feedbackItemsPerSlide) {
+        setFeedbackItemsPerSlide(newItemsPerSlide);
+        setCurrentFeedbackSlide(0); // Reset to first slide when changing layout
+      }
+    };
+    
+    handleResize(); // Set initial value
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [feedbackItemsPerSlide]);
+
+  // Get available items and featured items
+  const availableItems = menuItems.filter((item) => item.available);
   let featured: MenuItem[] = [];
-  if (categories.length > 0) {
-    featured = availableItems.filter((i) => i.bestSeller).slice(0, 3);
-    if (featured.length === 0) featured = availableItems.slice(0, 3);
+  if (availableItems.length > 0) {
+    featured = availableItems.filter((i) => i.bestSeller);
+    if (featured.length === 0) featured = availableItems.slice(0, 9); // Show up to 9 items (3 pages of 3)
   }
+  
+  // Calculate total slides based on screen size
+  const totalSlides = Math.ceil(featured.length / itemsPerSlide);
+
+  // Get non-hidden feedbacks with 4-5 stars, limit to 9
+  const displayFeedbacks = feedbacks
+    .filter(f => !f.hidden && f.rating >= 4)
+    .slice(0, 9); // Show up to 9 feedbacks (3 pages of 3)
+  
+  // Calculate total feedback slides
+  const totalFeedbackSlides = Math.ceil(displayFeedbacks.length / feedbackItemsPerSlide);
+
+  // Auto-play carousel
+  useEffect(() => {
+    if (totalSlides <= 1) return;
+    
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % totalSlides);
+    }, 10000); // 10 seconds
+
+    return () => clearInterval(interval);
+  }, [totalSlides]);
+
+  // Auto-play feedback carousel
+  useEffect(() => {
+    if (totalFeedbackSlides <= 1) return;
+    
+    const interval = setInterval(() => {
+      setCurrentFeedbackSlide((prev) => (prev + 1) % totalFeedbackSlides);
+    }, 10000); // 10 seconds
+
+    return () => clearInterval(interval);
+  }, [totalFeedbackSlides]);
+
+  // Carousel navigation (menu items)
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % totalSlides);
+  };
+
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + totalSlides) % totalSlides);
+  };
+
+  // Carousel navigation (feedback)
+  const nextFeedbackSlide = () => {
+    setCurrentFeedbackSlide((prev) => (prev + 1) % totalFeedbackSlides);
+  };
+
+  const prevFeedbackSlide = () => {
+    setCurrentFeedbackSlide((prev) => (prev - 1 + totalFeedbackSlides) % totalFeedbackSlides);
+  };
 
   return (
     <div>
@@ -33,7 +141,7 @@ export default function HomePage() {
             vụ tận tâm
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Link href="/thuc-don" className="btn-secondary">
+            <Link href="/user/thuc-don" className="btn-secondary">
               <svg
                 className="w-5 h-5"
                 fill="none"
@@ -50,7 +158,7 @@ export default function HomePage() {
               Xem Thực Đơn
             </Link>
             <Link
-              href="/dat-ban"
+              href="/user/dat-ban"
               className="btn-secondary">
               <svg
                 className="w-5 h-5"
@@ -65,7 +173,7 @@ export default function HomePage() {
                   d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
                 />
               </svg>
-              Đặt Bàn Ngay
+              Đặt Bàn & Liên Hệ
             </Link>
           </div>
         </div>
@@ -197,60 +305,153 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {categories.length === 0
-              ? null
-              : featured.map((item, index) => {
-                  const delayClass =
-                    index === 0
-                      ? "animate-fade-in-up"
-                      : index === 1
-                      ? "animate-fade-in-up-delay-1"
-                      : "animate-fade-in-up-delay-2";
-                  return (
-                    <article
-                      key={item.id}
-                      className={`rounded-xl overflow-hidden bg-white shadow-md p-0 ${delayClass}`}
-                    >
-                      <div className="h-44 bg-neutral-200">
-                        {item.image ? (
-                          <Image
-                            src={item.image}
-                            alt={item.name}
-                            width={400}
-                            height={176}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <div className="w-full h-full bg-neutral-100" />
-                        )}
+          {/* Carousel Container */}
+          <div className="relative">
+            {loading ? (
+              // Loading state
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {[1, 2, 3].map((n) => (
+                  <div key={n} className="rounded-xl overflow-hidden bg-white shadow-md p-0 animate-pulse">
+                    <div className="h-44 bg-neutral-200"></div>
+                    <div className="p-6">
+                      <div className="h-6 bg-neutral-200 rounded mb-2"></div>
+                      <div className="h-4 bg-neutral-200 rounded mb-4"></div>
+                      <div className="flex items-center justify-between">
+                        <div className="h-6 w-20 bg-neutral-200 rounded"></div>
+                        <div className="h-10 w-24 bg-neutral-200 rounded"></div>
                       </div>
-                      <div className="p-6">
-                        <h3 className="text-lg font-bold text-neutral-800 mb-2">
-                          {item.name}
-                        </h3>
-                        <p className="text-neutral-600 mb-4">
-                          {item.description}
-                        </p>
-                        <div className="flex items-center justify-between">
-                          <div className="text-primary-600 font-bold">
-                            {item.price.toLocaleString()}đ
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : featured.length === 0 ? (
+              // No items state
+              <div className="text-center py-12">
+                <p className="text-neutral-500">Chưa có món ăn nào</p>
+              </div>
+            ) : (
+              <>
+                {/* Carousel Track */}
+                <div className="overflow-hidden mx-auto max-w-7xl">
+                  <div 
+                    className="flex transition-transform duration-700 ease-in-out"
+                    style={{ 
+                      transform: `translateX(-${currentSlide * 100}%)`
+                    }}
+                  >
+                    {/* Group items by slides */}
+                    {Array.from({ length: totalSlides }).map((_, slideIndex) => (
+                      <div 
+                        key={slideIndex}
+                        className="w-full flex-shrink-0 px-4"
+                      >
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                          {featured
+                            .slice(slideIndex * itemsPerSlide, (slideIndex + 1) * itemsPerSlide)
+                            .map((item) => (
+                              <article
+                                key={item.id}
+                                className="rounded-xl overflow-hidden bg-white shadow-md flex flex-col relative"
+                              >
+                        <div className="h-44 bg-neutral-200 relative flex-shrink-0">
+                          {item.image ? (
+                            <Image
+                              src={item.image}
+                              alt={item.name}
+                              width={400}
+                              height={176}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full bg-neutral-100" />
+                          )}
+                          {/* Best Seller Badge */}
+                          {item.bestSeller && (
+                            <div className="absolute top-3 right-3 bg-gradient-to-r from-amber-500 to-orange-500 text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg flex items-center gap-1">
+                              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                              </svg>
+                              Best Seller
+                            </div>
+                          )}
+                        </div>
+                        <div className="p-6 flex flex-col flex-grow">
+                          <h3 className="text-lg font-bold text-neutral-800 mb-2 line-clamp-2 min-h-[3.5rem]">
+                            {item.name}
+                          </h3>
+                          <p className="text-neutral-600 mb-4 line-clamp-2 flex-grow">
+                            {item.description}
+                          </p>
+                          <div className="flex items-center justify-between mt-auto">
+                            <div className="text-primary-600 font-bold text-lg">
+                              {item.price.toLocaleString()}đ
+                            </div>
+                            <Link
+                              href="/user/thuc-don"
+                              className="btn-primary"
+                            >
+                              Xem Chi Tiết
+                            </Link>
                           </div>
-                          <Link
-                            href={`/thuc-don/${item.id}`}
-                            className="btn-primary"
-                          >
-                            Xem Chi Tiết
-                          </Link>
+                        </div>
+                      </article>
+                            ))}
                         </div>
                       </div>
-                    </article>
-                  );
-                })}
+                    ))}
+                  </div>
+                </div>
+
+                {/* Navigation Arrows */}
+                {totalSlides > 1 && (
+                  <>
+                    {/* Previous Button */}
+                    <button
+                      onClick={prevSlide}
+                      className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 lg:-translate-x-12 z-10 bg-white rounded-full p-3 shadow-xl hover:shadow-2xl hover:scale-110 transition-all duration-200 group"
+                      aria-label="Previous slide"
+                    >
+                      <svg className="w-6 h-6 text-neutral-700 group-hover:text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                      </svg>
+                    </button>
+
+                    {/* Next Button */}
+                    <button
+                      onClick={nextSlide}
+                      className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 lg:translate-x-12 z-10 bg-white rounded-full p-3 shadow-xl hover:shadow-2xl hover:scale-110 transition-all duration-200 group"
+                      aria-label="Next slide"
+                    >
+                      <svg className="w-6 h-6 text-neutral-700 group-hover:text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </button>
+                  </>
+                )}
+
+                {/* Dots Indicator */}
+                {totalSlides > 1 && (
+                  <div className="flex justify-center gap-2 mt-8">
+                    {Array.from({ length: totalSlides }).map((_, index) => (
+                      <button
+                        key={index}
+                        onClick={() => setCurrentSlide(index)}
+                        className={`h-2 rounded-full transition-all duration-300 ${
+                          index === currentSlide
+                            ? 'w-8 bg-primary-600'
+                            : 'w-2 bg-neutral-300 hover:bg-neutral-400'
+                        }`}
+                        aria-label={`Go to slide ${index + 1}`}
+                      />
+                    ))}
+                  </div>
+                )}
+              </>
+            )}
           </div>
 
           <div className="text-center mt-12">
-            <Link href="/thuc-don" className="btn-primary text-lg px-8 py-4">
+            <Link href="/user/thuc-don" className="btn-primary text-lg px-8 py-4">
               <svg
                 className="w-5 h-5"
                 fill="none"
@@ -270,6 +471,181 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Customer Feedback Section */}
+      <section className="section-padding bg-white">
+        <div className="container-custom">
+          <div className="text-center mb-16 animate-fade-in-up">
+            <h2 className="text-4xl font-bold text-neutral-800 mb-4">
+              Đánh Giá Từ Khách Hàng
+            </h2>
+            <p className="text-lg text-neutral-600 max-w-2xl mx-auto">
+              Những phản hồi chân thực từ khách hàng đã trải nghiệm dịch vụ của chúng tôi
+            </p>
+          </div>
+
+          {/* Carousel Container */}
+          <div className="relative">
+            {displayFeedbacks.length > 0 ? (
+              <>
+                {/* Carousel Track */}
+                <div className="overflow-hidden mx-auto max-w-7xl">
+                  <div 
+                    className="flex transition-transform duration-700 ease-in-out"
+                    style={{ 
+                      transform: `translateX(-${currentFeedbackSlide * 100}%)`
+                    }}
+                  >
+                    {/* Group feedbacks by slides */}
+                    {Array.from({ length: totalFeedbackSlides }).map((_, slideIndex) => (
+                      <div 
+                        key={slideIndex}
+                        className="w-full flex-shrink-0 px-4"
+                      >
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                          {displayFeedbacks
+                            .slice(slideIndex * feedbackItemsPerSlide, (slideIndex + 1) * feedbackItemsPerSlide)
+                            .map((feedback) => (
+                              <div
+                                key={feedback.id}
+                                className="bg-gradient-to-br from-neutral-50 to-white border border-neutral-200 rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-shadow h-full flex flex-col"
+                              >
+                    {/* Dish Image */}
+                    {feedback.dishImage && (
+                      <div className="w-full h-32 bg-neutral-200 flex-shrink-0">
+                        <Image
+                          src={feedback.dishImage}
+                          alt={feedback.dishName || 'Món ăn'}
+                          width={400}
+                          height={128}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    )}
+                    
+                    <div className="p-6 flex flex-col flex-grow">
+                      {/* Dish Name (if available) */}
+                      {feedback.dishName && (
+                        <h4 className="text-sm font-semibold text-primary-600 mb-2">
+                          {feedback.dishName}
+                        </h4>
+                      )}
+                      
+                      {/* Rating Stars */}
+                      <div className="flex items-center gap-1 mb-3 flex-shrink-0">
+                      {[...Array(5)].map((_, i) => (
+                        <svg
+                          key={i}
+                          className={`w-5 h-5 ${
+                            i < feedback.rating
+                              ? 'text-amber-400 fill-current'
+                              : 'text-neutral-300'
+                          }`}
+                          fill={i < feedback.rating ? 'currentColor' : 'none'}
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"
+                          />
+                        </svg>
+                      ))}
+                      <span className="ml-2 text-sm font-semibold text-neutral-700">
+                        {feedback.rating}/5
+                      </span>
+                    </div>
+
+                      {/* Comment */}
+                      <p className="text-neutral-700 mb-4 line-clamp-4 leading-relaxed flex-grow min-h-[6rem]">
+                        &ldquo;{feedback.comment}&rdquo;
+                      </p>
+
+                      {/* Customer Info */}
+                      <div className="flex items-center gap-3 pt-4 border-t border-neutral-200 flex-shrink-0 mt-auto">
+                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center text-white font-bold text-sm">
+                          {feedback.customerName?.charAt(0).toUpperCase() || 'K'}
+                        </div>
+                        <div>
+                          <p className="font-semibold text-neutral-800">
+                            {feedback.customerName || 'Khách hàng'}
+                          </p>
+                          <p className="text-xs text-neutral-500">
+                            {feedback.createdAt && typeof feedback.createdAt === 'object' && 'toDate' in feedback.createdAt
+                            ? new Date((feedback.createdAt as { toDate: () => Date }).toDate()).toLocaleDateString('vi-VN') 
+                            : 'N/A'}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                            ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Navigation Arrows */}
+                {totalFeedbackSlides > 1 && (
+                  <>
+                    {/* Previous Button */}
+                    <button
+                      onClick={prevFeedbackSlide}
+                      className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 lg:-translate-x-12 z-10 bg-white rounded-full p-3 shadow-xl hover:shadow-2xl hover:scale-110 transition-all duration-200 group"
+                      aria-label="Previous feedback slide"
+                    >
+                      <svg className="w-6 h-6 text-neutral-700 group-hover:text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                      </svg>
+                    </button>
+
+                    {/* Next Button */}
+                    <button
+                      onClick={nextFeedbackSlide}
+                      className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 lg:translate-x-12 z-10 bg-white rounded-full p-3 shadow-xl hover:shadow-2xl hover:scale-110 transition-all duration-200 group"
+                      aria-label="Next feedback slide"
+                    >
+                      <svg className="w-6 h-6 text-neutral-700 group-hover:text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </button>
+                  </>
+                )}
+
+                {/* Dots Indicator */}
+                {totalFeedbackSlides > 1 && (
+                  <div className="flex justify-center gap-2 mt-8">
+                    {Array.from({ length: totalFeedbackSlides }).map((_, index) => (
+                      <button
+                        key={index}
+                        onClick={() => setCurrentFeedbackSlide(index)}
+                        className={`h-2 rounded-full transition-all duration-300 ${
+                          index === currentFeedbackSlide
+                            ? 'w-8 bg-primary-600'
+                            : 'w-2 bg-neutral-300 hover:bg-neutral-400'
+                        }`}
+                        aria-label={`Go to feedback slide ${index + 1}`}
+                      />
+                    ))}
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className="text-center py-12">
+                <div className="w-20 h-20 bg-neutral-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-10 h-10 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                  </svg>
+                </div>
+                <p className="text-neutral-500">Chưa có đánh giá nào</p>
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
       {/* CTA Section */}
       <section className="section-padding bg-gradient-to-br from-secondary-600 via-secondary-500 to-primary-600 text-white">
         <div className="container-custom text-center">
@@ -279,9 +655,9 @@ export default function HomePage() {
           <p className="text-xl mb-8 opacity-90 animate-fade-in-up-delay-1">
             Đặt bàn ngay hôm nay để có trải nghiệm ẩm thực tuyệt vời
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-fade-in-up-delay-2">
+          <div className="flex justify-center animate-fade-in-up-delay-2">
             <Link
-              href="/dat-ban"
+              href="/user/dat-ban"
               className="btn-secondary">
               <svg
                 className="w-5 h-5"
@@ -293,34 +669,10 @@ export default function HomePage() {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth={2}
-                  d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
                 />
               </svg>
-              Đặt Bàn Ngay
-            </Link>
-            <Link
-              href="/lien-he"
-              className="btn-secondary">
-              <svg
-                className="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                />
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                />
-              </svg>
-              Liên Hệ
+              Đặt Bàn & Liên Hệ
             </Link>
           </div>
         </div>

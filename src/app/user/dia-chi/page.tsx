@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function UserLocationPage() {
+  const [showMap, setShowMap] = useState(false);
+
   // Prevent body scroll when this page is mounted
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -14,7 +16,7 @@ export default function UserLocationPage() {
   return (
     <div className="relative w-full h-[calc(100vh-73px)] -mb-px">
       {/* Full Screen Google Maps - Pushed right to accommodate sidebar */}
-      <div className="absolute inset-0 w-full h-full md:pl-[300px]">
+      <div className={`absolute inset-0 w-full h-full md:pl-[300px] transition-all duration-300 ${!showMap ? 'hidden md:block' : 'block'}`}>
         <iframe
           src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1961.5665524607439!2d107.18502083281068!3d10.490171921049502!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3175735a9fca1ce1%3A0xd20f7248807643ad!2zNTg4IEjDoCBIdXkgVOG6rXAsIFBoxrDhu5tjIFRydW5nLCBCw6AgUuG7i2EsIELDoCBS4buLYSAtIFbFqW5nIFTDoHUsIFZpZXRuYW0!5e0!3m2!1sen!2sus!4v1760583213893!5m2!1sen!2sus"
           width="100%"
@@ -28,7 +30,7 @@ export default function UserLocationPage() {
       </div>
 
       {/* Fixed Info Sidebar - Left Side, Below Header */}
-      <div className="absolute left-0 top-0 z-10 bg-white shadow-2xl h-full w-full md:w-[300px] overflow-y-auto p-4">
+      <div className={`absolute left-0 top-0 z-10 bg-white shadow-2xl h-full w-full md:w-[300px] overflow-y-auto p-4 transition-all duration-300 ${showMap ? 'hidden md:block' : 'block'}`}>
         {/* Restaurant Image Section */}
         <div className="mb-4 -mx-4 -mt-4">
           <div className="relative w-full h-48 overflow-hidden">
@@ -40,6 +42,18 @@ export default function UserLocationPage() {
             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-3">
               <h3 className="text-white font-bold text-lg">Mì cay yummy</h3>
             </div>
+            
+            {/* Floating Map Button - Mobile Only */}
+            <button
+              onClick={() => setShowMap(!showMap)}
+              className="md:hidden absolute bottom-3 right-3 py-2.5 px-4 rounded-full font-semibold text-white shadow-xl transition-all duration-200 hover:shadow-2xl active:scale-95 flex items-center gap-2 z-10"
+              style={{ backgroundColor: '#8B7CF6' }}
+            >
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z" />
+              </svg>
+              <span className="text-sm">Xem Bản Đồ</span>
+            </button>
           </div>
         </div>
 
@@ -128,6 +142,18 @@ export default function UserLocationPage() {
           </div>
         </div>
       </div>
+
+      {/* Floating Back Button - Mobile Only - When viewing map */}
+      {showMap && (
+        <button
+          onClick={() => setShowMap(false)}
+          className="md:hidden absolute top-4 left-4 z-20 bg-white rounded-full p-3 shadow-lg hover:shadow-xl transition-all duration-200 active:scale-95"
+        >
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ color: '#8B7CF6' }}>
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+      )}
     </div>
   );
 }
