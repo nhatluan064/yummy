@@ -18,7 +18,7 @@ export default function UserLocationPage() {
       {/* Full Screen Google Maps - Pushed right to accommodate sidebar */}
       <div className={`absolute inset-0 w-full h-full md:pl-[300px] transition-all duration-300 ${!showMap ? 'hidden md:block' : 'block'}`}>
         <iframe
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1961.5665524607439!2d107.18502083281068!3d10.490171921049502!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3175735a9fca1ce1%3A0xd20f7248807643ad!2zNTg4IEjDoCBIdXkgVOG6rXAsIFBoxrDhu5tjIFRydW5nLCBCw6AgUuG7i2EsIELDoCBS4buLYSAtIFbFqW5nIFTDoHUsIFZpZXRuYW0!5e0!3m2!1sen!2sus!4v1760583213893!5m2!1sen!2sus"
+          src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d488.88859371666255!2d107.18564239999999!3d10.4909665!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMTDCsDI5JzI3LjUiTiAxMDfCsDExJzA4LjMiRQ!5e0!3m2!1sen!2s!4v1730521000000!5m2!1sen!2s"
           width="100%"
           height="100%"
           style={{ border: 0 }}

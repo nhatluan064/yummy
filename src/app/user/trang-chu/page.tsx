@@ -211,20 +211,14 @@ export default function HomePage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="text-center group animate-fade-in-up-delay-1">
-              <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-primary-200 transition-colors">
-                <svg
-                  className="w-8 h-8 text-primary-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-                  />
-                </svg>
+              <div className="w-32 h-32 rounded-full overflow-hidden mx-auto mb-4 shadow-lg group-hover:shadow-xl transition-shadow">
+                <Image
+                  src="https://images.unsplash.com/photo-1488459716781-31db52582fe9?w=400"
+                  alt="Nguyên Liệu Tươi Ngon"
+                  width={128}
+                  height={128}
+                  className="w-full h-full object-cover"
+                />
               </div>
               <h3 className="text-xl font-bold text-neutral-800 mb-2">
                 Nguyên Liệu Tươi Ngon
@@ -236,20 +230,14 @@ export default function HomePage() {
             </div>
 
             <div className="text-center group animate-fade-in-up-delay-2">
-              <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-primary-200 transition-colors">
-                <svg
-                  className="w-8 h-8 text-primary-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
+              <div className="w-32 h-32 rounded-full overflow-hidden mx-auto mb-4 shadow-lg group-hover:shadow-xl transition-shadow">
+                <Image
+                  src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=400"
+                  alt="Phục Vụ Nhanh Chóng"
+                  width={128}
+                  height={128}
+                  className="w-full h-full object-cover"
+                />
               </div>
               <h3 className="text-xl font-bold text-neutral-800 mb-2">
                 Phục Vụ Nhanh Chóng
@@ -261,26 +249,14 @@ export default function HomePage() {
             </div>
 
             <div className="text-center group animate-fade-in-up-delay-3">
-              <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-primary-200 transition-colors">
-                <svg
-                  className="w-8 h-8 text-primary-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                  />
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                  />
-                </svg>
+              <div className="w-32 h-32 rounded-full overflow-hidden mx-auto mb-4 shadow-lg group-hover:shadow-xl transition-shadow">
+                <Image
+                  src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400"
+                  alt="Không Gian Ấm Cúng"
+                  width={128}
+                  height={128}
+                  className="w-full h-full object-cover"
+                />
               </div>
               <h3 className="text-xl font-bold text-neutral-800 mb-2">
                 Không Gian Ấm Cúng
@@ -382,15 +358,15 @@ export default function HomePage() {
                           <p className="text-neutral-600 mb-4 line-clamp-2 flex-grow">
                             {item.description}
                           </p>
-                          <div className="flex items-center justify-between mt-auto">
-                            <div className="text-primary-600 font-bold text-lg">
+                          <div className="flex items-center mt-auto gap-2">
+                            <div className="text-primary-600 font-bold text-base md:text-lg flex-1">
                               {item.price.toLocaleString()}đ
                             </div>
                             <Link
                               href="/user/thuc-don"
-                              className="btn-primary"
+                              className="btn-primary text-xs md:text-sm !px-3 !py-1.5 md:!px-4 md:!py-2 whitespace-nowrap !rounded-lg"
                             >
-                              Xem Chi Tiết
+                              Chi Tiết
                             </Link>
                           </div>
                         </div>
@@ -451,9 +427,9 @@ export default function HomePage() {
           </div>
 
           <div className="text-center mt-12">
-            <Link href="/user/thuc-don" className="btn-primary text-lg px-8 py-4">
+            <Link href="/user/thuc-don" className="btn-primary text-sm md:text-base !px-6 !py-3 md:!px-8 md:!py-4">
               <svg
-                className="w-5 h-5"
+                className="w-4 h-4 md:w-5 md:h-5"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"

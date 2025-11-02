@@ -15,7 +15,7 @@ export default function ContactInfo() {
             </div>
             <div>
               <h3 className="font-bold text-neutral-800 mb-1">Địa Chỉ</h3>
-              <p className="text-neutral-600">588/6 Hà Huy Tập, Phường Bà Rịa, HCM</p>
+              <p className="text-neutral-600">588/6 Cách Mạng Tháng 8, Phường Bà Rịa, HCM</p>
             </div>
           </div>
 

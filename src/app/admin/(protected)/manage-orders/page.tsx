@@ -42,6 +42,9 @@ export default function ManageOrdersPage() {
   const [existingOrder, setExistingOrder] = useState<Order | null>(null);
   const [tableOrders, setTableOrders] = useState<WithId<Order>[]>([]);
   
+  // Takeaway & Delivery pending payment orders
+  const [pendingPaymentOrders, setPendingPaymentOrders] = useState<WithId<Order>[]>([]);
+  
   // Cart
   const [cart, setCart] = useState<OrderItem[]>([]);
   
@@ -71,6 +74,23 @@ export default function ManageOrdersPage() {
     return () => unsubscribe();
   }, []);
   
+  // Subscribe to all orders when modal is open (pending, preparing, ready)
+  useEffect(() => {
+    if (!showModal || (selectedType !== "takeaway" && selectedType !== "delivery")) {
+      return;
+    }
+    
+    const unsubscribe = orderService.subscribeToOrders((allOrders) => {
+      const activeOrders = allOrders.filter(
+        (o) => o.orderType === selectedType && 
+        (o.status === "pending" || o.status === "preparing" || o.status === "ready")
+      );
+      setPendingPaymentOrders(activeOrders);
+    });
+    
+    return () => unsubscribe();
+  }, [showModal, selectedType]);
+  
   // Persist draftOrders to localStorage whenever it changes
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -90,6 +110,19 @@ export default function ManageOrdersPage() {
   const openModal = async (type: OrderType) => {
     setSelectedType(type);
     setShowModal(true);
+    
+    // Load ALL orders for takeaway and delivery (pending, preparing, ready)
+    if (type === "takeaway" || type === "delivery") {
+      try {
+        const orders = await orderService.getAll([
+          orderService.by("orderType", "==", type),
+          orderService.by("status", "in", ["pending", "preparing", "ready"])
+        ]);
+        setPendingPaymentOrders(orders);
+      } catch (error) {
+        console.error("Error loading orders:", error);
+      }
+    }
     // Reload draftOrders from localStorage to sync with kitchen changes
     if (typeof window !== "undefined") {
       const saved = localStorage.getItem("draftOrders");
@@ -316,6 +349,22 @@ export default function ManageOrdersPage() {
     }
   };
   
+  // Payment for takeaway/delivery orders
+  const handleTakeawayPayment = async (orderId: string, orderCode: string) => {
+    const confirmed = confirm(`Thanh toán đơn ${orderCode}?`);
+    if (!confirmed) return;
+    
+    try {
+      await orderService.updateStatus(orderId, "completed");
+      // Remove from pending list
+      setPendingPaymentOrders(pendingPaymentOrders.filter(o => o.id !== orderId));
+      showToast("✓ Đã thanh toán thành công!", 3000, "success");
+    } catch (error) {
+      console.error("Error processing payment:", error);
+      showToast("Có lỗi xảy ra!", 3000, "error");
+    }
+  };
+
   // Cancel order from history
   const cancelOrderFromHistory = async (orderId: string, orderCode: string) => {
     const confirmed = confirm(
@@ -452,12 +501,22 @@ export default function ManageOrdersPage() {
       
       await orderService.createOrder(orderData as Omit<Order, "id" | "createdAt" | "updatedAt" | "status" | "orderCode">);
       
+      // Clear cart for all types
+      setCart([]);
+      
       if (selectedType === "dine-in") {
         showToast("✓ Đã gửi món cho bếp! Bàn vẫn mở.", 3000, "success");
         // Don't close modal for dine-in
-      } else {
-        showToast("✓ Đã tạo đơn hàng thành công!", 3000, "success");
-        closeModal();
+      } else if (selectedType === "takeaway") {
+        showToast("✓ Đã tạo đơn mang đi thành công!", 3000, "success");
+        // Keep modal open to show pending orders, but clear delivery form
+        setDeliveryForm({ customerName: "", customerPhone: "", address: "" });
+        // Don't close modal - stay to allow payment or create new orders
+      } else if (selectedType === "delivery") {
+        showToast("✓ Đã tạo đơn ship thành công!", 3000, "success");
+        // Clear delivery form
+        setDeliveryForm({ customerName: "", customerPhone: "", address: "" });
+        // Don't close modal - stay to allow payment or create new orders
       }
     } catch (error) {
       console.error("Error creating order:", error);
@@ -679,7 +738,71 @@ export default function ManageOrdersPage() {
 
                 {/* Cart */}
                 <div className="flex-1 p-4 overflow-y-auto">
-                  {/* Orders đã gửi */}
+                  {/* All Orders - Takeaway/Delivery */}
+                  {(selectedType === "takeaway" || selectedType === "delivery") && pendingPaymentOrders.length > 0 && (
+                    <div className="mb-4 pb-4 border-b">
+                      <h3 className="font-bold text-xs text-neutral-500 mb-2">
+                        Đơn hàng ({pendingPaymentOrders.length})
+                      </h3>
+                      {pendingPaymentOrders.map((order) => (
+                        <div key={order.id} className={`mb-2 p-3 border rounded text-xs ${
+                          order.status === "ready" ? "bg-green-50 border-green-300" :
+                          order.status === "preparing" ? "bg-blue-50 border-blue-300" :
+                          "bg-yellow-50 border-yellow-300"
+                        }`}>
+                          <div className="flex items-center justify-between mb-2">
+                            <div className="flex items-center gap-2">
+                              <span className="font-bold text-neutral-700">{order.orderCode}</span>
+                              <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${
+                                order.status === "pending" ? "bg-yellow-100 text-yellow-700" :
+                                order.status === "preparing" ? "bg-blue-100 text-blue-700" :
+                                order.status === "ready" ? "bg-green-100 text-green-700" :
+                                "bg-neutral-100"
+                              }`}>
+                                {order.status === "pending" ? "⏳ Chờ xử lý" :
+                                 order.status === "preparing" ? "👨‍🍳 Đang làm" :
+                                 order.status === "ready" ? "✅ Đã xong" :
+                                 order.status}
+                              </span>
+                            </div>
+                            {order.status === "ready" && (
+                              <button
+                                onClick={() => handleTakeawayPayment(order.id!, order.orderCode!)}
+                                className="bg-primary-600 hover:bg-primary-700 text-white text-xs px-3 py-1.5 rounded font-bold transition-colors"
+                                title="Thanh toán"
+                              >
+                                💰 Thanh toán
+                              </button>
+                            )}
+                          </div>
+                          {selectedType === "delivery" && order.customerName && (
+                            <div className="mb-2 text-[10px] text-neutral-600">
+                              <div>👤 {order.customerName} • 📱 {order.customerPhone}</div>
+                              {order.notes && <div className="mt-1">📍 {order.notes}</div>}
+                            </div>
+                          )}
+                          <div className="space-y-1 mb-2">
+                            {order.items.map((item, idx) => (
+                              <div key={idx} className="text-neutral-600 flex justify-between">
+                                <span>{item.quantity}x {item.name}</span>
+                                <span className="font-medium">{(item.price * item.quantity).toLocaleString()}₫</span>
+                              </div>
+                            ))}
+                          </div>
+                          <div className={`pt-2 flex justify-between items-center ${
+                            order.status === "ready" ? "border-t border-green-200" :
+                            order.status === "preparing" ? "border-t border-blue-200" :
+                            "border-t border-yellow-200"
+                          }`}>
+                            <span className="font-bold text-neutral-700">Tổng:</span>
+                            <span className="font-bold text-primary-600">{order.totalAmount.toLocaleString()}₫</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Orders đã gửi - Dine-in */}
                   {selectedType === "dine-in" && tableOrders.length > 0 && (
                     <div className="mb-4 pb-4 border-b">
                       <h3 className="font-bold text-xs text-neutral-500 mb-2">Món đã gửi bếp ({tableOrders.length} đơn)</h3>

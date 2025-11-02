@@ -39,7 +39,7 @@ export default function Footer() {
                   </span>
                 <div>
                   <div className="font-semibold text-white">Địa Chỉ</div>
-                  <div className="text-neutral-300 text-sm">588/6 Hà Huy Tập, Phường Bà Rịa, HCM</div>
+                  <div className="text-neutral-300 text-sm">588/6 Cách Mạng Tháng 8, Phường Bà Rịa, HCM</div>
                 </div>
               </div>
               <div className="flex items-center space-x-3">

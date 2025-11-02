@@ -40,6 +40,8 @@ export default function MenuPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 15;
   const [showFilters, setShowFilters] = useState(false);
+  const [isFilterSticky, setIsFilterSticky] = useState(true);
+  const qualitySectionRef = useRef<HTMLDivElement>(null);
 
   // Review Modal State
   const [showReviewModal, setShowReviewModal] = useState(false);
@@ -87,6 +89,22 @@ export default function MenuPage() {
       setMenuData(menuWithReviews);
     }
     fetchMenuAndFeedback();
+  }, []);
+
+  // Track scroll position to hide filter on quality section
+  useEffect(() => {
+    const handleScroll = () => {
+      if (qualitySectionRef.current) {
+        const rect = qualitySectionRef.current.getBoundingClientRect();
+        // If quality section is in viewport, hide sticky filter
+        setIsFilterSticky(rect.top > 200);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    handleScroll(); // Check initial position
+    
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   // Filter, search, sort menuData
@@ -189,22 +207,22 @@ export default function MenuPage() {
       </section>
 
       {/* Search & Filters Bar */}
-      <section className="py-3 bg-white border-b border-neutral-200 sticky top-[73px] z-40 shadow-sm">
+      <section className={`py-2 md:py-3 bg-white border-b border-neutral-200 ${isFilterSticky ? 'sticky top-[73px]' : 'relative'} z-40 shadow-sm transition-all duration-300`}>
         <div className="container-custom">
           {/* Compact Filter Bar */}
-          <div className="flex flex-wrap items-end gap-3">
+          <div className="flex flex-wrap items-end gap-2 md:gap-3">
             {/* Search Box - Compact */}
-            <div className="flex-1 min-w-[200px] max-w-md">
-              <label className="block text-xs font-medium text-neutral-600 mb-1.5">
+            <div className="flex-1 min-w-[140px] md:min-w-[200px] max-w-md">
+              <label className="hidden md:block text-xs font-medium text-neutral-600 mb-1.5">
                 🔍 Tìm kiếm
               </label>
               <div className="relative">
                 <input
                   type="text"
-                  placeholder="Tìm kiếm món ăn..."
+                  placeholder="Tìm món..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-9 pr-9 py-2 text-sm border border-neutral-200 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all"
+                  className="w-full pl-8 md:pl-9 pr-8 md:pr-9 py-1.5 md:py-2 text-xs md:text-sm border border-neutral-200 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all"
                 />
                 <svg className="w-4 h-4 text-neutral-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -220,14 +238,14 @@ export default function MenuPage() {
             </div>
 
             {/* Category Dropdown */}
-            <div>
-              <label className="block text-xs font-medium text-neutral-600 mb-1.5">
+            <div className="w-auto">
+              <label className="hidden md:block text-xs font-medium text-neutral-600 mb-1.5">
                 📂 Danh mục
               </label>
               <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                className="px-3 py-2 text-sm border border-neutral-200 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white font-medium"
+                className="px-2 md:px-3 py-1.5 md:py-2 text-xs md:text-sm border border-neutral-200 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white font-medium"
               >
               <option value="all">📂 Tất cả danh mục ({menuData.length})</option>
               <optgroup label="🍜 Đồ Ăn">
@@ -258,14 +276,14 @@ export default function MenuPage() {
             </div>
 
             {/* Sort Dropdown */}
-            <div>
-              <label className="block text-xs font-medium text-neutral-600 mb-1.5">
+            <div className="w-auto">
+              <label className="hidden md:block text-xs font-medium text-neutral-600 mb-1.5">
                 🔄 Sắp xếp
               </label>
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
-                className="px-3 py-2 text-sm border border-neutral-200 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white font-medium"
+                className="px-2 md:px-3 py-1.5 md:py-2 text-xs md:text-sm border border-neutral-200 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white font-medium"
               >
                 <option value="price-asc">💰 Giá: Thấp → Cao</option>
                 <option value="price-desc">💎 Giá: Cao → Thấp</option>
@@ -275,14 +293,14 @@ export default function MenuPage() {
             </div>
 
             {/* Filter Type Dropdown */}
-            <div>
-              <label className="block text-xs font-medium text-neutral-600 mb-1.5">
+            <div className="w-auto">
+              <label className="hidden md:block text-xs font-medium text-neutral-600 mb-1.5">
                 🎯 Lọc
               </label>
               <select
                 value={filterType}
                 onChange={(e) => setFilterType(e.target.value as typeof filterType)}
-                className="px-3 py-2 text-sm border border-neutral-200 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white font-medium"
+                className="px-2 md:px-3 py-1.5 md:py-2 text-xs md:text-sm border border-neutral-200 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white font-medium"
               >
                 <option value="all">🎯 Tất cả</option>
                 <option value="bestSeller">🏆 Best Seller</option>
@@ -298,10 +316,10 @@ export default function MenuPage() {
                 setSortBy("price-asc");
                 setFilterType("all");
               }}
-              className="px-4 py-2 text-sm font-medium text-neutral-600 bg-neutral-100 hover:bg-neutral-200 rounded-lg transition-colors flex items-center gap-2"
+              className="px-2 md:px-4 py-1.5 md:py-2 text-xs md:text-sm font-medium text-neutral-600 bg-neutral-100 hover:bg-neutral-200 rounded-lg transition-colors flex items-center gap-1 md:gap-2"
               title="Đặt lại bộ lọc"
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-3 h-3 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
               </svg>
               <span className="hidden sm:inline">Reset</span>
@@ -441,7 +459,7 @@ export default function MenuPage() {
       </section>
 
       {/* Nutritional Info */}
-      <section className="section-padding bg-neutral-100">
+      <section ref={qualitySectionRef} className="section-padding bg-neutral-100">
         <div className="container-custom">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-neutral-800 mb-4 animate-fade-in-up">

@@ -12,7 +12,7 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "Mì cay yummy - Nhà Hàng ABC",
+  title: "Mì cay yummy",
   description:
     "Mì cay yummy - Tận hưởng những tô mì cay thơm ngon trong không gian ấm cúng và phục vụ tận tâm",
 };
