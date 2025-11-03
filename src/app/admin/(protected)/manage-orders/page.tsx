@@ -355,7 +355,24 @@ export default function ManageOrdersPage() {
     if (!confirmed) return;
     
     try {
+      // Get order details
+      const order = pendingPaymentOrders.find(o => o.id === orderId);
+      if (!order) return;
+      
+      // Update status to completed
       await orderService.updateStatus(orderId, "completed");
+      
+      // Create bill for revenue tracking
+      const { billService } = await import("@/lib/sdk");
+      await billService.ensureForOrder({
+        id: orderId,
+        orderCode: orderCode,
+        customerName: order.customerName || "",
+        tableNumber: order.tableNumber,
+        items: order.items,
+        totalAmount: order.totalAmount,
+      });
+      
       // Remove from pending list
       setPendingPaymentOrders(pendingPaymentOrders.filter(o => o.id !== orderId));
       showToast("✓ Đã thanh toán thành công!", 3000, "success");
@@ -505,14 +522,34 @@ export default function ManageOrdersPage() {
       setCart([]);
       
       if (selectedType === "dine-in") {
+        // Reload table orders immediately to show new order
+        if (selectedTable) {
+          const orders = await orderService.getAll([
+            orderService.by("tableNumber", "==", selectedTable.tableNumber),
+            orderService.by("status", "in", ["pending", "preparing", "ready"])
+          ]);
+          setTableOrders(orders);
+        }
         showToast("✓ Đã gửi món cho bếp! Bàn vẫn mở.", 3000, "success");
         // Don't close modal for dine-in
       } else if (selectedType === "takeaway") {
+        // Reload pending orders immediately to show new order
+        const orders = await orderService.getAll([
+          orderService.by("orderType", "==", "takeaway"),
+          orderService.by("status", "in", ["pending", "preparing", "ready"])
+        ]);
+        setPendingPaymentOrders(orders);
         showToast("✓ Đã tạo đơn mang đi thành công!", 3000, "success");
         // Keep modal open to show pending orders, but clear delivery form
         setDeliveryForm({ customerName: "", customerPhone: "", address: "" });
         // Don't close modal - stay to allow payment or create new orders
       } else if (selectedType === "delivery") {
+        // Reload pending orders immediately to show new order
+        const orders = await orderService.getAll([
+          orderService.by("orderType", "==", "delivery"),
+          orderService.by("status", "in", ["pending", "preparing", "ready"])
+        ]);
+        setPendingPaymentOrders(orders);
         showToast("✓ Đã tạo đơn ship thành công!", 3000, "success");
         // Clear delivery form
         setDeliveryForm({ customerName: "", customerPhone: "", address: "" });
@@ -750,30 +787,39 @@ export default function ManageOrdersPage() {
                           order.status === "preparing" ? "bg-blue-50 border-blue-300" :
                           "bg-yellow-50 border-yellow-300"
                         }`}>
-                          <div className="flex items-center justify-between mb-2">
-                            <div className="flex items-center gap-2">
-                              <span className="font-bold text-neutral-700">{order.orderCode}</span>
-                              <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${
+                          <div className="flex items-start justify-between gap-2 mb-2">
+                            <div className="flex items-center gap-2 flex-wrap min-w-0">
+                              <span className="font-bold text-neutral-700 whitespace-nowrap">{order.orderCode}</span>
+                              <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium whitespace-nowrap ${
                                 order.status === "pending" ? "bg-yellow-100 text-yellow-700" :
                                 order.status === "preparing" ? "bg-blue-100 text-blue-700" :
                                 order.status === "ready" ? "bg-green-100 text-green-700" :
                                 "bg-neutral-100"
                               }`}>
-                                {order.status === "pending" ? "⏳ Chờ xử lý" :
-                                 order.status === "preparing" ? "👨‍🍳 Đang làm" :
-                                 order.status === "ready" ? "✅ Đã xong" :
+                                {order.status === "pending" ? "⏳ Chờ" :
+                                 order.status === "preparing" ? "👨‍🍳 Làm" :
+                                 order.status === "ready" ? "✅ Xong" :
                                  order.status}
                               </span>
                             </div>
-                            {order.status === "ready" && (
+                            <div className="flex items-center gap-1.5 flex-shrink-0">
                               <button
-                                onClick={() => handleTakeawayPayment(order.id!, order.orderCode!)}
-                                className="bg-primary-600 hover:bg-primary-700 text-white text-xs px-3 py-1.5 rounded font-bold transition-colors"
-                                title="Thanh toán"
+                                onClick={() => cancelOrderFromHistory(order.id!, order.orderCode!)}
+                                className="bg-red-500 hover:bg-red-600 text-white text-[10px] px-2 py-1 rounded transition-colors whitespace-nowrap font-medium"
+                                title="Hủy đơn"
                               >
-                                💰 Thanh toán
+                                Hủy
                               </button>
-                            )}
+                              {order.status === "ready" && (
+                                <button
+                                  onClick={() => handleTakeawayPayment(order.id!, order.orderCode!)}
+                                  className="bg-primary-600 hover:bg-primary-700 text-white text-[10px] px-2 py-1 rounded font-medium transition-colors whitespace-nowrap"
+                                  title="Thanh toán"
+                                >
+                                  💰 Toán
+                                </button>
+                              )}
+                            </div>
                           </div>
                           {selectedType === "delivery" && order.customerName && (
                             <div className="mb-2 text-[10px] text-neutral-600">
@@ -812,24 +858,24 @@ export default function ManageOrdersPage() {
                           order.status === "preparing" ? "bg-blue-50 border-blue-300" :
                           "bg-yellow-50 border-yellow-300"
                         }`}>
-                          <div className="flex items-center justify-between mb-1">
-                            <div className="flex items-center gap-2">
-                              <span className="font-bold text-neutral-700">{order.orderCode}</span>
-                              <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${
+                          <div className="flex items-start justify-between gap-2 mb-1">
+                            <div className="flex items-center gap-2 flex-wrap min-w-0">
+                              <span className="font-bold text-neutral-700 whitespace-nowrap">{order.orderCode}</span>
+                              <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium whitespace-nowrap ${
                                 order.status === "pending" ? "bg-yellow-100 text-yellow-700" :
                                 order.status === "preparing" ? "bg-blue-100 text-blue-700" :
                                 order.status === "ready" ? "bg-green-100 text-green-700" :
                                 "bg-neutral-100"
                               }`}>
                                 {order.status === "pending" ? "⏳ Chờ" :
-                                 order.status === "preparing" ? "👨‍🍳 Đang làm" :
+                                 order.status === "preparing" ? "👨‍🍳 Làm" :
                                  order.status === "ready" ? "✅ Xong" :
                                  order.status}
                               </span>
                             </div>
                             <button
                               onClick={() => cancelOrderFromHistory(order.id!, order.orderCode!)}
-                              className="bg-red-500 hover:bg-red-600 text-white text-xs px-2 py-1 rounded transition-colors"
+                              className="bg-red-500 hover:bg-red-600 text-white text-[10px] px-2 py-1 rounded transition-colors whitespace-nowrap font-medium flex-shrink-0"
                               title="Hủy đơn"
                             >
                               Hủy

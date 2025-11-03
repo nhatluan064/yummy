@@ -22,8 +22,9 @@ export default function KitchenPage() {
   async function load() {
     setLoading(true);
     const list = await orderService.getAll();
-    // show only pending, preparing, or ready - chỉ biến mất khi thanh toán (completed)
-    const filtered = list.filter((o) => o.status === "pending" || o.status === "preparing" || o.status === "ready");
+    // show only preparing or ready - chỉ biến mất khi thanh toán (completed)
+    // Không cần "pending" nữa vì order tự động là "preparing"
+    const filtered = list.filter((o) => o.status === "preparing" || o.status === "ready");
     filtered.sort((a, b) => {
       let aTime: Date;
       if (typeof a.createdAt === 'object' && a.createdAt && 'toDate' in a.createdAt) {
@@ -52,8 +53,15 @@ export default function KitchenPage() {
   useEffect(() => { load(); }, []);
 
   async function updateStatus(id: string, status: Order["status"]) {
+    // Update on server
     await orderService.updateStatus(id, status);
-    await load();
+    
+    // Update local state immediately without reload
+    setOrders(prevOrders => 
+      prevOrders.map(order => 
+        order.id === id ? { ...order, status } : order
+      )
+    );
   }
 
   if (loading) return <div>Đang tải đơn bếp…</div>;
@@ -81,13 +89,11 @@ export default function KitchenPage() {
       <div className="flex items-center justify-between mb-2">
         <div className="font-bold text-sm">{o.orderCode ?? o.id}</div>
         <span className={`text-xs px-2 py-1 rounded font-medium ${
-          o.status === "pending" ? "bg-yellow-100 text-yellow-700" :
           o.status === "preparing" ? "bg-blue-100 text-blue-700" :
           o.status === "ready" ? "bg-green-100 text-green-700" :
           "bg-neutral-100"
         }`}>
-          {o.status === "pending" ? "⏳ Chờ xử lý" :
-           o.status === "preparing" ? "👨‍🍳 Đang làm" :
+          {o.status === "preparing" ? "👨‍🍳 Đang làm" :
            o.status === "ready" ? "✅ Đã xong" :
            o.status}
         </span>
@@ -116,11 +122,7 @@ export default function KitchenPage() {
           <span className="font-semibold text-sm">Tổng: {o.totalAmount.toLocaleString()}₫</span>
         </div>
         <div className="flex gap-2">
-          {o.status === "pending" && (
-            <button className="btn-primary flex-1 text-sm py-2" onClick={() => updateStatus(o.id!, "preparing")}>
-              👨‍🍳 Đang làm
-            </button>
-          )}
+          {/* Chỉ hiện nút "Đã xong" vì order đã tự động "Đang làm" */}
           {o.status === "preparing" && (
             <button className="bg-green-600 hover:bg-green-700 text-white font-bold flex-1 text-sm py-2 rounded-lg transition-colors" onClick={() => updateStatus(o.id!, "ready")}>
               ✅ Đã xong

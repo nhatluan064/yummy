@@ -35,24 +35,43 @@ export default function AdminDashboard() {
       end = new Date(now.getFullYear() + 1, 0, 1);
     }
     
-    Promise.all([
-      billService.getAll([billService.by("completedAt", ">=", start), billService.by("completedAt", "<", end), billService.take(200)]),
-      orderService.getAll([orderService.by("createdAt", ">=", start), orderService.by("createdAt", "<", end), orderService.take(200)]),
-      feedbackService.getAll([feedbackService.by("createdAt", ">=", start), feedbackService.by("createdAt", "<", end)]),
-      reservationService.getAll([reservationService.by("createdAt", ">=", start), reservationService.by("createdAt", "<", end)]),
-    ]).then(([billsData, ordersData, feedbacksData, reservationsData]) => {
-      setBills(billsData);
-      setOrders(ordersData.filter(o => o.status === "completed"));
-      setFeedbacks(feedbacksData);
-      setReservations(reservationsData);
-    }).catch(console.error);
+    // Realtime subscriptions for instant updates
+    const unsubscribeBills = billService.subscribeAll(
+      [billService.by("completedAt", ">=", start), billService.by("completedAt", "<", end), billService.take(200)],
+      (billsData) => setBills(billsData)
+    );
+    
+    const unsubscribeOrders = orderService.subscribeAll(
+      [orderService.by("createdAt", ">=", start), orderService.by("createdAt", "<", end), orderService.take(200)],
+      (ordersData) => setOrders(ordersData.filter(o => o.status === "completed"))
+    );
+    
+    const unsubscribeFeedbacks = feedbackService.subscribeAll(
+      [feedbackService.by("createdAt", ">=", start), feedbackService.by("createdAt", "<", end)],
+      (feedbacksData) => setFeedbacks(feedbacksData)
+    );
+    
+    const unsubscribeReservations = reservationService.subscribeAll(
+      [reservationService.by("createdAt", ">=", start), reservationService.by("createdAt", "<", end)],
+      (reservationsData) => setReservations(reservationsData)
+    );
+    
+    return () => {
+      unsubscribeBills();
+      unsubscribeOrders();
+      unsubscribeFeedbacks();
+      unsubscribeReservations();
+    };
   }, [timeRange]);
 
-  // useEffect riêng để fetch TẤT CẢ bills cho phần Đơn Hàng
+  // useEffect riêng để subscribe TẤT CẢ bills cho phần Đơn Hàng (realtime)
   useEffect(() => {
-    billService.getAll([billService.take(500)])
-      .then(setAllBills)
-      .catch(console.error);
+    const unsubscribe = billService.subscribeAll(
+      [billService.take(500)],
+      (billsData) => setAllBills(billsData)
+    );
+    
+    return () => unsubscribe();
   }, []);
 
   const metrics = useMemo(() => {
@@ -146,11 +165,15 @@ export default function AdminDashboard() {
             <option value="month">Tháng Này</option>
             <option value="year">Năm Nay</option>
           </select>
-          <button className="btn-primary text-sm px-4 py-2">
-            <svg className="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+          <button 
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 text-sm bg-neutral-100 hover:bg-neutral-200 text-neutral-700 rounded-lg font-medium transition-colors flex items-center gap-2"
+            title="Làm mới dữ liệu"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
             </svg>
-            Xuất Báo Cáo
+            Làm mới
           </button>
         </div>
       </div>

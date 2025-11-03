@@ -246,6 +246,30 @@ export default function OrdersPage() {
     }
   };
 
+  const deleteBill = async (orderId: string, orderCode: string) => {
+    const confirmed = confirm(
+      `⚠️ XÓA BILL & ORDER\n\nBạn có chắc chắn muốn xóa Bill và Order ${orderCode}?\n\n🚨 CẢNH BÁO: Hành động này KHÔNG THỂ KHÔI PHỤC!\n- Bill sẽ bị xóa (doanh thu giảm)\n- Order sẽ bị xóa vĩnh viễn`
+    );
+    
+    if (!confirmed) return;
+    
+    try {
+      // Delete bill from Firebase
+      await billService.delete(orderId);
+      
+      // Delete order from Firebase
+      await orderService.delete(orderId);
+      
+      // Remove order from local state immediately for instant UI update
+      setOrders(prevOrders => prevOrders.filter(o => o.id !== orderId));
+      
+      alert("✓ Đã xóa Bill và Order thành công!");
+    } catch (error) {
+      console.error("Failed to delete bill/order:", error);
+      alert("Không thể xóa. Vui lòng thử lại.");
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -440,6 +464,25 @@ export default function OrdersPage() {
                       </span>
                     </div>
                   </div>
+
+                  {/* Delete Bill Button for Completed Orders */}
+                  {order.status === "completed" && (
+                    <div className="mt-2 pt-2 border-t border-neutral-200">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          deleteBill(order.id!, order.orderCode ?? order.id!);
+                        }}
+                        className="w-full bg-red-500 hover:bg-red-600 text-white font-medium text-xs py-2 rounded-lg transition-colors flex items-center justify-center gap-1.5"
+                        title="Xóa Bill"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                        Xóa Bill
+                      </button>
+                    </div>
+                  )}
 
                   {/* Actions */}
                   {order.status !== "completed" &&

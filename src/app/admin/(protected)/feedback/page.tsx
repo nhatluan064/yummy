@@ -47,6 +47,18 @@ export default function FeedbackManagementPage() {
     "all" | "visible" | "hidden"
   >("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState<string>("all");
+  const [categories, setCategories] = useState<{id: string, name: string}[]>([]);
+
+  // Load categories
+  useEffect(() => {
+    async function fetchCategories() {
+      const { getCategoriesFromFirestore } = await import("@/lib/firestoreMenu");
+      const cats = await getCategoriesFromFirestore();
+      setCategories(cats as {id: string, name: string}[]);
+    }
+    fetchCategories();
+  }, []);
 
   // Load all reviews from Firestore
   useEffect(() => {
@@ -103,6 +115,13 @@ export default function FeedbackManagementPage() {
     // Filter by status
     if (filterStatus === "visible" && review.hidden) return false;
     if (filterStatus === "hidden" && !review.hidden) return false;
+
+    // Filter by category
+    if (categoryFilter !== "all") {
+      const allItems = getMenuItems();
+      const dish = allItems.find(item => item.name === review.dishName);
+      if (!dish || dish.category !== categoryFilter) return false;
+    }
 
     // Filter by search query
     if (searchQuery) {
@@ -303,6 +322,38 @@ export default function FeedbackManagementPage() {
             >
               Đã ẩn
             </button>
+          </div>
+        </div>
+
+        {/* Category Filter */}
+        <div className="mt-4 pt-4 border-t border-neutral-200">
+          <label className="block text-sm font-semibold text-neutral-700 mb-3">
+            🍽️ Lọc theo danh mục:
+          </label>
+          <div className="flex flex-wrap gap-2">
+            <button
+              onClick={() => setCategoryFilter("all")}
+              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                categoryFilter === "all"
+                  ? "bg-primary-600 text-white"
+                  : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200"
+              }`}
+            >
+              Tất cả danh mục
+            </button>
+            {categories.map((cat) => (
+              <button
+                key={cat.id}
+                onClick={() => setCategoryFilter(cat.id)}
+                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                  categoryFilter === cat.id
+                    ? "bg-primary-600 text-white"
+                    : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200"
+                }`}
+              >
+                {cat.name}
+              </button>
+            ))}
           </div>
         </div>
       </div>

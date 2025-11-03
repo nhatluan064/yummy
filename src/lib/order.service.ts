@@ -44,7 +44,7 @@ class OrderService extends FirestoreService<Order> {
 
     const id = await this.create({
       ...order,
-      status: "pending",
+      status: "preparing", // Mặc định là "Đang làm" thay vì "Chờ xử lý"
       orderCode: code,
     } as Order);
     return { id, orderCode: code };

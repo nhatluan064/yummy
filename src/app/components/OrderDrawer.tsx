@@ -38,6 +38,7 @@ export default function OrderDrawer() {
     return {};
   });
   const [currentTableItems, setCurrentTableItems] = useState<CurrentOrderItem[]>([]);
+  const [currentTableOrders, setCurrentTableOrders] = useState<Order[]>([]);
 
   // Load tables and sync with Firebase when drawer opens
   useEffect(() => {
@@ -50,10 +51,22 @@ export default function OrderDrawer() {
           const tablesData = await tableService.getAllTables();
           setTables(tablesData);
           
-          // Get all pending orders from Firebase
+          // Get all preparing/ready orders from Firebase (không có "pending" nữa)
           const allOrders = await orderService.getAll([
-            orderService.by('status', '==', 'pending')
+            orderService.by('status', 'in', ['preparing', 'ready'])
           ]);
+          
+          // Store all orders for status checking
+          const ordersMap: Record<string, Order[]> = {};
+          allOrders.forEach(order => {
+            if (order.tableNumber) {
+              const table = tablesData.find(t => t.tableNumber === order.tableNumber);
+              if (table?.id) {
+                if (!ordersMap[table.id]) ordersMap[table.id] = [];
+                ordersMap[table.id].push(order);
+              }
+            }
+          });
           
           // Build tableOrders from Firebase
           const syncedTableOrders: Record<string, CurrentOrderItem[]> = {};
@@ -88,6 +101,11 @@ export default function OrderDrawer() {
           // Update state and localStorage
           setTableOrders(syncedTableOrders);
           
+          // Update current table orders if table is selected
+          if (selectedTableId && ordersMap[selectedTableId]) {
+            setCurrentTableOrders(ordersMap[selectedTableId]);
+          }
+          
         } catch (error) {
           console.error('Error loading tables and syncing:', error);
         } finally {
@@ -99,17 +117,22 @@ export default function OrderDrawer() {
       
       // Subscribe to orders changes for real-time sync
       const unsubscribe = orderService.subscribeToOrders(async (updatedOrders) => {
-        // Only sync pending orders
-        const pendingOrders = updatedOrders.filter(o => o.status === 'pending');
+        // Only sync preparing/ready orders
+        const pendingOrders = updatedOrders.filter(o => o.status === 'preparing' || o.status === 'ready');
         
         const tablesData = await tableService.getAllTables();
         const syncedTableOrders: Record<string, CurrentOrderItem[]> = {};
+        const ordersMap: Record<string, Order[]> = {};
         
         pendingOrders.forEach(order => {
           if (order.tableNumber) {
             const table = tablesData.find(t => t.tableNumber === order.tableNumber);
             const tableId = table?.id;
             if (tableId) {
+              // Store orders for status checking
+              if (!ordersMap[tableId]) ordersMap[tableId] = [];
+              ordersMap[tableId].push(order);
+              
               if (!syncedTableOrders[tableId]) {
                 syncedTableOrders[tableId] = [];
               }
@@ -133,6 +156,11 @@ export default function OrderDrawer() {
         
         setTableOrders(syncedTableOrders);
         setTables(tablesData);
+        
+        // Update current table orders if table is selected
+        if (selectedTableId && ordersMap[selectedTableId]) {
+          setCurrentTableOrders(ordersMap[selectedTableId]);
+        }
       });
       
       return () => unsubscribe();
@@ -148,9 +176,9 @@ export default function OrderDrawer() {
       const tablesData = await tableService.getAllTables();
       setTables(tablesData);
       
-      // Get all pending orders from Firebase
+      // Get all preparing/ready orders from Firebase
       const allOrders = await orderService.getAll([
-        orderService.by('status', '==', 'pending')
+        orderService.by('status', 'in', ['preparing', 'ready'])
       ]);
       
       // Build tableOrders from Firebase
@@ -217,12 +245,20 @@ export default function OrderDrawer() {
       setSelectedTableId("");
       setTableId("");
       setTableNumber("");
+      setCurrentTableOrders([]);
       return;
     }
     
     setSelectedTableId(table.id);
     setTableId(table.id);
     setTableNumber(table.tableNumber);
+    
+    // Load orders với status từ Firebase
+    const orders = await orderService.getAll([
+      orderService.by('tableNumber', '==', table.tableNumber),
+      orderService.by('status', 'in', ['preparing', 'ready'])
+    ]);
+    setCurrentTableOrders(orders);
     
     // Load orders từ Firebase nếu bàn đang occupied và chưa có trong state
     if ((table.status === "occupied" || tableOrders[table.id]?.length > 0) &&
@@ -236,11 +272,11 @@ export default function OrderDrawer() {
     try {
       const orders = await orderService.getAll([
         orderService.by('tableNumber', '==', tNumber),
-        orderService.by('status', '==', 'pending')
+        orderService.by('status', 'in', ['preparing', 'ready'])
       ]);
       
       if (orders.length > 0) {
-        // Merge all pending orders for this table
+        // Merge all preparing/ready orders for this table
         const allItems: CurrentOrderItem[] = [];
         orders.forEach(order => {
           order.items.forEach(item => {
@@ -413,6 +449,52 @@ export default function OrderDrawer() {
       const filtered = items.filter(i => i.name !== itemName);
       return { ...prev, [selectedTableId]: filtered };
     });
+  };
+
+  // Cancel table - Hủy bàn
+  const handleCancelTable = async () => {
+    if (!tableId || !tableNumber) return;
+    
+    if (!confirm(`⚠️ HỦY BÀN ${tableNumber}\n\nBạn có chắc chắn muốn hủy tất cả món của bàn này?\n\nTất cả orders sẽ bị hủy và bàn sẽ trở về trạng thái trống.`)) {
+      return;
+    }
+    
+    setSubmitting(true);
+    try {
+      // Get all orders for this table
+      const orders = await orderService.getAll([
+        orderService.by('tableNumber', '==', tableNumber),
+        orderService.by('status', 'in', ['preparing', 'ready'])
+      ]);
+      
+      // Cancel all orders
+      for (const order of orders) {
+        if (order.id) {
+          await orderService.updateStatus(order.id, 'cancelled');
+        }
+      }
+      
+      // Clear table status and items
+      await tableService.updateTableStatus(tableId, "empty");
+      setTableOrders(prev => {
+        const copy = { ...prev };
+        delete copy[tableId];
+        return copy;
+      });
+      
+      showToast(`✓ Đã hủy ${tableNumber} thành công!`);
+      
+      setSelectedTableId("");
+      setTableId("");
+      setTableNumber("");
+      await reloadTablesAndSync();
+      close();
+    } catch (e) {
+      const err = e as Error;
+      setError(err?.message || "Không thể hủy bàn");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   if (!isOpen) return null;
@@ -616,7 +698,7 @@ export default function OrderDrawer() {
             
             {/* Nút hành động */}
             <div className="space-y-2">
-              {/* Nút gửi order / thêm món */}
+              {/* 1. Nút gửi order / thêm món - PHÍA TRÊN */}
               {items.length > 0 && (
                 <button
                   onClick={submitOrder}
@@ -627,20 +709,60 @@ export default function OrderDrawer() {
                     ? "Đang gửi..." 
                     : currentTableItems.length > 0 
                     ? "➕ Thêm món vào " + tableNumber
-                    : "🍳 Gửi Order đến Bếp"}
+                    : "🍳 Orders"}
                 </button>
               )}
               
-              {/* Nút thanh toán */}
-              {currentTableItems.length > 0 && (
-                <button
-                  onClick={handlePayment}
-                  disabled={submitting}
-                  className="btn-primary w-full py-3 bg-green-600 hover:bg-green-700"
-                >
-                  {submitting ? "Đang xử lý..." : "💳 Thanh Toán " + tableNumber}
-                </button>
-              )}
+              {/* 2. Nút Hủy Bàn (1/3) + Thanh toán (2/3) - PHÍA DƯỚI */}
+              {currentTableItems.length > 0 && (() => {
+                // Kiểm tra tất cả orders phải có status "ready"
+                const allReady = currentTableOrders.length > 0 && 
+                                 currentTableOrders.every(order => order.status === 'ready');
+                const hasOrders = currentTableOrders.length > 0;
+                
+                // Debug log
+                console.log('Payment validation:', {
+                  ordersCount: currentTableOrders.length,
+                  orders: currentTableOrders.map(o => ({ code: o.orderCode, status: o.status })),
+                  allReady
+                });
+                
+                return (
+                  <div>
+                    <div className="flex gap-2">
+                      {/* Nút Hủy Bàn - 1/3 */}
+                      <button
+                        onClick={handleCancelTable}
+                        disabled={submitting}
+                        className="w-1/3 py-3 bg-red-500 hover:bg-red-600 text-white font-bold rounded-lg transition-colors text-sm"
+                      >
+                        {submitting ? "..." : "❌ Hủy bàn"}
+                      </button>
+                      
+                      {/* Nút Thanh toán - 2/3 */}
+                      <button
+                        onClick={handlePayment}
+                        disabled={submitting || !allReady}
+                        className={`w-2/3 py-3 font-bold rounded-lg transition-colors ${
+                          allReady
+                            ? "bg-green-600 hover:bg-green-700 text-white cursor-pointer"
+                            : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                        }`}
+                        title={!allReady && hasOrders ? "Chờ tất cả món Xong (màu xanh) mới có thể thanh toán" : ""}
+                      >
+                        {submitting ? "Đang xử lý..." : allReady ? "💰 Thanh toán" : "⏳ Chờ món Xong"}
+                      </button>
+                    </div>
+                    
+                    {/* Cảnh báo nếu chưa ready */}
+                    {!allReady && hasOrders && (
+                      <p className="text-xs text-orange-600 mt-1 text-center">
+                        ⚠️ Vui lòng đợi tất cả món chuyển sang trạng thái "Xong" (màu xanh)
+                      </p>
+                    )}
+                  </div>
+                );
+              })()}
               
               {/* Thông báo nếu chưa có gì */}
               {items.length === 0 && currentTableItems.length === 0 && (
