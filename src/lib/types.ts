@@ -116,3 +116,39 @@ export interface Contact {
   createdAt?: Timestamp;
   updatedAt?: Timestamp;
 }
+
+// Site Configuration - Centralized settings for the website
+export interface SiteConfig {
+  id?: string;
+  // Branding
+  siteName: string; // e.g., "Mì cay yummy"
+  siteIcon: string; // e.g., "🍜"
+  logoUrl?: string; // Optional logo image URL
+  tagline?: string; // e.g., "Thưởng thức tô mì cay chuẩn vị Hàn Quốc..."
+  
+  // Contact Information
+  address: string; // e.g., "588/6 Cách Mạng Tháng 8"
+  addressDetail: string; // e.g., "Phường Bà Rịa, TP.HCM"
+  country: string; // e.g., "Việt Nam"
+  phone: string; // e.g., "0988 994 799"
+  email?: string;
+  facebook?: string; // Facebook page URL or name
+  zalo?: string; // Zalo number
+  
+  // Business Hours
+  openingHours: {
+    monday: { open: string; close: string; closed?: boolean };
+    tuesday: { open: string; close: string; closed?: boolean };
+    wednesday: { open: string; close: string; closed?: boolean };
+    thursday: { open: string; close: string; closed?: boolean };
+    friday: { open: string; close: string; closed?: boolean };
+    saturday: { open: string; close: string; closed?: boolean };
+    sunday: { open: string; close: string; closed?: boolean };
+  };
+  
+  // Additional Settings
+  copyrightText?: string;
+  
+  createdAt?: Timestamp;
+  updatedAt?: Timestamp;
+}

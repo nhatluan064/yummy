@@ -5,4 +5,5 @@ export { billService } from './bill.service';
 export { adminMaintenance } from './admin.service';
 export { feedbackService } from './feedback.service';
 export { reservationService } from './reservation.service';
+export { siteConfigService } from './siteConfig.service';
 export type * from './types';

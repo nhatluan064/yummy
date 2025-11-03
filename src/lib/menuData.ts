@@ -1,4 +1,8 @@
-// Shared menu data between Admin and User
+// DEPRECATED: This file is kept for compatibility only
+// Use @/lib/types and services instead
+
+import type { MenuItem as MenuItemType } from './types';
+
 export interface Category {
   id: string;
   name: string;
@@ -9,11 +13,11 @@ export interface Category {
 export interface Review {
   id: number;
   userName: string;
-  rating: number; // 1-5 stars
+  rating: number;
   comment: string;
   date: string;
   avatar?: string;
-  hidden?: boolean; // Admin can hide spam or inappropriate reviews
+  hidden?: boolean;
 }
 
 export interface MenuItem {
@@ -26,24 +30,17 @@ export interface MenuItem {
   image: string;
   available: boolean;
   bestSeller: boolean;
-  rating: number; // Average rating 1-5
+  rating: number;
   reviewCount: number;
   reviews: Review[];
 }
 
-// No default categories
-
-// Categories management
 let categories: Category[] = [];
-
-// No default menu items
-
-// This will be the single source of truth for menu items
-// Admin can modify this data, User will read from it
 let menuItems: MenuItem[] = [];
 
-// Get all menu items
+// Stub functions for compatibility
 export function getMenuItems(): MenuItem[] {
+  console.warn('getMenuItems is deprecated. Use menuService.getAll() instead');
   return [...menuItems];
 }
 

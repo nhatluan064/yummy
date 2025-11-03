@@ -254,8 +254,15 @@ export default function OrdersPage() {
     if (!confirmed) return;
     
     try {
-      // Delete bill from Firebase
-      await billService.delete(orderId);
+      // Find bill by orderId (bill.orderId === orderId, not bill.id)
+      const bills = await billService.getAll([billService.by('orderId', '==', orderId)]);
+      
+      // Delete all bills associated with this order
+      for (const bill of bills) {
+        if (bill.id) {
+          await billService.delete(bill.id);
+        }
+      }
       
       // Delete order from Firebase
       await orderService.delete(orderId);
@@ -267,6 +274,36 @@ export default function OrdersPage() {
     } catch (error) {
       console.error("Failed to delete bill/order:", error);
       alert("Không thể xóa. Vui lòng thử lại.");
+    }
+  };
+
+  // Cleanup orphan orders (orders without bills)
+  const cleanupOrphanOrders = async () => {
+    const confirmed = confirm(
+      `🧹 DỌN DẸP ORDERS KHÔNG CÓ BILL\n\nTính năng này sẽ:\n- Tìm tất cả orders "completed"\n- Kiểm tra xem có bill tương ứng không\n- Xóa orders không có bill\n\n⚠️ Dùng khi bạn xóa bill trực tiếp trên Firebase và order vẫn còn.\n\nTiếp tục?`
+    );
+    
+    if (!confirmed) return;
+    
+    try {
+      const allOrders = await orderService.getAll([orderService.by('status', '==', 'completed')]);
+      let deletedCount = 0;
+      
+      for (const order of allOrders) {
+        // Check if bill exists for this order
+        const bills = await billService.getAll([billService.by('orderId', '==', order.id!)]);
+        
+        if (bills.length === 0) {
+          // No bill found, delete orphan order
+          await orderService.delete(order.id!);
+          deletedCount++;
+        }
+      }
+      
+      alert(`✓ Đã xóa ${deletedCount} orders không có bill!`);
+    } catch (error) {
+      console.error("Failed to cleanup orphan orders:", error);
+      alert("Lỗi khi dọn dẹp. Vui lòng thử lại.");
     }
   };
 
@@ -282,6 +319,16 @@ export default function OrdersPage() {
             Đơn hàng đã hoàn thành
           </p>
         </div>
+        <button
+          onClick={cleanupOrphanOrders}
+          className="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-colors"
+          title="Xóa orders không có bill (dùng khi xóa bill trực tiếp trên Firebase)"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+          </svg>
+          🧹 Dọn dẹp Orders
+        </button>
       </div>
 
       {/* Search and Filter */}

@@ -918,21 +918,35 @@ export default function ManageOrdersPage() {
 
                 {/* Buttons */}
                 <div className="p-4 border-t bg-neutral-50 space-y-2">
-                  <div className="flex gap-2">
-                    <button onClick={closeModal} className="btn-secondary flex-1">Hủy</button>
-                    {selectedType === "dine-in" && selectedTable && tableOrders.length > 0 && (
+                  {/* 1. Nút Orders - PHÍA TRÊN */}
+                  <button onClick={submitOrder} disabled={loading || cart.length === 0} className="btn-primary w-full disabled:opacity-50">
+                    {loading ? "Đang xử lý..." : `🍳 Orders (${cart.length})`}
+                  </button>
+                  
+                  {/* 2. Nút Hủy bàn + Thanh toán - PHÍA DƯỚI */}
+                  {selectedType === "dine-in" && selectedTable && tableOrders.length > 0 ? (
+                    <div className="flex gap-2">
+                      {/* Hủy bàn - 1/3 */}
+                      <button onClick={closeModal} className="w-1/3 py-3 bg-red-500 hover:bg-red-600 text-white font-bold rounded-lg transition-colors text-sm">
+                        ❌ Hủy bàn
+                      </button>
+                      {/* Thanh toán - 2/3 */}
                       <button 
                         onClick={handlePayment} 
-                        disabled={loading}
-                        className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg flex-1 disabled:opacity-50"
+                        disabled={loading || !tableOrders.every(o => o.status === 'ready')}
+                        className={`w-2/3 py-3 font-bold rounded-lg transition-colors ${
+                          tableOrders.every(o => o.status === 'ready')
+                            ? "bg-green-600 hover:bg-green-700 text-white"
+                            : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                        }`}
+                        title={!tableOrders.every(o => o.status === 'ready') ? "Chờ tất cả món Xong (màu xanh)" : ""}
                       >
-                        💵 Thanh toán ({tableOrders.length} đơn)
+                        {loading ? "..." : tableOrders.every(o => o.status === 'ready') ? `💰 Thanh toán (${tableOrders.length} đơn)` : `⏳ Chờ món Xong`}
                       </button>
-                    )}
-                  </div>
-                  <button onClick={submitOrder} disabled={loading || cart.length === 0} className="btn-primary w-full disabled:opacity-50">
-                    {loading ? "Đang xử lý..." : `Orders (${cart.length})`}
-                  </button>
+                    </div>
+                  ) : (
+                    <button onClick={closeModal} className="btn-secondary w-full">Hủy</button>
+                  )}
                 </div>
               </div>
 

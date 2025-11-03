@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { getMenuItems, type MenuItem } from "@/lib/menuData";
-import { type Feedback } from "@/lib/types";
-import { type Timestamp } from "firebase/firestore"; // Import Timestamp nếu cần
+import { type MenuItem, type Feedback } from "@/lib/types";
+import { menuService } from "@/lib/sdk";
+import { type Timestamp } from "firebase/firestore";
 
 // Định nghĩa lại kiểu Feedback để createdAt rõ ràng hơn
 interface FeedbackWithTimestamp extends Omit<Feedback, "createdAt"> {
@@ -11,7 +11,7 @@ interface FeedbackWithTimestamp extends Omit<Feedback, "createdAt"> {
 }
 
 interface ReviewWithDish extends FeedbackWithTimestamp {
-  dishId?: string | number;
+  dishId?: string;
   dishName: string;
 }
 
@@ -43,21 +43,25 @@ const mapFeedbacksToReviews = (
 
 export default function FeedbackManagementPage() {
   const [allReviews, setAllReviews] = useState<ReviewWithDish[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("all");
   const [filterStatus, setFilterStatus] = useState<
     "all" | "visible" | "hidden"
   >("all");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [categoryFilter, setCategoryFilter] = useState<string>("all");
-  const [categories, setCategories] = useState<{id: string, name: string}[]>([]);
+  const [categories, setCategories] = useState<{ id: string; name: string }[]>([]);
+  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
 
-  // Load categories
+  // Load categories and menu items
   useEffect(() => {
-    async function fetchCategories() {
+    async function fetchData() {
       const { getCategoriesFromFirestore } = await import("@/lib/firestoreMenu");
       const cats = await getCategoriesFromFirestore();
-      setCategories(cats as {id: string, name: string}[]);
+      setCategories(cats as { id: string; name: string }[]);
+      
+      const items = await menuService.getAll();
+      setMenuItems(items);
     }
-    fetchCategories();
+    fetchData();
   }, []);
 
   // Load all reviews from Firestore
@@ -66,13 +70,14 @@ export default function FeedbackManagementPage() {
       const { feedbackService } = await import("@/lib/feedback.service");
       const feedbacks =
         (await feedbackService.getAll()) as FeedbackWithTimestamp[];
-      const allItems = getMenuItems();
-      const reviewsList = mapFeedbacksToReviews(feedbacks, allItems);
+      const reviewsList = mapFeedbacksToReviews(feedbacks, menuItems);
       reviewsList.sort(sortReviews);
       setAllReviews(reviewsList);
     }
-    fetchFeedbacks();
-  }, []);
+    if (menuItems.length > 0) {
+      fetchFeedbacks();
+    }
+  }, [menuItems]);
 
   // Tối ưu: Chỉ cập nhật state, không fetch lại toàn bộ
   const toggleHideReview = async (reviewId: string) => {
@@ -118,8 +123,7 @@ export default function FeedbackManagementPage() {
 
     // Filter by category
     if (categoryFilter !== "all") {
-      const allItems = getMenuItems();
-      const dish = allItems.find(item => item.name === review.dishName);
+      const dish = menuItems.find((item: MenuItem) => item.name === review.dishName);
       if (!dish || dish.category !== categoryFilter) return false;
     }
 

@@ -2,9 +2,8 @@
 "use client";
 import Link from "next/link";
 import { useState } from "react";
-import { useOrder } from "./OrderContext";
 import { usePathname } from "next/navigation";
-import { User2, Menu as MenuIcon, ShoppingBag } from "lucide-react";
+import { User2, Menu as MenuIcon } from "lucide-react";
 
 type HeaderMode = "user" | "admin";
 
@@ -16,19 +15,7 @@ export default function Header({ mode = "user" }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
 
-  // Only try to use OrderContext in admin mode
-  let order: ReturnType<typeof useOrder> | null = null;
-  if (mode === "admin") {
-    try {
-      // eslint-disable-next-line react-hooks/rules-of-hooks
-      order = useOrder();
-    } catch {
-      order = null;
-    }
-  }
-
   // Determine visibility and routes based on mode
-  const showOrderButton = mode === "admin"; // Only show Cart in admin
   const showAdminButton = mode === "admin"; // Show Login button in admin
   
   // Routes based on mode
@@ -131,23 +118,7 @@ export default function Header({ mode = "user" }: HeaderProps) {
           </nav>
           {/* Admin Login & Mobile Menu Button */}
           <div className="flex items-center gap-4">
-            {/* Order Drawer trigger */}
-            {showOrderButton && (
-              <button
-                onClick={() => order?.open()}
-                className="btn-primary hidden sm:inline-flex p-2 rounded-full relative"
-                aria-label="Xem giỏ hàng"
-              >
-                <ShoppingBag className="w-5 h-5" />
-                {order && order.items.length > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
-                    {order.items.length}
-                  </span>
-                )}
-              </button>
-            )}
-            {/* Admin Dashboard link */}
-            {showAdminButton && (
+            {showAdminButton ? (
               <Link
                 href="/admin/dashboard"
                 className="hidden lg:flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-secondary-600 to-primary-600 text-white rounded-lg font-medium shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200"
@@ -156,8 +127,7 @@ export default function Header({ mode = "user" }: HeaderProps) {
                 <User2 className="w-4 h-4" />
                 <span>Quản lý</span>
               </Link>
-            )}
-            {/* Mobile Menu Button */}
+            ) : null}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="lg:hidden p-2 text-neutral-700 hover:text-primary-600 transition-colors"
@@ -227,23 +197,6 @@ export default function Header({ mode = "user" }: HeaderProps) {
             >
               🍜 Thực Đơn
             </Link>
-            {showOrderButton && (
-              <button
-                onClick={() => {
-                  order?.open();
-                  setIsMenuOpen(false);
-                }}
-                className="btn-primary py-3 flex items-center gap-2 justify-center relative"
-              >
-                <ShoppingBag className="w-5 h-5" />
-                <span className="font-medium">Giỏ hàng</span>
-                {order && order.items.length > 0 && (
-                  <span className="bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
-                    {order.items.length}
-                  </span>
-                )}
-              </button>
-            )}
             {showAdminButton && (
               <Link
                 href="/admin/dashboard"
