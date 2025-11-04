@@ -7,7 +7,7 @@ export default function Footer() {
       <div className="container-custom pt-12 pb-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Company Info */}
-          <div className="space-x-4">
+          <div className="space-y-4">
             <h3 className="text-2xl font-bold text-gradient mb-4">
               🍜 Mì cay yummy
             </h3>
@@ -17,7 +17,7 @@ export default function Footer() {
           </div>
 
           {/* Quick Links (the same as Navbar) */}
-          <div className="space-x-4 py-1">
+          <div className="space-y-4 py-1">
             <h4 className="text-lg font-semibold mb-4">Liên Kết Nhanh</h4>
             <nav className="space-y-2">
               <Link href="/" className="block text-neutral-300 hover:text-white transition-colors">Trang Chủ</Link>
@@ -28,7 +28,7 @@ export default function Footer() {
           </div>
 
           {/* Contact Info mới với icon màu nền */}
-          <div className="space-x-4 py-1">
+          <div className="space-y-4 py-1">
             <h4 className="text-lg font-semibold mb-4">Thông Tin Liên Hệ</h4>
             <div className="space-y-3">
               <div className="flex items-center space-x-3">
@@ -75,7 +75,7 @@ export default function Footer() {
           </div>
 
           {/* Opening Hours */}
-          <div className="space-x-4 py-1">
+          <div className="space-y-4 py-1">
             <h4 className="text-lg font-semibold mb-4">Giờ Hoạt Động</h4>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
