@@ -7,7 +7,11 @@
     "build": "next build --turbopack",
     "start": "next start",
     "lint": "eslint",
-    "export": "next export"
+    "export": "next export",
+    "deploy": "npm run build && firebase deploy --only hosting:new-site",
+    "deploy:old": "npm run build && firebase deploy --only hosting:old-site",
+    "deploy:new": "npm run build && firebase deploy --only hosting:new-site",
+    "deploy:all": "npm run build && firebase deploy --only hosting"
   },
   "dependencies": {
     "firebase": "^12.4.0",

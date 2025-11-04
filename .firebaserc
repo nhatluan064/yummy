@@ -1,5 +1,17 @@
 {
   "projects": {
     "default": "order-yummy"
+  },
+  "targets": {
+    "order-yummy": {
+      "hosting": {
+        "old-site": [
+          "order-yummy"
+        ],
+        "new-site": [
+          "yummyhouse"
+        ]
+      }
+    }
   }
 }
