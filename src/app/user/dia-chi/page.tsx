@@ -27,7 +27,7 @@ export default function UserLocationPage() {
         </div>
       </section>
 
-      <div className="relative w-full h-[calc(100vh-73px-112px)] -mb-px">
+      <div className="relative w-full h-[calc(100vh-110px-112px)] -mb-px">
         {/* Full Screen Google Maps - Pushed right to accommodate sidebar */}
         <div className={`absolute inset-0 w-full h-full md:pl-[300px] transition-all duration-300 ${!showMap ? 'hidden md:block' : 'block'}`}>
           <iframe
@@ -46,7 +46,7 @@ export default function UserLocationPage() {
         <div className={`absolute left-0 top-0 z-10 bg-white shadow-2xl h-full w-full md:w-[300px] overflow-y-auto p-4 transition-all duration-300 ${showMap ? 'hidden md:block' : 'block'}`}>
           {/* Restaurant Image Section */}
           <div className="mb-4 -mx-4 -mt-4">
-            <div className="relative w-full h-48 overflow-hidden">
+            <div className="relative w-full h-[200px] overflow-hidden z-index-1">
               <img
                 src="https://streetviewpixels-pa.googleapis.com/v1/thumbnail?cb_client=maps_sv.tactile&w=900&h=600&pitch=-7.871751026549973&panoid=ao32Cv9dRatBAY_NlGHFuA&yaw=307.1888799378881"
                 alt="Tiệm may Lệ Xuân - Mì cay yummy"

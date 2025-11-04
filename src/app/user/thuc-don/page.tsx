@@ -433,11 +433,14 @@ export default function MenuPage() {
           {/* Search & Filters Bar */}
           <div 
             ref={filterRef}
-            className={`bg-white rounded-2xl shadow-md p-4 mb-8 transition-all duration-300 ${
+            className={`bg-white rounded-2xl shadow-md p-4 mb-8 transition-all duration-500 ease-in-out ${
               isFilterSticky 
-                ? 'fixed top-20 left-0 right-0 z-40 mx-auto max-w-7xl shadow-2xl' 
-                : ''
+                ? 'fixed top-20 left-0 right-0 z-50 mx-auto max-w-7xl shadow-2xl scale-100 opacity-100' 
+                : 'scale-100 opacity-100 animate-fade-in-up-delay-100'
             }`}
+            style={{
+              transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease-in-out, transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease-in-out'
+            }}
           >
             <div className="flex flex-wrap items-end gap-2 md:gap-3">
               {/* Search Box */}

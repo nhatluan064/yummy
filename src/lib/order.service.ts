@@ -27,20 +27,32 @@ class OrderService extends FirestoreService<Order> {
       typePrefix = "ODER-SHIP";
     }
 
-    // Generate sequential code using a transaction on a meta doc
-    const metaRef = doc(db, "_meta", `order-seq-${order.orderType || "default"}`);
-    const { code } = await runTransaction(db, async (tx) => {
-      const snap = await tx.get(metaRef);
-      let current = 0;
-      if (snap.exists()) {
-        const data = snap.data() as { current?: number };
-        current = Number(data.current) || 0;
+    // Get all existing orders of this type to find gaps
+    const existingOrders = await this.getAll([
+      this.by("orderType", "==", order.orderType || "dine-in")
+    ]);
+    
+    // Extract numbers from orderCodes
+    const usedNumbers = new Set<number>();
+    const codePattern = new RegExp(`#DONHANG-${typePrefix}-(\\d+)`);
+    
+    for (const existingOrder of existingOrders) {
+      if (existingOrder.orderCode) {
+        const match = existingOrder.orderCode.match(codePattern);
+        if (match) {
+          usedNumbers.add(parseInt(match[1], 10));
+        }
       }
-      const next = current + 1;
-      tx.set(metaRef, { current: next }, { merge: true });
-      const padded = String(next).padStart(3, "0");
-      return { code: `#DONHANG-${typePrefix}-${padded}` };
-    });
+    }
+    
+    // Find smallest available number (starting from 1)
+    let nextNumber = 1;
+    while (usedNumbers.has(nextNumber)) {
+      nextNumber++;
+    }
+    
+    const padded = String(nextNumber).padStart(3, "0");
+    const code = `#DONHANG-${typePrefix}-${padded}`;
 
     const id = await this.create({
       ...order,

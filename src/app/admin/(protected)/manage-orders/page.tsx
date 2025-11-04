@@ -44,6 +44,7 @@ export default function ManageOrdersPage() {
   
   // Takeaway & Delivery pending payment orders
   const [pendingPaymentOrders, setPendingPaymentOrders] = useState<WithId<Order>[]>([]);
+  const [selectedOrder, setSelectedOrder] = useState<WithId<Order> | null>(null);
   
   // Cart
   const [cart, setCart] = useState<OrderItem[]>([]);
@@ -168,6 +169,7 @@ export default function ManageOrdersPage() {
     setSelectedTable(null);
     setExistingOrder(null);
     setTableOrders([]);
+    setSelectedOrder(null);
     // Reload draftOrders on close to sync
     if (typeof window !== "undefined") {
       const saved = localStorage.getItem("draftOrders");
@@ -379,6 +381,53 @@ export default function ManageOrdersPage() {
     } catch (error) {
       console.error("Error processing payment:", error);
       showToast("Có lỗi xảy ra!", 3000, "error");
+    }
+  };
+
+  // Payment for selected takeaway/delivery order
+  const handleSelectedOrderPayment = async () => {
+    if (!selectedOrder) {
+      showToast("Vui lòng chọn đơn cần thanh toán!", 3000, "error");
+      return;
+    }
+    
+    if (selectedOrder.status !== 'ready') {
+      showToast("Đơn chưa sẵn sàng! Chờ bếp làm xong.", 3000, "error");
+      return;
+    }
+    
+    const orderType = selectedType === "takeaway" ? "mang đi" : "ship";
+    const confirmed = confirm(
+      `Thanh toán đơn ${selectedOrder.orderCode}?`
+    );
+    if (!confirmed) return;
+    
+    setLoading(true);
+    try {
+      const { billService } = await import("@/lib/sdk");
+      
+      // Update status to completed
+      await orderService.updateStatus(selectedOrder.id!, "completed");
+      
+      // Create bill
+      await billService.ensureForOrder({
+        id: selectedOrder.id!,
+        orderCode: selectedOrder.orderCode!,
+        customerName: selectedOrder.customerName || "",
+        tableNumber: selectedOrder.tableNumber,
+        items: selectedOrder.items,
+        totalAmount: selectedOrder.totalAmount,
+      });
+      
+      // Remove paid order from pending list
+      setPendingPaymentOrders(pendingPaymentOrders.filter(o => o.id !== selectedOrder.id));
+      setSelectedOrder(null);
+      showToast(`✓ Đã thanh toán đơn ${orderType}!`, 3000, "success");
+    } catch (error) {
+      console.error("Error processing payment:", error);
+      showToast("Có lỗi xảy ra!", 3000, "error");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -782,11 +831,17 @@ export default function ManageOrdersPage() {
                         Đơn hàng ({pendingPaymentOrders.length})
                       </h3>
                       {pendingPaymentOrders.map((order) => (
-                        <div key={order.id} className={`mb-2 p-3 border rounded text-xs ${
-                          order.status === "ready" ? "bg-green-50 border-green-300" :
-                          order.status === "preparing" ? "bg-blue-50 border-blue-300" :
-                          "bg-yellow-50 border-yellow-300"
-                        }`}>
+                        <div 
+                          key={order.id} 
+                          onClick={() => setSelectedOrder(selectedOrder?.id === order.id ? null : order)}
+                          className={`mb-2 p-3 border-2 rounded text-xs cursor-pointer transition-all ${
+                            selectedOrder?.id === order.id 
+                              ? "ring-2 ring-primary-500 ring-offset-2 border-primary-500 bg-primary-50" 
+                              : order.status === "ready" ? "bg-green-50 border-green-300 hover:border-green-400" :
+                                order.status === "preparing" ? "bg-blue-50 border-blue-300 hover:border-blue-400" :
+                                "bg-yellow-50 border-yellow-300 hover:border-yellow-400"
+                          }`}
+                        >
                           <div className="flex items-start justify-between gap-2 mb-2">
                             <div className="flex items-center gap-2 flex-wrap min-w-0">
                               <span className="font-bold text-neutral-700 whitespace-nowrap">{order.orderCode}</span>
@@ -804,21 +859,15 @@ export default function ManageOrdersPage() {
                             </div>
                             <div className="flex items-center gap-1.5 flex-shrink-0">
                               <button
-                                onClick={() => cancelOrderFromHistory(order.id!, order.orderCode!)}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  cancelOrderFromHistory(order.id!, order.orderCode!);
+                                }}
                                 className="bg-red-500 hover:bg-red-600 text-white text-[10px] px-2 py-1 rounded transition-colors whitespace-nowrap font-medium"
                                 title="Hủy đơn"
                               >
                                 Hủy
                               </button>
-                              {order.status === "ready" && (
-                                <button
-                                  onClick={() => handleTakeawayPayment(order.id!, order.orderCode!)}
-                                  className="bg-primary-600 hover:bg-primary-700 text-white text-[10px] px-2 py-1 rounded font-medium transition-colors whitespace-nowrap"
-                                  title="Thanh toán"
-                                >
-                                  💰 Toán
-                                </button>
-                              )}
                             </div>
                           </div>
                           {selectedType === "delivery" && order.customerName && (
@@ -917,35 +966,23 @@ export default function ManageOrdersPage() {
                 </div>
 
                 {/* Buttons */}
-                <div className="p-4 border-t bg-neutral-50 space-y-2">
-                  {/* 1. Nút Orders - PHÍA TRÊN */}
-                  <button onClick={submitOrder} disabled={loading || cart.length === 0} className="btn-primary w-full disabled:opacity-50">
-                    {loading ? "Đang xử lý..." : `🍳 Orders (${cart.length})`}
-                  </button>
-                  
-                  {/* 2. Nút Hủy + Chờ món Xong - PHÍA DƯỚI */}
+                <div className="p-4 border-t bg-neutral-50">
                   <div className="flex gap-2">
-                    {/* Nút Hủy - 1/3 width - Chỉ enable khi có orders */}
+                    {/* 1. Nút Orders - 50% width */}
                     <button 
-                      onClick={closeModal} 
-                      disabled={
-                        selectedType === "dine-in" ? tableOrders.length === 0 : false
-                      }
-                      className={`w-1/3 py-3 font-bold rounded-lg transition-colors text-sm ${
-                        selectedType === "dine-in" && tableOrders.length === 0
-                          ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                          : "bg-red-500 hover:bg-red-600 text-white"
-                      }`}
+                      onClick={submitOrder} 
+                      disabled={loading || cart.length === 0} 
+                      className="btn-primary w-1/2 disabled:opacity-50"
                     >
-                      {selectedType === "dine-in" ? "❌ Hủy bàn" : "❌ Hủy"}
+                      {loading ? "Đang xử lý..." : `🍳 Orders (${cart.length})`}
                     </button>
                     
-                    {/* Nút Chờ món Xong / Thanh toán - 2/3 width - Luôn hiển thị và disable khi chưa có món */}
+                    {/* 2. Nút Chờ món Xong / Thanh toán - 50% width */}
                     {selectedType === "dine-in" && selectedTable ? (
                       <button 
                         onClick={handlePayment}
                         disabled={loading || tableOrders.length === 0 || !tableOrders.every(o => o.status === 'ready')}
-                        className={`w-2/3 py-3 font-bold rounded-lg transition-colors ${
+                        className={`w-1/2 py-3 font-bold rounded-lg transition-colors ${
                           tableOrders.length > 0 && tableOrders.every(o => o.status === 'ready')
                             ? "bg-green-600 hover:bg-green-700 text-white"
                             : "bg-gray-300 text-gray-500 cursor-not-allowed"
@@ -954,14 +991,21 @@ export default function ManageOrdersPage() {
                       >
                         {loading ? "..." : tableOrders.length === 0 ? "⏳ Chờ món Xong" : (tableOrders.every(o => o.status === 'ready') ? `💰 Thanh toán (${tableOrders.length} đơn)` : `⏳ Chờ món Xong`)}
                       </button>
-                    ) : selectedType !== null && (
+                    ) : (selectedType === "takeaway" || selectedType === "delivery") && (
                       <button 
-                        onClick={closeModal}
-                        disabled={true}
-                        className="w-2/3 py-3 font-bold rounded-lg transition-colors bg-gray-300 text-gray-500 cursor-not-allowed"
-                        title="Chờ món được gửi cho bếp"
+                        onClick={handleSelectedOrderPayment}
+                        disabled={loading || !selectedOrder || selectedOrder.status !== 'ready'}
+                        className={`w-1/2 py-3 font-bold rounded-lg transition-colors ${
+                          selectedOrder && selectedOrder.status === 'ready'
+                            ? "bg-green-600 hover:bg-green-700 text-white"
+                            : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                        }`}
+                        title={!selectedOrder ? "Chọn đơn hàng để thanh toán" : selectedOrder.status !== 'ready' ? "Chờ món được bếp làm xong (màu xanh)" : ""}
                       >
-                        {selectedType === "takeaway" ? `🍱 Chờ món Xong` : `🚚 Chờ món Xong`}
+                        {loading ? "..." : selectedOrder && selectedOrder.status === 'ready'
+                          ? `💰 Thanh toán`
+                          : (selectedType === "takeaway" ? `🍱 Chọn đơn` : `🚚 Chọn đơn`)
+                        }
                       </button>
                     )}
                   </div>
