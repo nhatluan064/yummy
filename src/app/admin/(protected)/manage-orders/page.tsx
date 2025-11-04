@@ -923,30 +923,48 @@ export default function ManageOrdersPage() {
                     {loading ? "Đang xử lý..." : `🍳 Orders (${cart.length})`}
                   </button>
                   
-                  {/* 2. Nút Hủy bàn + Thanh toán - PHÍA DƯỚI */}
-                  {selectedType === "dine-in" && selectedTable && tableOrders.length > 0 ? (
-                    <div className="flex gap-2">
-                      {/* Hủy bàn - 1/3 */}
-                      <button onClick={closeModal} className="w-1/3 py-3 bg-red-500 hover:bg-red-600 text-white font-bold rounded-lg transition-colors text-sm">
-                        ❌ Hủy bàn
-                      </button>
-                      {/* Thanh toán - 2/3 */}
+                  {/* 2. Nút Hủy + Chờ món Xong - PHÍA DƯỚI */}
+                  <div className="flex gap-2">
+                    {/* Nút Hủy - 1/3 width - Chỉ enable khi có orders */}
+                    <button 
+                      onClick={closeModal} 
+                      disabled={
+                        selectedType === "dine-in" ? tableOrders.length === 0 : false
+                      }
+                      className={`w-1/3 py-3 font-bold rounded-lg transition-colors text-sm ${
+                        selectedType === "dine-in" && tableOrders.length === 0
+                          ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                          : "bg-red-500 hover:bg-red-600 text-white"
+                      }`}
+                    >
+                      {selectedType === "dine-in" ? "❌ Hủy bàn" : "❌ Hủy"}
+                    </button>
+                    
+                    {/* Nút Chờ món Xong / Thanh toán - 2/3 width - Luôn hiển thị và disable khi chưa có món */}
+                    {selectedType === "dine-in" && selectedTable ? (
                       <button 
-                        onClick={handlePayment} 
-                        disabled={loading || !tableOrders.every(o => o.status === 'ready')}
+                        onClick={handlePayment}
+                        disabled={loading || tableOrders.length === 0 || !tableOrders.every(o => o.status === 'ready')}
                         className={`w-2/3 py-3 font-bold rounded-lg transition-colors ${
-                          tableOrders.every(o => o.status === 'ready')
+                          tableOrders.length > 0 && tableOrders.every(o => o.status === 'ready')
                             ? "bg-green-600 hover:bg-green-700 text-white"
                             : "bg-gray-300 text-gray-500 cursor-not-allowed"
                         }`}
-                        title={!tableOrders.every(o => o.status === 'ready') ? "Chờ tất cả món Xong (màu xanh)" : ""}
+                        title={tableOrders.length === 0 ? "Chưa có món" : !tableOrders.every(o => o.status === 'ready') ? "Chờ tất cả món Xong (màu xanh)" : ""}
                       >
-                        {loading ? "..." : tableOrders.every(o => o.status === 'ready') ? `💰 Thanh toán (${tableOrders.length} đơn)` : `⏳ Chờ món Xong`}
+                        {loading ? "..." : tableOrders.length === 0 ? "⏳ Chờ món Xong" : (tableOrders.every(o => o.status === 'ready') ? `💰 Thanh toán (${tableOrders.length} đơn)` : `⏳ Chờ món Xong`)}
                       </button>
-                    </div>
-                  ) : (
-                    <button onClick={closeModal} className="btn-secondary w-full">Hủy</button>
-                  )}
+                    ) : selectedType !== null && (
+                      <button 
+                        onClick={closeModal}
+                        disabled={true}
+                        className="w-2/3 py-3 font-bold rounded-lg transition-colors bg-gray-300 text-gray-500 cursor-not-allowed"
+                        title="Chờ món được gửi cho bếp"
+                      >
+                        {selectedType === "takeaway" ? `🍱 Chờ món Xong` : `🚚 Chờ món Xong`}
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
 

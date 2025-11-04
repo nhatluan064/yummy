@@ -33,13 +33,13 @@ export default function Header({ mode = "user" }: HeaderProps) {
   };
 
   return (
-    <header className="bg-white/95 backdrop-blur-sm shadow-lg border-b border-neutral-200 sticky top-0 z-50">
+    <header className="bg-white/95 backdrop-blur-sm shadow-lg border-b border-neutral-200 fixed top-0 left-0 right-0 z-50">
       <div className="container-custom">
-        <div className="flex justify-between items-center py-4">
+        <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link
             href={homeHref}
-            className="text-3xl font-bold text-gradient hover:scale-105 transition-transform duration-300"
+            className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-gradient hover:scale-105 transition-transform duration-300 flex items-center"
           >
             🍜 Mì cay yummy
           </Link>

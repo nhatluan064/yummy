@@ -52,9 +52,41 @@ export default function MenuPage() {
   });
   const mouseDownOnBackdropRef = useRef(false);
 
+  // Sticky filter state
+  const [isFilterSticky, setIsFilterSticky] = useState(false);
+  const filterRef = useRef<HTMLDivElement>(null);
+  const qualityRef = useRef<HTMLElement>(null);
+  const menuGridSectionRef = useRef<HTMLElement>(null);
+
   // Định nghĩa các danh mục đồ ăn và đồ uống
   const foodCategories = ["mi-cay", "an-vat", "hu-tieu", "rau-an-kem"];
   const drinkCategories = ["coffee", "milk-tea", "sua-chua", "nuoc-giai-khat"];
+
+  // Sticky filter scroll handler
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!filterRef.current || !qualityRef.current || !menuGridSectionRef.current) return;
+
+      const menuGridRect = menuGridSectionRef.current.getBoundingClientRect();
+      const qualityRect = qualityRef.current.getBoundingClientRect();
+      
+      // Sticky chỉ khi:
+      // 1. Đã vào section menu grid (menu grid section đã đi lên trên)
+      // 2. Chưa chạm section cam kết chất lượng
+      const isInMenuGridSection = menuGridRect.top < 80;
+      const hasNotReachedQuality = qualityRect.top > 100;
+      
+      if (isInMenuGridSection && hasNotReachedQuality) {
+        setIsFilterSticky(true);
+      } else {
+        setIsFilterSticky(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    handleScroll(); // Check on mount
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // Realtime subscription cho feedback của món đang xem
   useEffect(() => {
@@ -235,19 +267,75 @@ export default function MenuPage() {
       {/* Timeline Menu Section */}
       <section className="section-padding bg-white">
         <div className="max-w-7xl mx-auto px-4">
-          {/* Timeline Container */}
-          <div className="relative">
+          {/* Header Menu */}
+          <div className="relative flex justify-center mb-8 md:mb-12">
+            <div className="relative z-10 bg-gradient-to-r from-primary-500 via-primary-600 to-secondary-500 px-6 py-3 md:px-8 md:py-4 rounded-2xl shadow-xl">
+              <h2 className="text-2xl md:text-3xl font-bold text-white tracking-wide" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.2)' }}>
+                🍽️ MENU
+              </h2>
+            </div>
+          </div>
+
+          {/* MOBILE: Simple Vertical Layout */}
+          <div className="md:hidden space-y-6">
+            {categories.map((category) => {
+              const isFood = foodCategories.includes(category.id);
+              const isDrink = drinkCategories.includes(category.id);
+              
+              if (!isFood && !isDrink) return null;
+
+              const categoryItems = menuData.filter(item => item.category === category.id);
+              if (categoryItems.length === 0) return null;
+
+              return (
+                <div key={category.id} className="bg-white rounded-xl shadow-md overflow-hidden">
+                  {/* Category Header */}
+                  <div className={`px-4 py-3 ${isFood ? 'bg-gradient-to-r from-orange-100 to-orange-50' : 'bg-gradient-to-r from-blue-100 to-blue-50'}`}>
+                    <div className="flex items-center gap-2">
+                      <span className="text-2xl">{category.icon}</span>
+                      <h3 className="text-lg font-bold text-neutral-800">
+                        {category.name}
+                      </h3>
+                      <span className="text-sm text-neutral-600">({categoryItems.length})</span>
+                    </div>
+                  </div>
+
+                  {/* Menu Items */}
+                  <div className="p-4 space-y-3">
+                    {categoryItems.map((item) => (
+                      <div
+                        key={item.id}
+                        className={`flex items-center justify-between gap-3 p-3 rounded-lg hover:bg-neutral-50 transition-colors cursor-pointer ${!item.available ? 'opacity-50' : ''}`}
+                        onClick={() => {
+                          setSelectedDish(item);
+                          setShowReviewModal(true);
+                        }}
+                      >
+                        <div className="flex items-center gap-2 flex-1 min-w-0">
+                          {item.bestSeller && (
+                            <svg className="w-4 h-4 text-primary-500 fill-current flex-shrink-0" viewBox="0 0 20 20">
+                              <path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" />
+                            </svg>
+                          )}
+                          <span className={`font-medium text-sm text-neutral-800 truncate ${!item.available ? 'line-through' : ''}`}>
+                            {item.name}
+                          </span>
+                        </div>
+                        <span className="font-bold text-sm text-primary-600 whitespace-nowrap">
+                          {item.price.toLocaleString('vi-VN')}đ
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* DESKTOP: Timeline Layout */}
+          <div className="hidden md:block relative">
             {/* Đường kẻ dọc ở giữa */}
             <div className="absolute left-1/2 transform -translate-x-1/2 w-1 bg-gradient-to-b from-primary-400 via-secondary-400 to-accent-400 h-full"></div>
-
-            {/* Header Menu - Vệt sơn */}
-            <div className="relative flex justify-center mb-12">
-              <div className="relative z-10 bg-gradient-to-r from-primary-500 via-primary-600 to-secondary-500 px-8 py-4 rounded-2xl shadow-xl">
-                <h2 className="text-3xl font-bold text-white tracking-wide" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.2)' }}>
-                  🍽️ MENU
-                </h2>
-              </div>
-            </div>
 
             {/* Render các danh mục */}
             {categories.map((category, index) => {
@@ -303,7 +391,7 @@ export default function MenuPage() {
                               </div>
 
                               {/* Tên món */}
-                              <span className={`font-medium text-neutral-800 group-hover:text-primary-600 transition-colors ${!item.available ? 'line-through' : ''}`}>
+                              <span className={`font-medium text-sm sm:text-base text-neutral-800 group-hover:text-primary-600 transition-colors truncate max-w-[120px] sm:max-w-none ${!item.available ? 'line-through' : ''}`}>
                                 {item.name}
                               </span>
                               
@@ -311,7 +399,7 @@ export default function MenuPage() {
                               <div className="flex-1 border-b border-dotted border-neutral-300 mb-1"></div>
                               
                               {/* Giá tiền */}
-                              <span className="font-bold text-primary-600 whitespace-nowrap">
+                              <span className="font-bold text-sm sm:text-base text-primary-600 whitespace-nowrap">
                                 {item.price.toLocaleString('vi-VN')}đ
                               </span>
                             </div>
@@ -328,7 +416,7 @@ export default function MenuPage() {
       </section>
 
       {/* Menu Grid Section with Filters */}
-      <section className="section-padding bg-neutral-100">
+      <section ref={menuGridSectionRef} className="section-padding bg-neutral-100">
         <div className="container-custom">
           <div className="text-center mb-8">
             <h2 className="text-3xl font-bold text-neutral-800 mb-4">
@@ -339,8 +427,18 @@ export default function MenuPage() {
             </p>
           </div>
 
+          {/* Placeholder when filter is sticky to prevent layout shift */}
+          {isFilterSticky && <div className="h-[88px] mb-8"></div>}
+          
           {/* Search & Filters Bar */}
-          <div className="bg-white rounded-2xl shadow-md p-4 mb-8">
+          <div 
+            ref={filterRef}
+            className={`bg-white rounded-2xl shadow-md p-4 mb-8 transition-all duration-300 ${
+              isFilterSticky 
+                ? 'fixed top-20 left-0 right-0 z-40 mx-auto max-w-7xl shadow-2xl' 
+                : ''
+            }`}
+          >
             <div className="flex flex-wrap items-end gap-2 md:gap-3">
               {/* Search Box */}
               <div className="flex-1 min-w-[140px] md:min-w-[200px] max-w-md">
@@ -495,7 +593,7 @@ export default function MenuPage() {
 
                         {/* Content */}
                         <div className="p-4 flex flex-col flex-1">
-                          <h3 className="font-bold text-lg text-neutral-800 mb-2 line-clamp-2 min-h-[56px]">
+                          <h3 className="font-bold text-base text-neutral-800 mb-2 line-clamp-2 min-h-[48px] leading-tight">
                             {item.name}
                           </h3>
                           <p className="text-sm text-neutral-600 mb-3 line-clamp-2 min-h-[40px]">
@@ -609,7 +707,7 @@ export default function MenuPage() {
       </section>
 
       {/* Nutritional Info */}
-      <section className="section-padding bg-white">
+      <section ref={qualityRef} className="section-padding bg-white">
         <div className="container-custom">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-neutral-800 mb-4 animate-fade-in-up">

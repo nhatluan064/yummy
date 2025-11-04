@@ -19,7 +19,7 @@ class BillService extends FirestoreService<Bill> {
       orderId: order.id,
       orderCode: order.orderCode,
       customerName: order.customerName,
-      tableNumber: order.tableNumber,
+      tableNumber: order.tableNumber || "", // Fix: Set empty string if undefined (for takeaway/delivery)
       items: order.items.map((i) => ({ name: i.name, price: i.price, quantity: i.quantity })),
       totalAmount: order.totalAmount,
       status: 'completed',

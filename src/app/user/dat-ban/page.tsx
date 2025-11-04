@@ -90,12 +90,12 @@ export default function DatBanPage() {
   return (
     <div className="bg-neutral-50">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-primary-500 via-primary-600 to-secondary-600 text-white py-20">
+      <section className="bg-gradient-to-br from-primary-500 via-primary-600 to-secondary-600 text-white py-12">
         <div className="container-custom text-center">
-          <h1 className="text-5xl font-bold mb-4 animate-fade-in-up">
+          <h1 className="text-3xl font-bold mb-2 animate-fade-in-up">
             📅 Đặt Bàn & Liên Hệ
           </h1>
-          <p className="text-xl opacity-90 max-w-2xl mx-auto animate-fade-in-up-delay-1">
+          <p className="text-sm opacity-90 max-w-2xl mx-auto animate-fade-in-up-delay-1">
             Đặt bàn trước hoặc liên hệ với chúng tôi ngay hôm nay
           </p>
         </div>

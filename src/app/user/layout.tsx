@@ -11,7 +11,7 @@ export default function UserLayout({
   return (
     <ToastProvider>
       <Header mode="user" />
-      <main>{children}</main>
+      <main className="pt-16">{children}</main>
       <Footer />
     </ToastProvider>
   );
