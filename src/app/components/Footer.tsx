@@ -130,7 +130,7 @@ export default function Footer() {
         <div className="container-custom py-8">
           <div className="flex flex-col md:flex-row justify-center items-center text-sm text-neutral-400 gap-4">
             <p className="text-center md:text-left">
-              &copy; 2025 Mì cay yummy. Tất cả quyền được bảo lưu.
+              &copy; 2025 Mì cay yummy. Tất cả quyền được bảo lưu. Liên hệ 0823328788 hoặc Email: nhatluan064@gmail.com để được nhận thiết kế Website Oders như mẫu.
             </p>
             {/* <div className="flex flex-wrap justify-center gap-6">
               <Link
